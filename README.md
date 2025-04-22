@@ -1,1 +1,205 @@
-# registry
+# MCP Registry
+
+A reference implementation of a registry service for Model Context Protocol (MCP) servers.
+
+> **Note:** This project is currently a work in progress.
+
+## Overview
+
+The MCP Registry service provides a centralized repository for MCP server entries. It allows discovery and management of various MCP implementations with their associated metadata, configurations, and capabilities.
+
+## Features
+
+- RESTful API for managing MCP registry entries (list, get, create, update, delete)
+- Health check endpoint for service monitoring
+- Support for various environment configurations
+- Graceful shutdown handling
+- MongoDB and in-memory database support
+- Comprehensive API documentation
+- Pagination support for listing registry entries
+
+## Project Structure
+
+```
+├── cmd/           # Application entry points
+├── config/        # Configuration files
+├── internal/      # Private application code
+│   ├── api/       # HTTP server and request handlers
+│   ├── config/    # Configuration management
+│   ├── model/     # Data models
+│   └── service/   # Business logic
+├── pkg/           # Public libraries
+├── scripts/       # Utility scripts
+└── build/         # Build artifacts
+```
+
+## Getting Started
+
+### Prerequisites
+
+- Go 1.18 or later
+- MongoDB (optional, for production use)
+- Docker (optional, for containerized deployment)
+
+### Building
+
+```bash
+make build
+```
+
+This will create the `mcp-registry` binary in the `build/` directory.
+
+### Running
+
+```bash
+./build/mcp-registry
+```
+
+Alternatively, run
+```bash
+make run
+```
+
+By default, the service will run on `http://localhost:8080`.
+
+### Docker Deployment
+
+You can build and run the service using Docker:
+
+```bash
+# Build the Docker image
+docker build -t mcp-registry .
+
+# Run the container
+docker run -p 8080:8080 mcp-registry
+```
+
+This will build and start the MCP Registry service in a container, exposing it on port 8080.
+
+### Using the Fake Service
+
+For development and testing purposes, the application includes a fake service with pre-populated registry entries. To use the fake service:
+
+1. Set the environment to "test":
+
+```bash
+export APP_ENV=test
+./build/mcp-registry
+```
+
+Alternatively, run
+
+```bash
+make run-test
+```
+
+The fake service provides three sample MCP registry entries with the following capabilities:
+
+- Registry 1: Code generation and completion capabilities
+- Registry 2: Chat and knowledge base capabilities
+- Registry 3: Data visualization and analysis capabilities
+
+You can interact with the fake data through the API endpoints:
+
+- List all entries: `GET /servers`
+
+
+The fake service is useful for:
+- Frontend development without a real backend
+- Testing API integrations
+- Example data structure reference
+
+## API Endpoints
+
+### Health Check
+
+```
+GET /v0/health
+```
+
+Returns the health status of the service:
+```json
+{
+  "status": "ok"
+}
+```
+
+### Registry Endpoints
+
+#### List Registry Server Entries
+
+```
+GET /v0/servers
+```
+
+Lists MCP registry server entries with pagination support.
+
+Query parameters:
+- `limit`: Maximum number of entries to return (default: 30, max: 100)
+- `cursor`: Pagination cursor for retrieving next set of results
+
+Response example:
+```json
+{
+  "servers": [
+    {
+      "id": "1",
+      "name": "Example MCP Server",
+      "description": "An example MCP server implementation",
+      "url": "https://example.com/mcp",
+      "repository": {
+        "url": "https://github.com/example/mcp-server",
+        "stars": 120
+      },
+      "version": "1.0.0",
+  ],
+  "metadata": {
+    "next_cursor": "cursor-value-for-next-page"
+  }
+}
+```
+
+### Ping Endpoint
+
+```
+GET /v0/ping
+```
+
+Simple ping endpoint that returns environment configuration information:
+```json
+{
+  "environment": "dev",
+  "version": "mcp-registry-<sha>"
+}
+```
+
+
+## Configuration
+
+The service can be configured using environment variables:
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `APP_ENV` | Application environment (production, test) | production |
+| `APP_VERSION`| Application version | dev |
+| `DATABASE_URL` | MongoDB connection string | mongodb://localhost:27017 |
+
+## Testing
+
+Run the test script to validate API endpoints:
+
+```bash
+./scripts/test_endpoints.sh
+```
+
+You can specify specific endpoints to test:
+
+```bash
+./scripts/test_endpoints.sh --endpoint health
+./scripts/test_endpoints.sh --endpoint servers
+```
+
+## License
+
+See the [LICENSE](LICENSE) file for details.
+
