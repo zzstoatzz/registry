@@ -1,0 +1,19 @@
+// Package router contains API routing logic
+package router
+
+import (
+	"net/http"
+
+	v0 "github.com/modelcontextprotocol/registry/internal/api/handlers/v0"
+	"github.com/modelcontextprotocol/registry/internal/config"
+	"github.com/modelcontextprotocol/registry/internal/service"
+)
+
+// RegisterV0Routes registers all v0 API routes to the provided router
+func RegisterV0Routes(mux *http.ServeMux, cfg *config.Config, registry service.RegistryService) {
+	// Register v0 endpoints
+	mux.HandleFunc("/v0/health", v0.HealthHandler())
+	mux.HandleFunc("/v0/servers", v0.ServersHandler(registry))
+	mux.HandleFunc("/v0/servers/{id}", v0.ServersDetailHandler(registry))
+	mux.HandleFunc("/v0/ping", v0.PingHandler(cfg))
+}
