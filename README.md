@@ -47,7 +47,7 @@ The MCP Registry service provides a centralized repository for MCP server entrie
 make build
 ```
 
-This will create the `mcp-registry` binary in the `build/` directory.
+This will create the `registry` binary in the `build/` directory.
 
 ### Running
 
@@ -68,10 +68,10 @@ You can build and run the service using Docker:
 
 ```bash
 # Build the Docker image
-docker build -t mcp-registry .
+docker build -t registry .
 
 # Run the container
-docker run -p 8080:8080 mcp-registry
+docker run -p 8080:8080 registry
 ```
 
 This will build and start the MCP Registry service in a container, exposing it on port 8080.
@@ -84,7 +84,7 @@ For development and testing purposes, the application includes a fake service wi
 
 ```bash
 export APP_ENV=test
-./build/mcp-registry
+./build/registry
 ```
 
 Alternatively, run
@@ -152,8 +152,8 @@ Response example:
         "stars": 120
       },
       "version": "1.0.0",
-  ],
-  "metadata": {
+    }],
+   "metadata": {
     "next_cursor": "cursor-value-for-next-page"
   }
 }
@@ -169,7 +169,7 @@ Simple ping endpoint that returns environment configuration information:
 ```json
 {
   "environment": "dev",
-  "version": "mcp-registry-<sha>"
+  "version": "registry-<sha>"
 }
 ```
 
