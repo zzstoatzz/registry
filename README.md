@@ -57,7 +57,7 @@ This will create the `registry` binary in the `build/` directory.
 
 Alternatively, run
 ```bash
-make run
+DATABASE_URL="mongodb://localhost:27017" ./build/registry 
 ```
 
 By default, the service will run on `http://localhost:8080`.
@@ -190,9 +190,12 @@ The service can be configured using environment variables:
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `APP_ENV` | Application environment (production, test) | production |
-| `APP_VERSION`| Application version | dev |
-| `DATABASE_URL` | MongoDB connection string | mongodb://localhost:27017 |
+| `APP_ENV` | Application environment (production, test) | `production` |
+| `APP_VERSION`| Application version | `dev` |
+| `DATABASE_URL` | MongoDB connection string | `mongodb://localhost:27017` |
+| `DATABASE_NAME` | MongoDB database name | `mcp-registry` |
+| `COLLECTION_NAME` | MongoDB collection name for server registry | `servers_v2` |
+
 
 ## Testing
 
