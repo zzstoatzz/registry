@@ -40,12 +40,12 @@ test:
 # Run the application
 run:
 	@echo "Running $(BINARY_NAME)..."
-	@$(GO) run $(MAIN_PATH)
+	@$(GO) run $(MAIN_PACKAGE)/main.go $(MAIN_PACKAGE)/version.go
 
 # Run the application with test environment (using fake service)
 run-test:
 	@echo "Running $(BINARY_NAME) with test environment..."
-	@APP_ENV=test $(GO) run $(MAIN_PATH)
+	@APP_ENV=test $(GO) run $(MAIN_PACKAGE)/main.go $(MAIN_PACKAGE)/version.go
 
 # Install dependencies
 deps:

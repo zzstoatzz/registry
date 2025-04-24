@@ -20,6 +20,8 @@ type PaginatedResponse struct {
 // Metadata contains pagination metadata
 type Metadata struct {
 	NextCursor string `json:"next_cursor,omitempty"`
+	Count      int    `json:"count,omitempty"`
+	Total      int    `json:"total,omitempty"`
 }
 
 // ServersHandler returns a handler for listing registry items
@@ -82,6 +84,7 @@ func ServersHandler(registry service.RegistryService) http.HandlerFunc {
 		if nextCursor != "" {
 			response.Metadata = Metadata{
 				NextCursor: nextCursor,
+				Count:      len(registries),
 			}
 		}
 
