@@ -109,6 +109,16 @@ The fake service is useful for:
 - Testing API integrations
 - Example data structure reference
 
+## API Documentation
+
+The API is documented using Swagger/OpenAPI. You can access the interactive Swagger UI at:
+
+```
+/v0/swagger/index.html
+```
+
+This provides a complete reference of all endpoints with request/response schemas and allows you to test the API directly from your browser.
+
 ## API Endpoints
 
 ### Health Check
