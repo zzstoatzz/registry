@@ -34,7 +34,11 @@ func SwaggerHandler() http.HandlerFunc {
 func SwaggerJSONHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Find the project root directory
-		workDir, _ := os.Getwd()
+		workDir, err := os.Getwd()
+		if err != nil {
+			http.Error(w, "Unable to determine working directory", http.StatusInternalServerError)
+			return
+		}
 
 		// Path to the swagger YAML file
 		swaggerFilePath := filepath.Join(workDir, "internal", "docs", "swagger.yaml")
