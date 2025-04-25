@@ -3,6 +3,7 @@ module github.com/modelcontextprotocol/registry
 go 1.23.0
 
 require (
+	github.com/caarlos0/env/v11 v11.3.1
 	github.com/google/uuid v1.6.0
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/http-swagger v1.3.4
@@ -11,7 +12,6 @@ require (
 
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
-	github.com/caarlos0/env/v11 v11.3.1 // indirect
 	github.com/go-openapi/jsonpointer v0.21.1 // indirect
 	github.com/go-openapi/jsonreference v0.21.0 // indirect
 	github.com/go-openapi/spec v0.21.0 // indirect
@@ -33,3 +33,6 @@ require (
 	golang.org/x/tools v0.32.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+// temporary replace directive to use local version of the module so we can share in different orgs
+replace github.com/modelcontextprotocol/registry => ./
