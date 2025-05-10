@@ -222,6 +222,11 @@ components:
         default:
           type: string
           description: The default value for the input.
+        choices:
+          type: array
+          items:
+            type: string
+          example: []
 
     PositionalInput:
       description: A positional input is a value inserted verbatim into the command line.
