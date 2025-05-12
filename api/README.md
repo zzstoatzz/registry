@@ -65,7 +65,7 @@ GET /v0/servers/a5e8a7f0-d4e4-4a1d-b12f-2896a23fd4f1?version=0.0.3
       "registry_name": "npm",
       "name": "@modelcontextprotocol/server-filesystem",
       "version": "1.0.2",
-      "arguments": [
+      "package_arguments": [
         {
           "type": "positional",
           "description": "Path to access",
@@ -108,7 +108,7 @@ GET /v0/servers/a5e8a7f0-d4e4-4a1d-b12f-2896a23fd4f1?version=0.0.3
           }
         }
       ],
-      "arguments": [
+      "package_arguments": [
         {
           "type": "positional",
           "value": "/project",
@@ -234,7 +234,7 @@ API Response:
           }
         }
       ],
-      "arguments": [
+      "package_arguments": [
         {
           "type": "positional",
           "value": "/project",
