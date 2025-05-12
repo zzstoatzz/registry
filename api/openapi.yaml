@@ -213,7 +213,7 @@ components:
         format:
           type: string
           description: Input format. Includes a variety of standardized formats, including `filepath`, which should be interpreted as a file on the user's filesystem.
-          enum: [string, number, boolean, array, filepath]
+          enum: [string, number, boolean, filepath]
           default: string
         value:
           type: string
