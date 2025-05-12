@@ -185,7 +185,7 @@ components:
           description: List of arguments passed to the package's runtime command (such as docker or npx).
           items:
             $ref: '#/components/schemas/Input'
-        arguments:
+        package_arguments:
           type: array
           description: List of arguments passed to the package's binary.
           items:
