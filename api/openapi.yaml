@@ -184,20 +184,18 @@ components:
           type: array
           description: List of arguments passed to the package's runtime command (such as docker or npx).
           items:
-            $ref: '#/components/schemas/Input'
+            $ref: '#/components/schemas/ArgumentInput'
         package_arguments:
           type: array
           description: List of arguments passed to the package's binary.
           items:
-            $ref: '#/components/schemas/Input'
+            $ref: '#/components/schemas/ArgumentInput'
         environment_variables:
           type: array
           items:
-            anyOf:
-              - $ref: '#/components/schemas/NamedInput'
-              - $ref: '#/components/schemas/TemplateInput'
+            $ref: '#/components/schemas/NamedInput'
 
-    UserInput:
+    Input:
       type: object
       properties:
         description:
@@ -213,7 +211,8 @@ components:
           default: string
         value:
           type: string
-          description: The default value for the input. If this is not set, the user will be asked to provide a value.
+          description: The default value for the input. If not specified and a value is required, the user will be prompted to provide one. This value may be a template string, where placeholders in `{curly_braces}` are replaced with corresponding variables.
+          example: "type=bind,src={host_path},dst={container_path}"
         is_secret:
           type: boolean
           description: Whether the input is a secret value (e.g., password, token). If true, clients should handle the value securely.
@@ -227,33 +226,29 @@ components:
           items:
             type: string
           example: []
+        variables:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/Input'
 
     PositionalInput:
       description: A positional input is a value inserted verbatim into the command line.
       allOf:
-        - $ref: '#/components/schemas/UserInput'
+        - $ref: '#/components/schemas/Input'
         - type: object
           required:
             - type
-            - name
+            - value
           properties:
             type:
               type: string
               enum: [positional]
               example: "positional"
-            name:
-              type: string
-              description: Name of the positional argument. This is not part of the command line, but can be used for reference by client configuration.
-              example: file_path
-            is_repeated:
-              type: boolean
-              description: Whether the input can be repeated multiple times in the command line.
-              default: false
 
     NamedInput:
-      description: A command-line `--flag={value}`, named environment variable or header.
+      description: A named input is a value inserted into the command line as a flag or option or as an environment variable or as an header.
       allOf:
-        - $ref: '#/components/schemas/UserInput'
+        - $ref: '#/components/schemas/Input'
         - type: object
           required:
             - type
@@ -266,49 +261,20 @@ components:
             name:
               type: string
               example: "--port"
+
+    ArgumentInput:
+      description: An argument input is a value inserted into the command line
+      allOf:
+        anyOf:
+          - $ref: '#/components/schemas/PositionalInput'
+          - $ref: '#/components/schemas/NamedInput'
+          - $ref: '#/components/schemas/TemplateInput'
+        type: object
+        properties:
             is_repeated:
               type: boolean
               description: Whether the argument or header can be repeated multiple times. Has no effect for environment variables.
               default: false
-
-    TemplateInput:
-      - type: object
-        required:
-          - type
-          - template
-          - name
-        properties:
-          type:
-            type: string
-            enum: [template]
-          name:
-            type: string
-            example: mount_config
-            description: The name of the input, which can be used by clients as an identifier to reference the input. For environment variables and headers, this is the environment variable or header names. For arguments, this is solely for reference and not part of the command line.
-          description:
-            description: A description of the input, which can be used by clients to provide context to the user.
-            type: string
-          is_required:
-            type: boolean
-            default: false
-          is_repeated:
-            type: boolean
-            description: Whether the argument or header can be repeated multiple times. Has no effect for environment variables.
-            default: false
-          template:
-            type: string
-            description: The template string that will be used to generate the value. Values wrapped in `{curly_braces}` will be replaced with the corresponding variables. Input which is not `is_required` is replaced with its `default` value, or otherwise an empty string.
-            example: "--mount=type=bind,src={host_path},dst={container_path}"
-          variables:
-            type: object
-            additionalProperties:
-              $ref: '#/components/schemas/UserInput'
-
-    Input:
-      anyOf:
-        - $ref: '#/components/schemas/PositionalInput'
-        - $ref: '#/components/schemas/NamedInput'
-        - $ref: '#/components/schemas/TemplateInput'
 
     Remote:
       type: object
@@ -327,9 +293,7 @@ components:
         headers:
           type: array
           items:
-            anyOf:
-              - $ref: '#/components/schemas/NamedInput'
-              - $ref: '#/components/schemas/TemplateInput'
+            $ref: '#/components/schemas/NamedInput'
 
     ServerDetail:
       allOf:

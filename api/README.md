@@ -68,7 +68,6 @@ GET /v0/servers/a5e8a7f0-d4e4-4a1d-b12f-2896a23fd4f1?version=0.0.3
       "package_arguments": [
         {
           "type": "positional",
-          "name": "target_dir",
           "description": "Path to access",
           "default": "/Users/username/Desktop",
           "is_required": true,
@@ -90,9 +89,10 @@ GET /v0/servers/a5e8a7f0-d4e4-4a1d-b12f-2896a23fd4f1?version=0.0.3
       "version": "1.0.2",
       "runtime_arguments": [
         {
-          "type": "template",
+          "type": "input",
           "description": "Mount a volume into the container",
-          "template": "--mount=type=bind,src={source_path},dst={target_path}",
+          "name": "--mount",
+          "value": "type=bind,src={source_path},dst={target_path}",
           "is_required": true,
           "is_repeated": true,
           "variables": {
@@ -112,10 +112,9 @@ GET /v0/servers/a5e8a7f0-d4e4-4a1d-b12f-2896a23fd4f1?version=0.0.3
       "package_arguments": [
         {
           "type": "positional",
-          "name": "target_dir",
-          "value": "/project",
+          "value": "/project"
         }
-      ]
+      ],
       "environment_variables": [
         {
           "type": "named",
@@ -217,9 +216,10 @@ API Response:
       "version": "1.0.2",
       "runtime_arguments": [
         {
-          "type": "template",
+          "type": "input",
           "description": "Mount a volume into the container",
-          "template": "--mount=type=bind,src={source_path},dst={target_path}",
+          "name": "--mount",
+          "value": "type=bind,src={source_path},dst={target_path}",
           "is_required": true,
           "is_repeated": true,
           "variables": {
