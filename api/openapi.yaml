@@ -268,13 +268,23 @@ components:
         anyOf:
           - $ref: '#/components/schemas/PositionalInput'
           - $ref: '#/components/schemas/NamedInput'
-          - $ref: '#/components/schemas/TemplateInput'
         type: object
         properties:
-            is_repeated:
-              type: boolean
-              description: Whether the argument or header can be repeated multiple times. Has no effect for environment variables.
-              default: false
+          is_repeated:
+            type: boolean
+            description: Whether the argument can be repeated multiple times.
+            default: false
+    
+    HeaderInput:
+      description: An argument input is a value inserted into the command line
+      allOf:
+        $ref: '#/components/schemas/NamedInput'
+        type: object
+        properties:
+          is_repeated:
+            type: boolean
+            description: Whether the header can be repeated multiple times.
+            default: false
 
     Remote:
       type: object
@@ -293,7 +303,7 @@ components:
         headers:
           type: array
           items:
-            $ref: '#/components/schemas/NamedInput'
+            $ref: '#/components/schemas/HeaderInput'
 
     ServerDetail:
       allOf:
