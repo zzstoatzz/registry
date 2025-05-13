@@ -68,6 +68,7 @@ GET /v0/servers/a5e8a7f0-d4e4-4a1d-b12f-2896a23fd4f1?version=0.0.3
       "package_arguments": [
         {
           "type": "positional",
+          "name": "target_dir",
           "description": "Path to access",
           "default": "/Users/username/Desktop",
           "is_required": true,
@@ -94,7 +95,7 @@ GET /v0/servers/a5e8a7f0-d4e4-4a1d-b12f-2896a23fd4f1?version=0.0.3
           "template": "--mount=type=bind,src={source_path},dst={target_path}",
           "is_required": true,
           "is_repeated": true,
-          "properties": {
+          "variables": {
             "source_path": {
               "description": "Source path on host",
               "format": "filepath",
@@ -111,6 +112,7 @@ GET /v0/servers/a5e8a7f0-d4e4-4a1d-b12f-2896a23fd4f1?version=0.0.3
       "package_arguments": [
         {
           "type": "positional",
+          "name": "target_dir",
           "value": "/project",
         }
       ]
@@ -220,7 +222,7 @@ API Response:
           "template": "--mount=type=bind,src={source_path},dst={target_path}",
           "is_required": true,
           "is_repeated": true,
-          "properties": {
+          "variables": {
             "source_path": {
               "description": "Source path on host",
               "format": "filepath",
@@ -237,6 +239,7 @@ API Response:
       "package_arguments": [
         {
           "type": "positional",
+          "name": "target_dir",
           "value": "/project",
         }
       ]

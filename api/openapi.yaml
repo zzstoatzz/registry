@@ -206,10 +206,6 @@ components:
         is_required:
           type: boolean
           default: false
-        is_repeated:
-          type: boolean
-          description: Whether the input can be repeated multiple times in the command line.
-          default: false
         format:
           type: string
           description: Input format. Includes a variety of standardized formats, including `filepath`, which should be interpreted as a file on the user's filesystem.
@@ -239,11 +235,20 @@ components:
         - type: object
           required:
             - type
+            - name
           properties:
             type:
               type: string
               enum: [positional]
               example: "positional"
+            name:
+              type: string
+              description: Name of the positional argument. This is not part of the command line, but can be used for reference by client configuration.
+              example: file_path
+            is_repeated:
+              type: boolean
+              description: Whether the input can be repeated multiple times in the command line.
+              default: false
 
     NamedInput:
       description: A command-line `--flag={value}`, named environment variable or header.
@@ -261,6 +266,10 @@ components:
             name:
               type: string
               example: "--port"
+            is_repeated:
+              type: boolean
+              description: Whether the argument or header can be repeated multiple times. Has no effect for environment variables.
+              default: false
 
     TemplateInput:
       - type: object
@@ -281,14 +290,16 @@ components:
             type: string
           is_required:
             type: boolean
+            default: false
           is_repeated:
             type: boolean
-            description: Whether the input can be repeated multiple times in the command line.
+            description: Whether the argument or header can be repeated multiple times. Has no effect for environment variables.
+            default: false
           template:
             type: string
-            description: The template string that will be used to generate the value. Values wrapped in `{curly_braces}` will be replaced with the corresponding properties. Input which is not `is_required` is replaced with its `default` value, or otherwise an empty string.
+            description: The template string that will be used to generate the value. Values wrapped in `{curly_braces}` will be replaced with the corresponding variables. Input which is not `is_required` is replaced with its `default` value, or otherwise an empty string.
             example: "--mount=type=bind,src={host_path},dst={container_path}"
-          properties:
+          variables:
             type: object
             additionalProperties:
               $ref: '#/components/schemas/UserInput'
