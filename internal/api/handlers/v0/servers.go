@@ -60,7 +60,7 @@ func ServersHandler(registry service.RegistryService) http.HandlerFunc {
 				return
 			}
 
-			if parsedLimit > 100 {
+			if parsedLimit > 10000 {
 				// Cap maximum limit to prevent excessive queries
 				limit = 100
 			} else {
