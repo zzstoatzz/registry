@@ -1,0 +1,183 @@
+openapi: 3.1.0
+jsonSchemaDialect: "https://json-schema.org/draft/2020-12/schema"
+$id: https://modelcontextprotocol.io/schemas/draft/2025-07-09/server-registry-openapi
+info:
+  title: MCP Server Registry API
+  summary: API for discovering and accessing MCP server metadata
+  description: |
+    Specification for a theoretical REST API that serves up metadata about MCP servers.
+  license:
+    name: MIT
+    identifier: MIT
+
+paths:
+  /servers:
+    get:
+      summary: List MCP servers
+      description: Returns a list of all registered MCP servers
+      parameters:
+        - name: limit
+          in: query
+          description: Number of results per page
+          schema:
+            type: integer
+            minimum: 1
+        - name: offset
+          in: query
+          description: Number of results to skip for pagination
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+      responses:
+        '200':
+          description: A list of MCP servers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerList'
+  /servers/{id}:
+    get:
+      summary: Get MCP server details
+      description: Returns detailed information about a specific MCP server
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique ID of the server
+          schema:
+            type: string
+            format: uuid
+        - name: version
+          in: query
+          description: Desired MCP server version
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Detailed server information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerDetail'
+        '404':
+          description: Server not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Server not found"
+
+components:
+  schemas:
+    # Import base schemas first
+    Repository:
+      $ref: './openapi-components-generated.yaml#/components/schemas/Repository'
+
+    # Server with registry-specific fields
+    Server:
+      type: object
+      required:
+        - id
+        - name
+        - description
+        - version_detail
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "a5e8a7f0-d4e4-4a1d-b12f-2896a23fd4f1"
+        name:
+          type: string
+          description: Human-readable description of the server's functionality
+          example: "io.modelcontextprotocol/filesystem"
+        description:
+          type: string
+          example: "Node.js server implementing Model Context Protocol (MCP) for filesystem operations."
+        repository:
+          $ref: '#/components/schemas/Repository'
+        version_detail:
+          $ref: '#/components/schemas/VersionDetail'
+
+    # VersionDetail with registry-specific fields
+    VersionDetail:
+      type: object
+      required:
+        - version
+        - release_date
+        - is_latest
+      properties:
+        version:
+          type: string
+          example: "1.0.2"
+          description: Equivalent of Implementation.version in MCP specification.
+        release_date:
+          type: string
+          format: date-time
+          example: "2023-06-15T10:30:00Z"
+          description: Datetime that the MCP server version was published to the registry.
+        is_latest:
+          type: boolean
+          example: true
+          description: Whether the MCP server version is the latest version available in the registry.
+
+    ServerList:
+      type: object
+      required:
+        - servers
+        - total_count
+      properties:
+        servers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Server'
+        next:
+          type: string
+          format: uri
+          example: "https://registry.modelcontextprotocol.io/servers?offset=50"
+        total_count:
+          type: integer
+          example: 1
+
+    # Import remaining schemas from generated file
+    Package:
+      $ref: './openapi-components-generated.yaml#/components/schemas/Package'
+
+    Input:
+      $ref: './openapi-components-generated.yaml#/components/schemas/Input'
+
+    InputWithVariables:
+      $ref: './openapi-components-generated.yaml#/components/schemas/InputWithVariables'
+
+    PositionalArgument:
+      $ref: './openapi-components-generated.yaml#/components/schemas/PositionalArgument'
+
+    NamedArgument:
+      $ref: './openapi-components-generated.yaml#/components/schemas/NamedArgument'
+
+    KeyValueInput:
+      $ref: './openapi-components-generated.yaml#/components/schemas/KeyValueInput'
+
+    Argument:
+      $ref: './openapi-components-generated.yaml#/components/schemas/Argument'
+
+    Remote:
+      $ref: './openapi-components-generated.yaml#/components/schemas/Remote'
+
+    ServerDetail:
+      description: Schema for a static representation of an MCP server. Used in various contexts related to discovery, installation, and configuration.
+      allOf:
+        - $ref: '#/components/schemas/Server'
+        - type: object
+          properties:
+            packages:
+              type: array
+              items:
+                $ref: '#/components/schemas/Package'
+            remotes:
+              type: array
+              items:
+                $ref: '#/components/schemas/Remote'
