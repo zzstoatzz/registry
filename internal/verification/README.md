@@ -172,6 +172,7 @@ BenchmarkValidateTokenFormat-16          98329761   12.31 ns/op
 BenchmarkGenerateTokenWithInfo-16        4017357    290.5 ns/op
 ```
 
+Note: These benchmark results are provided as examples and were obtained on an Apple M4 Max system. Performance may vary significantly on different hardware configurations.
 Token generation is fast enough for real-time use in web applications.
 
 ## Testing
