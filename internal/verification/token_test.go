@@ -284,7 +284,7 @@ func TestTokenDNSSafety(t *testing.T) {
 
 		// Test full DNS record format
 		dnsRecord := "mcp-verify=" + token
-		maxDNSRecordLength := 255
+		MaxDNSRecordLength := 255
 		if len(dnsRecord) > MaxDNSRecordLength {
 			t.Errorf("DNS record too long (%d chars): %s", len(dnsRecord), dnsRecord)
 		}
