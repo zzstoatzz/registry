@@ -13,6 +13,7 @@ const (
 	errMsgGenToken          = "GenerateVerificationToken() error = %v"
 	errMsgGenTokenNormal    = "GenerateVerificationToken() should succeed in normal conditions: %v"
 	errMsgGenTokenWithInfo  = "GenerateTokenWithInfo() error = %v"
+	dnsRecordPrefix         = "mcp-verify="
 )
 
 func TestGenerateVerificationToken(t *testing.T) {
@@ -228,7 +229,7 @@ func TestGenerateTokenWithInfo(t *testing.T) {
 		t.Errorf("TokenInfo.Encoding = %s, want base64url", tokenInfo.Encoding)
 	}
 
-	expectedDNSRecord := "mcp-verify=" + tokenInfo.Token
+	expectedDNSRecord := dnsRecordPrefix + tokenInfo.Token
 	if tokenInfo.DNSRecord != expectedDNSRecord {
 		t.Errorf("TokenInfo.DNSRecord = %s, want %s", tokenInfo.DNSRecord, expectedDNSRecord)
 	}
@@ -283,11 +284,151 @@ func TestTokenDNSSafety(t *testing.T) {
 		}
 
 		// Test full DNS record format
-		dnsRecord := "mcp-verify=" + token
+		dnsRecord := dnsRecordPrefix + token
 		MaxDNSRecordLength := 255
 		if len(dnsRecord) > MaxDNSRecordLength {
 			t.Errorf("DNS record too long (%d chars): %s", len(dnsRecord), dnsRecord)
 		}
+	}
+}
+
+func TestDNSTXTRecordRFCCompliance(t *testing.T) {
+	// Test DNS TXT record format compliance according to RFC 1035 and RFC 1464
+	token, err := verification.GenerateVerificationToken()
+	if err != nil {
+		t.Fatalf(errMsgGenToken, err)
+	}
+
+	dnsRecord := dnsRecordPrefix + token
+
+	// RFC 1035: DNS names and TXT records have specific length limitations
+	// TXT record data must not exceed 255 octets per string
+	if len(dnsRecord) > 255 {
+		t.Errorf("DNS TXT record exceeds 255 character limit: %d chars", len(dnsRecord))
+	}
+
+	// RFC 1464: TXT records should follow attribute=value format
+	if !strings.Contains(dnsRecord, "=") {
+		t.Error("DNS TXT record missing required '=' separator")
+	}
+
+	parts := strings.SplitN(dnsRecord, "=", 2)
+	if len(parts) != 2 {
+		t.Error("DNS TXT record should have exactly one '=' separator")
+	}
+
+	attribute := parts[0]
+	value := parts[1]
+
+	// Validate attribute name (should be "mcp-verify")
+	expectedAttribute := strings.TrimSuffix(dnsRecordPrefix, "=")
+	if attribute != expectedAttribute {
+		t.Errorf("DNS TXT record attribute = %s, want %s", attribute, expectedAttribute)
+	}
+
+	// Validate that value is our token
+	if value != token {
+		t.Errorf("DNS TXT record value = %s, want %s", value, token)
+	}
+
+	// Test that the record contains only ASCII printable characters (RFC compliant)
+	for i, char := range dnsRecord {
+		if char < 32 || char > 126 {
+			t.Errorf("DNS TXT record contains non-ASCII printable character at position %d: %c (code %d)", i, char, char)
+		}
+	}
+}
+
+func TestDNSTXTRecordTokenValidation(t *testing.T) {
+	// Test that tokens in DNS records are valid according to our format
+	for i := 0; i < 50; i++ {
+		token, err := verification.GenerateVerificationToken()
+		if err != nil {
+			t.Fatalf(errMsgGenTokenIteration, err, i)
+		}
+
+		dnsRecord := dnsRecordPrefix + token
+
+		// Extract token from DNS record
+		if !strings.HasPrefix(dnsRecord, dnsRecordPrefix) {
+			t.Errorf("DNS record missing expected prefix: %s", dnsRecord)
+			continue
+		}
+
+		extractedToken := strings.TrimPrefix(dnsRecord, dnsRecordPrefix)
+		
+		// Validate extracted token format
+		if !verification.ValidateTokenFormat(extractedToken) {
+			t.Errorf("Extracted token from DNS record failed validation: %s", extractedToken)
+		}
+
+		// Ensure token matches what we generated
+		if extractedToken != token {
+			t.Errorf("Extracted token %s does not match generated token %s", extractedToken, token)
+		}
+	}
+}
+
+func TestDNSTXTRecordSpecialCharacters(t *testing.T) {
+	// Test that DNS records handle RFC-compliant special characters correctly
+	token, err := verification.GenerateVerificationToken()
+	if err != nil {
+		t.Fatalf(errMsgGenToken, err)
+	}
+
+	dnsRecord := dnsRecordPrefix + token
+
+	// Characters that should NOT appear in our DNS records
+	prohibitedChars := []rune{
+		0,   // NULL
+		9,   // TAB
+		10,  // LF
+		13,  // CR
+		34,  // Double quote
+		92,  // Backslash
+		127, // DEL
+	}
+
+	for _, prohibited := range prohibitedChars {
+		if strings.ContainsRune(dnsRecord, prohibited) {
+			t.Errorf("DNS record contains prohibited character: %c (code %d)", prohibited, prohibited)
+		}
+	}
+
+	// Characters that SHOULD be allowed (base64url safe)
+	allowedChars := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_="
+	for _, char := range dnsRecord {
+		if !strings.ContainsRune(allowedChars, char) {
+			t.Errorf("DNS record contains unexpected character: %c (code %d)", char, char)
+		}
+	}
+}
+
+func TestDNSTXTRecordLength(t *testing.T) {
+	// Test DNS TXT record length constraints
+	token, err := verification.GenerateVerificationToken()
+	if err != nil {
+		t.Fatalf(errMsgGenToken, err)
+	}
+
+	dnsRecord := dnsRecordPrefix + token
+
+	// RFC 1035: TXT record strings are limited to 255 octets
+	maxTXTRecordLength := 255
+	if len(dnsRecord) > maxTXTRecordLength {
+		t.Errorf("DNS TXT record length %d exceeds RFC limit of %d", len(dnsRecord), maxTXTRecordLength)
+	}
+
+	// Calculate expected length: "mcp-verify=" (11 chars) + token (22 chars) = 33 chars
+	expectedLength := 11 + 22 // len("mcp-verify=") + token length
+	if len(dnsRecord) != expectedLength {
+		t.Errorf("DNS TXT record length %d, expected %d", len(dnsRecord), expectedLength)
+	}
+
+	// Ensure we have reasonable margin below the limit
+	marginRequired := 50 // Leave room for future changes
+	if len(dnsRecord) > (maxTXTRecordLength - marginRequired) {
+		t.Errorf("DNS TXT record length %d too close to limit, needs %d char margin", len(dnsRecord), marginRequired)
 	}
 }
 
