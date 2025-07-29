@@ -1,18 +1,22 @@
-package verification
+package verification_test
 
 import (
 	"encoding/base64"
 	"strings"
 	"testing"
+
+	"github.com/modelcontextprotocol/registry/internal/verification"
 )
 
 const (
 	errMsgGenTokenIteration = "GenerateVerificationToken() error = %v, iteration %d"
 	errMsgGenToken          = "GenerateVerificationToken() error = %v"
+	errMsgGenTokenNormal    = "GenerateVerificationToken() should succeed in normal conditions: %v"
+	errMsgGenTokenWithInfo  = "GenerateTokenWithInfo() error = %v"
 )
 
 func TestGenerateVerificationToken(t *testing.T) {
-	token, err := GenerateVerificationToken()
+	token, err := verification.GenerateVerificationToken()
 	if err != nil {
 		t.Errorf("GenerateVerificationToken() error = %v, want nil", err)
 		return
@@ -24,7 +28,7 @@ func TestGenerateVerificationToken(t *testing.T) {
 	}
 
 	// Test token format is valid
-	if !ValidateTokenFormat(token) {
+	if !verification.ValidateTokenFormat(token) {
 		t.Errorf("GenerateVerificationToken() returned invalid token format: %s", token)
 	}
 
@@ -61,7 +65,7 @@ func TestGenerateVerificationTokenUniqueness(t *testing.T) {
 	tokens := make(map[string]bool)
 
 	for i := 0; i < tokenCount; i++ {
-		token, err := GenerateVerificationToken()
+		token, err := verification.GenerateVerificationToken()
 		if err != nil {
 			t.Fatalf(errMsgGenTokenIteration, err, i)
 		}
@@ -79,7 +83,7 @@ func TestGenerateVerificationTokenUniqueness(t *testing.T) {
 
 func TestGenerateVerificationTokenEntropy(t *testing.T) {
 	// Test that generated tokens have exactly 128 bits (16 bytes) of entropy
-	token, err := GenerateVerificationToken()
+	token, err := verification.GenerateVerificationToken()
 	if err != nil {
 		t.Fatalf(errMsgGenToken, err)
 	}
@@ -102,10 +106,10 @@ func TestGenerateVerificationTokenErrorHandling(t *testing.T) {
 	// so we test the error wrapping behavior indirectly
 
 	// Test with valid input to ensure normal operation
-	token, err := GenerateVerificationToken()
+	token, err := verification.GenerateVerificationToken()
 	if err != nil {
 		// If this fails in a normal environment, there's likely a real issue
-		t.Errorf("GenerateVerificationToken() should succeed in normal conditions: %v", err)
+		t.Errorf(errMsgGenTokenNormal, err)
 	}
 
 	if token == "" {
@@ -182,7 +186,7 @@ func TestValidateTokenFormat(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := ValidateTokenFormat(tt.token)
+			got := verification.ValidateTokenFormat(tt.token)
 			if got != tt.want {
 				t.Errorf("ValidateTokenFormat(%q) = %v, want %v", tt.token, got, tt.want)
 			}
@@ -193,31 +197,31 @@ func TestValidateTokenFormat(t *testing.T) {
 func TestValidateTokenFormatWithGeneratedTokens(t *testing.T) {
 	// Test that all generated tokens pass validation
 	for i := 0; i < 100; i++ {
-		token, err := GenerateVerificationToken()
+		token, err := verification.GenerateVerificationToken()
 		if err != nil {
 			t.Fatalf(errMsgGenTokenIteration, err, i)
 		}
 
-		if !ValidateTokenFormat(token) {
+		if !verification.ValidateTokenFormat(token) {
 			t.Errorf("Generated token failed validation: %s", token)
 		}
 	}
 }
 
 func TestGenerateTokenWithInfo(t *testing.T) {
-	tokenInfo, err := GenerateTokenWithInfo()
+	tokenInfo, err := verification.GenerateTokenWithInfo()
 	if err != nil {
 		t.Fatalf("GenerateTokenWithInfo() error = %v", err)
 	}
 
 	// Test basic token validation
-	if !ValidateTokenFormat(tokenInfo.Token) {
+	if !verification.ValidateTokenFormat(tokenInfo.Token) {
 		t.Errorf("GenerateTokenWithInfo() returned invalid token: %s", tokenInfo.Token)
 	}
 
 	// Test metadata fields
-	if tokenInfo.Length != TokenLength {
-		t.Errorf("TokenInfo.Length = %d, want %d", tokenInfo.Length, TokenLength)
+	if tokenInfo.Length != verification.TokenLength {
+		t.Errorf("TokenInfo.Length = %d, want %d", tokenInfo.Length, verification.TokenLength)
 	}
 
 	if tokenInfo.Encoding != "base64url" {
@@ -238,15 +242,15 @@ func TestGenerateTokenWithInfo(t *testing.T) {
 func TestTokenConstants(t *testing.T) {
 	// Test that TokenLength is exactly 16 bytes (128 bits)
 	expectedLength := 16
-	if TokenLength != expectedLength {
-		t.Errorf("TokenLength = %d, want %d (128 bits)", TokenLength, expectedLength)
+	if verification.TokenLength != expectedLength {
+		t.Errorf("TokenLength = %d, want %d (128 bits)", verification.TokenLength, expectedLength)
 	}
 }
 
 func TestTokenURLSafety(t *testing.T) {
 	// Generate multiple tokens and ensure they're URL-safe
 	for i := 0; i < 100; i++ {
-		token, err := GenerateVerificationToken()
+		token, err := verification.GenerateVerificationToken()
 		if err != nil {
 			t.Fatalf(errMsgGenTokenIteration, err, i)
 		}
@@ -264,7 +268,7 @@ func TestTokenURLSafety(t *testing.T) {
 func TestTokenDNSSafety(t *testing.T) {
 	// Generate multiple tokens and ensure they're DNS TXT record safe
 	for i := 0; i < 100; i++ {
-		token, err := GenerateVerificationToken()
+		token, err := verification.GenerateVerificationToken()
 		if err != nil {
 			t.Fatalf(errMsgGenTokenIteration, err, i)
 		}
@@ -290,31 +294,31 @@ func TestTokenDNSSafety(t *testing.T) {
 // Benchmark tests for performance
 func BenchmarkGenerateVerificationToken(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		_, err := GenerateVerificationToken()
+		_, err := verification.GenerateVerificationToken()
 		if err != nil {
-			b.Fatalf("GenerateVerificationToken() error = %v", err)
+			b.Fatalf(errMsgGenToken, err)
 		}
 	}
 }
 
 func BenchmarkValidateTokenFormat(b *testing.B) {
 	// Generate a token once for benchmarking validation
-	token, err := GenerateVerificationToken()
+	token, err := verification.GenerateVerificationToken()
 	if err != nil {
-		b.Fatalf("GenerateVerificationToken() error = %v", err)
+		b.Fatalf(errMsgGenToken, err)
 	}
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		ValidateTokenFormat(token)
+		verification.ValidateTokenFormat(token)
 	}
 }
 
 func BenchmarkGenerateTokenWithInfo(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		_, err := GenerateTokenWithInfo()
+		_, err := verification.GenerateTokenWithInfo()
 		if err != nil {
-			b.Fatalf("GenerateTokenWithInfo() error = %v", err)
+			b.Fatalf(errMsgGenTokenWithInfo, err)
 		}
 	}
 }
