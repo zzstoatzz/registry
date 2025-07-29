@@ -356,7 +356,7 @@ func TestDNSTXTRecordTokenValidation(t *testing.T) {
 		}
 
 		extractedToken := strings.TrimPrefix(dnsRecord, dnsRecordPrefix)
-		
+
 		// Validate extracted token format
 		if !verification.ValidateTokenFormat(extractedToken) {
 			t.Errorf("Extracted token from DNS record failed validation: %s", extractedToken)
