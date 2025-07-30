@@ -179,9 +179,13 @@ func performDNSVerificationWithRetries(
 				attempt, config.MaxRetries, domain, retryDelay)
 
 			// Wait before retry with context cancellation support
+			timer := time.NewTimer(retryDelay)
 			select {
-			case <-time.After(retryDelay):
+			case <-timer.C:
+				// Timer fired normally, continue with retry
 			case <-ctx.Done():
+				// Context cancelled, stop timer to prevent leak
+				timer.Stop()
 				return nil, &DNSVerificationError{
 					Domain:  domain,
 					Token:   expectedToken,
