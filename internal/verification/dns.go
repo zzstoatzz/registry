@@ -184,7 +184,7 @@ func performDNSVerificationWithRetries(
 			case <-timer.C:
 				// Timer fired normally, continue with retry
 			case <-ctx.Done():
-				// Context cancelled, stop timer to prevent leak
+				// Context canceled, stop timer to prevent leak
 				timer.Stop()
 				return nil, &DNSVerificationError{
 					Domain:  domain,
