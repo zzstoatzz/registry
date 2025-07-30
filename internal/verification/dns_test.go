@@ -3,7 +3,6 @@ package verification_test
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net"
 	"strings"
 	"testing"
@@ -346,20 +345,14 @@ func TestIsRetryableDNSError(t *testing.T) {
 }
 
 func TestDNSRecordFormat(t *testing.T) {
-	token := "TBeVXe_X4npM6p8vpzStnA"
-	expectedFormat := "mcp-verify=" + token
-
 	tokenInfo, err := verification.GenerateTokenWithInfo()
 	if err != nil {
 		t.Fatalf("Failed to generate token info: %v", err)
 	}
 
-	if !strings.HasPrefix(tokenInfo.DNSRecord, "mcp-verify=") {
-		t.Errorf("DNS record format mismatch: %s", tokenInfo.DNSRecord)
-	}
-
-	if expectedFormat != fmt.Sprintf("mcp-verify=%s", token) {
-		t.Errorf("DNS record format construction error")
+	expectedFormat := "mcp-verify=" + tokenInfo.Token
+	if tokenInfo.DNSRecord != expectedFormat {
+		t.Errorf("DNS record format mismatch: got %s, want %s", tokenInfo.DNSRecord, expectedFormat)
 	}
 
 	t.Logf("Expected DNS record format: %s", expectedFormat)
