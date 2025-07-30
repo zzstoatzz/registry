@@ -18,16 +18,16 @@ func TestVerifyDNSRecordSuccess(t *testing.T) {
 		t.Fatalf("Failed to generate test token: %v", err)
 	}
 
-	domain := "example.com"
-	
+	domain := testDomain
+
 	// Create mock resolver with the verification token
 	mockResolver := verification.NewMockDNSResolver()
 	mockResolver.SetVerificationToken(domain, token)
-	
+
 	// Use custom config with mock resolver
 	config := verification.DefaultDNSConfig()
 	config.Resolver = mockResolver
-	
+
 	result, err := verification.VerifyDNSRecordWithConfig(domain, token, config)
 	if err != nil {
 		t.Errorf("VerifyDNSRecord returned unexpected error: %v", err)
@@ -67,16 +67,16 @@ func TestVerifyDNSRecordTokenNotFound(t *testing.T) {
 		t.Fatalf("Failed to generate test token: %v", err)
 	}
 
-	domain := "example.com"
-	
+	domain := testDomain
+
 	// Create mock resolver with different TXT records (no verification token)
 	mockResolver := verification.NewMockDNSResolver()
 	mockResolver.SetTXTRecord(domain, "v=spf1 -all", "some-other-record")
-	
+
 	// Use custom config with mock resolver
 	config := verification.DefaultDNSConfig()
 	config.Resolver = mockResolver
-	
+
 	result, err := verification.VerifyDNSRecordWithConfig(domain, token, config)
 	if err != nil {
 		t.Errorf("VerifyDNSRecord returned unexpected error: %v", err)
@@ -127,14 +127,14 @@ func TestVerifyDNSRecordInvalidInputs(t *testing.T) {
 		},
 		{
 			name:          "empty token",
-			domain:        "example.com",
+			domain:        testDomain,
 			token:         "",
 			expectError:   true,
 			errorContains: "token cannot be empty",
 		},
 		{
 			name:          "invalid token format",
-			domain:        "example.com",
+			domain:        testDomain,
 			token:         "invalid-token!@#",
 			expectError:   true,
 			errorContains: "invalid token format",
@@ -168,16 +168,16 @@ func TestVerifyDNSRecordTokenFormatValidation(t *testing.T) {
 		t.Fatalf("Failed to generate test token: %v", err)
 	}
 
-	domain := "example.com"
-	
+	domain := testDomain
+
 	// Create mock resolver with the verification token
 	mockResolver := verification.NewMockDNSResolver()
 	mockResolver.SetVerificationToken(domain, token)
-	
+
 	// Use custom config with mock resolver
 	config := verification.DefaultDNSConfig()
 	config.Resolver = mockResolver
-	
+
 	result, err := verification.VerifyDNSRecordWithConfig(domain, token, config)
 
 	if err != nil {
@@ -212,21 +212,30 @@ func TestVerifyDNSRecordWithConfigTimeout(t *testing.T) {
 		t.Fatalf("Failed to generate test token: %v", err)
 	}
 
+	// Create mock resolver that simulates a timeout
+	mockResolver := verification.NewMockDNSResolver()
+	mockResolver.Delay = 200 * time.Millisecond // Longer than the config timeout
+
 	config := &verification.DNSVerificationConfig{
 		Timeout:            100 * time.Millisecond,
 		MaxRetries:         0,
 		RetryDelay:         0,
 		UseSecureResolvers: false,
 		CustomResolvers:    []string{},
+		Resolver:           mockResolver,
 	}
 
-	domain := "non-existent-domain-that-should-timeout.com"
+	domain := testDomain
 	result, err := verification.VerifyDNSRecordWithConfig(domain, token, config)
 
 	if err == nil {
-		t.Log("DNS query succeeded unexpectedly")
+		t.Error("Expected timeout error but got none")
 	} else {
 		t.Logf("DNS query failed as expected: %v", err)
+		// Verify it's a context timeout error
+		if !strings.Contains(err.Error(), "context deadline exceeded") {
+			t.Errorf("Expected context deadline exceeded error, got: %v", err)
+		}
 	}
 
 	if result == nil {
@@ -273,14 +282,14 @@ func TestDefaultDNSConfig(t *testing.T) {
 func TestDNSVerificationError(t *testing.T) {
 	baseErr := errors.New("base network error")
 	dnsErr := &verification.DNSVerificationError{
-		Domain:  "example.com",
+		Domain:  testDomain,
 		Token:   "test-token",
 		Message: "DNS query failed",
 		Cause:   baseErr,
 	}
 
 	errMsg := dnsErr.Error()
-	if !strings.Contains(errMsg, "example.com") {
+	if !strings.Contains(errMsg, testDomain) {
 		t.Errorf("Error message should contain domain: %s", errMsg)
 	}
 
