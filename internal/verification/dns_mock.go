@@ -30,7 +30,6 @@ func (m *MockDNSResolver) LookupTXT(ctx context.Context, name string) ([]string,
 
 	// Simulate delay if configured
 	if m.Delay > 0 {
-		select {
 		timer := time.NewTimer(m.Delay)
 		defer timer.Stop()
 		select {

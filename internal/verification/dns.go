@@ -291,7 +291,6 @@ func IsRetryableDNSError(err error) bool {
 	}
 
 	// Use iterative approach to prevent stack overflow with deeply nested errors
-	// Use iterative approach to prevent stack overflow with deeply nested errors
 	const maxIterations = 100
 	iterationCount := 0
 	for err != nil {
