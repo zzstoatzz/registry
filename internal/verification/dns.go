@@ -213,7 +213,7 @@ func performDNSVerificationWithRetries(
 		}
 
 		log.Printf("Retryable DNS error for domain %s (attempt %d/%d): %v",
-			domain, attempt+1, config.MaxRetries+1, err)
+			domain, attempt+1, config.MaxRetries, err)
 	}
 
 	// All retries exhausted
