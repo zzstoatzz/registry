@@ -32,20 +32,6 @@ if err != nil {
 - No padding characters
 - 22-character output length
 
-#### ValidateTokenFormat(token string)
-
-Validates that a token string matches the expected format for verification tokens.
-
-```go
-isValid := verification.ValidateTokenFormat("TBeVXe_X4npM6p8vpzStnA")
-// Returns: true
-```
-
-**Validation Rules:**
-- Exactly 22 characters long
-- Contains only base64url characters: `A-Z`, `a-z`, `0-9`, `-`, `_`
-- No padding or special characters
-
 #### GenerateTokenWithInfo()
 
 Generates a token with additional metadata about how to use it.
