@@ -291,7 +291,16 @@ func IsRetryableDNSError(err error) bool {
 	}
 
 	// Use iterative approach to prevent stack overflow with deeply nested errors
+	// Use iterative approach to prevent stack overflow with deeply nested errors
+	const maxIterations = 100
+	iterationCount := 0
 	for err != nil {
+		// Prevent infinite loop in case of circular error chain
+		if iterationCount >= maxIterations {
+			log.Printf("Exceeded maximum error unwrapping iterations (%d); possible circular error chain", maxIterations)
+			return false
+		}
+		iterationCount++
 		// Check for temporary network errors
 		var netErr *net.OpError
 		if errors.As(err, &netErr) {
