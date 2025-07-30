@@ -176,7 +176,7 @@ func performDNSVerificationWithRetries(
 	for attempt := 0; attempt <= config.MaxRetries; attempt++ {
 		if attempt > 0 {
 			log.Printf("DNS verification retry %d/%d for domain %s after %v delay",
-				attempt, config.MaxRetries, domain, retryDelay)
+				attempt+1, config.MaxRetries, domain, retryDelay)
 
 			// Wait before retry with context cancellation support
 			timer := time.NewTimer(retryDelay)
