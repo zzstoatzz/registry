@@ -19,7 +19,16 @@ func TestVerifyDNSRecordSuccess(t *testing.T) {
 	}
 
 	domain := "example.com"
-	result, err := verification.VerifyDNSRecord(domain, token)
+	
+	// Create mock resolver with the verification token
+	mockResolver := verification.NewMockDNSResolver()
+	mockResolver.SetVerificationToken(domain, token)
+	
+	// Use custom config with mock resolver
+	config := verification.DefaultDNSConfig()
+	config.Resolver = mockResolver
+	
+	result, err := verification.VerifyDNSRecordWithConfig(domain, token, config)
 	if err != nil {
 		t.Errorf("VerifyDNSRecord returned unexpected error: %v", err)
 	}
@@ -28,12 +37,74 @@ func TestVerifyDNSRecordSuccess(t *testing.T) {
 		t.Fatal("VerifyDNSRecord returned nil result")
 	}
 
+	if !result.Success {
+		t.Errorf("Expected successful verification, got: %s", result.Message)
+	}
+
 	if result.Domain != domain {
 		t.Errorf("Result domain = %s, want %s", result.Domain, domain)
 	}
 
 	if result.Token != token {
 		t.Errorf("Result token = %s, want %s", result.Token, token)
+	}
+
+	// Verify the mock was called
+	if mockResolver.CallCount != 1 {
+		t.Errorf("Expected 1 DNS call, got %d", mockResolver.CallCount)
+	}
+
+	if mockResolver.LastDomain != domain {
+		t.Errorf("Expected DNS query for %s, got %s", domain, mockResolver.LastDomain)
+	}
+
+	t.Logf("DNS verification result: %+v", result)
+}
+
+func TestVerifyDNSRecordTokenNotFound(t *testing.T) {
+	token, err := verification.GenerateVerificationToken()
+	if err != nil {
+		t.Fatalf("Failed to generate test token: %v", err)
+	}
+
+	domain := "example.com"
+	
+	// Create mock resolver with different TXT records (no verification token)
+	mockResolver := verification.NewMockDNSResolver()
+	mockResolver.SetTXTRecord(domain, "v=spf1 -all", "some-other-record")
+	
+	// Use custom config with mock resolver
+	config := verification.DefaultDNSConfig()
+	config.Resolver = mockResolver
+	
+	result, err := verification.VerifyDNSRecordWithConfig(domain, token, config)
+	if err != nil {
+		t.Errorf("VerifyDNSRecord returned unexpected error: %v", err)
+	}
+
+	if result == nil {
+		t.Fatal("VerifyDNSRecord returned nil result")
+	}
+
+	if result.Success {
+		t.Error("Expected verification to fail when token is not found")
+	}
+
+	if !strings.Contains(result.Message, "verification token not found") {
+		t.Errorf("Expected 'token not found' message, got: %s", result.Message)
+	}
+
+	if result.Domain != domain {
+		t.Errorf("Result domain = %s, want %s", result.Domain, domain)
+	}
+
+	if result.Token != token {
+		t.Errorf("Result token = %s, want %s", result.Token, token)
+	}
+
+	// Verify TXT records are included in result
+	if len(result.TXTRecords) != 2 {
+		t.Errorf("Expected 2 TXT records in result, got %d", len(result.TXTRecords))
 	}
 
 	t.Logf("DNS verification result: %+v", result)
@@ -98,7 +169,16 @@ func TestVerifyDNSRecordTokenFormatValidation(t *testing.T) {
 	}
 
 	domain := "example.com"
-	result, err := verification.VerifyDNSRecord(domain, token)
+	
+	// Create mock resolver with the verification token
+	mockResolver := verification.NewMockDNSResolver()
+	mockResolver.SetVerificationToken(domain, token)
+	
+	// Use custom config with mock resolver
+	config := verification.DefaultDNSConfig()
+	config.Resolver = mockResolver
+	
+	result, err := verification.VerifyDNSRecordWithConfig(domain, token, config)
 
 	if err != nil {
 		var dnsErr *verification.DNSVerificationError
@@ -111,6 +191,10 @@ func TestVerifyDNSRecordTokenFormatValidation(t *testing.T) {
 
 	if result == nil {
 		t.Fatal("Expected result but got nil")
+	}
+
+	if !result.Success {
+		t.Errorf("Expected successful verification, got: %s", result.Message)
 	}
 
 	if result.Domain != domain {
