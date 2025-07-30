@@ -1,4 +1,4 @@
-package verification
+package verification_test
 
 import (
 	"context"
@@ -8,16 +8,18 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/modelcontextprotocol/registry/internal/verification"
 )
 
 func TestVerifyDNSRecordSuccess(t *testing.T) {
-	token, err := GenerateVerificationToken()
+	token, err := verification.GenerateVerificationToken()
 	if err != nil {
 		t.Fatalf("Failed to generate test token: %v", err)
 	}
 
 	domain := "example.com"
-	result, err := VerifyDNSRecord(domain, token)
+	result, err := verification.VerifyDNSRecord(domain, token)
 	if err != nil {
 		t.Errorf("VerifyDNSRecord returned unexpected error: %v", err)
 	}
@@ -70,7 +72,7 @@ func TestVerifyDNSRecordInvalidInputs(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := VerifyDNSRecord(tt.domain, tt.token)
+			result, err := verification.VerifyDNSRecord(tt.domain, tt.token)
 
 			if tt.expectError {
 				if err == nil {
@@ -90,16 +92,16 @@ func TestVerifyDNSRecordInvalidInputs(t *testing.T) {
 }
 
 func TestVerifyDNSRecordTokenFormatValidation(t *testing.T) {
-	token, err := GenerateVerificationToken()
+	token, err := verification.GenerateVerificationToken()
 	if err != nil {
 		t.Fatalf("Failed to generate test token: %v", err)
 	}
 
 	domain := "example.com"
-	result, err := VerifyDNSRecord(domain, token)
+	result, err := verification.VerifyDNSRecord(domain, token)
 
 	if err != nil {
-		var dnsErr *DNSVerificationError
+		var dnsErr *verification.DNSVerificationError
 		if errors.As(err, &dnsErr) {
 			if strings.Contains(dnsErr.Message, "invalid token format") {
 				t.Errorf("Unexpected token format validation error: %v", err)
@@ -121,12 +123,12 @@ func TestVerifyDNSRecordTokenFormatValidation(t *testing.T) {
 }
 
 func TestVerifyDNSRecordWithConfigTimeout(t *testing.T) {
-	token, err := GenerateVerificationToken()
+	token, err := verification.GenerateVerificationToken()
 	if err != nil {
 		t.Fatalf("Failed to generate test token: %v", err)
 	}
 
-	config := &DNSVerificationConfig{
+	config := &verification.DNSVerificationConfig{
 		Timeout:            100 * time.Millisecond,
 		MaxRetries:         0,
 		RetryDelay:         0,
@@ -135,7 +137,7 @@ func TestVerifyDNSRecordWithConfigTimeout(t *testing.T) {
 	}
 
 	domain := "non-existent-domain-that-should-timeout.com"
-	result, err := VerifyDNSRecordWithConfig(domain, token, config)
+	result, err := verification.VerifyDNSRecordWithConfig(domain, token, config)
 
 	if err == nil {
 		t.Log("DNS query succeeded unexpectedly")
@@ -155,7 +157,7 @@ func TestVerifyDNSRecordWithConfigTimeout(t *testing.T) {
 }
 
 func TestDefaultDNSConfig(t *testing.T) {
-	config := DefaultDNSConfig()
+	config := verification.DefaultDNSConfig()
 
 	if config == nil {
 		t.Fatal("DefaultDNSConfig returned nil")
@@ -186,7 +188,7 @@ func TestDefaultDNSConfig(t *testing.T) {
 
 func TestDNSVerificationError(t *testing.T) {
 	baseErr := errors.New("base network error")
-	dnsErr := &DNSVerificationError{
+	dnsErr := &verification.DNSVerificationError{
 		Domain:  "example.com",
 		Token:   "test-token",
 		Message: "DNS query failed",
@@ -207,7 +209,7 @@ func TestDNSVerificationError(t *testing.T) {
 	}
 
 	unwrapped := errors.Unwrap(dnsErr)
-	if unwrapped != baseErr {
+	if !errors.Is(unwrapped, baseErr) {
 		t.Errorf("Unwrap should return base error, got: %v", unwrapped)
 	}
 }
@@ -242,7 +244,7 @@ func TestIsRetryableDNSError(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := isRetryableDNSError(tt.err)
+			result := verification.IsRetryableDNSError(tt.err)
 			if result != tt.shouldRetry {
 				t.Errorf("isRetryableDNSError(%v) = %t, want %t", tt.err, result, tt.shouldRetry)
 			}
@@ -254,7 +256,7 @@ func TestDNSRecordFormat(t *testing.T) {
 	token := "TBeVXe_X4npM6p8vpzStnA"
 	expectedFormat := "mcp-verify=" + token
 
-	tokenInfo, err := GenerateTokenWithInfo()
+	tokenInfo, err := verification.GenerateTokenWithInfo()
 	if err != nil {
 		t.Fatalf("Failed to generate token info: %v", err)
 	}

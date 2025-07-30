@@ -163,7 +163,11 @@ func VerifyDNSRecordWithConfig(domain, expectedToken string, config *DNSVerifica
 }
 
 // performDNSVerificationWithRetries implements the retry logic for DNS verification
-func performDNSVerificationWithRetries(ctx context.Context, domain, expectedToken string, config *DNSVerificationConfig) (*DNSVerificationResult, error) {
+func performDNSVerificationWithRetries(
+	ctx context.Context,
+	domain, expectedToken string,
+	config *DNSVerificationConfig,
+) (*DNSVerificationResult, error) {
 	var lastErr error
 	var lastResult *DNSVerificationResult
 
@@ -181,7 +185,7 @@ func performDNSVerificationWithRetries(ctx context.Context, domain, expectedToke
 				return nil, &DNSVerificationError{
 					Domain:  domain,
 					Token:   expectedToken,
-					Message: "verification cancelled",
+					Message: "verification canceled",
 					Cause:   ctx.Err(),
 				}
 			}
@@ -199,7 +203,7 @@ func performDNSVerificationWithRetries(ctx context.Context, domain, expectedToke
 		lastResult = result
 
 		// Check if error is retryable
-		if !isRetryableDNSError(err) {
+		if !IsRetryableDNSError(err) {
 			log.Printf("Non-retryable DNS error for domain %s: %v", domain, err)
 			break
 		}
@@ -276,14 +280,15 @@ func performDNSVerification(ctx context.Context, domain, expectedToken string, c
 	return result, nil
 }
 
-// isRetryableDNSError determines if a DNS error should be retried
-func isRetryableDNSError(err error) bool {
+// IsRetryableDNSError determines if a DNS error should be retried
+func IsRetryableDNSError(err error) bool {
 	if err == nil {
 		return false
 	}
 
 	// Check for temporary network errors
-	if netErr, ok := err.(*net.OpError); ok {
+	var netErr *net.OpError
+	if errors.As(err, &netErr) {
 		return netErr.Temporary()
 	}
 
@@ -293,14 +298,14 @@ func isRetryableDNSError(err error) bool {
 	}
 
 	// Check for DNS-specific temporary failures
-	dnsErr, ok := err.(*net.DNSError)
-	if ok {
+	var dnsErr *net.DNSError
+	if errors.As(err, &dnsErr) {
 		return dnsErr.Temporary()
 	}
 
 	// Unwrap and check nested errors
 	if unwrapped := errors.Unwrap(err); unwrapped != nil {
-		return isRetryableDNSError(unwrapped)
+		return IsRetryableDNSError(unwrapped)
 	}
 
 	return false

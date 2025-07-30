@@ -1,4 +1,4 @@
-package verification
+package verification_test
 
 import (
 	"context"
@@ -8,24 +8,26 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/modelcontextprotocol/registry/internal/verification"
 )
 
 const testDomain = "example.com"
 
 func TestVerifyDNSRecordWithMockSuccess(t *testing.T) {
-	token, err := GenerateVerificationToken()
+	token, err := verification.GenerateVerificationToken()
 	if err != nil {
 		t.Fatalf("Failed to generate test token: %v", err)
 	}
 
-	mockResolver := NewMockDNSResolver()
+	mockResolver := verification.NewMockDNSResolver()
 	mockResolver.SetVerificationToken(testDomain, token)
 
-	config := DefaultDNSConfig()
+	config := verification.DefaultDNSConfig()
 	config.Resolver = mockResolver
 	config.Timeout = 1 * time.Second
 
-	result, err := VerifyDNSRecordWithConfig(testDomain, token, config)
+	result, err := verification.VerifyDNSRecordWithConfig(testDomain, token, config)
 
 	if err != nil {
 		t.Errorf("VerifyDNSRecord returned unexpected error: %v", err)
@@ -57,18 +59,18 @@ func TestVerifyDNSRecordWithMockSuccess(t *testing.T) {
 }
 
 func TestVerifyDNSRecordWithMockTokenNotFound(t *testing.T) {
-	token, err := GenerateVerificationToken()
+	token, err := verification.GenerateVerificationToken()
 	if err != nil {
 		t.Fatalf("Failed to generate test token: %v", err)
 	}
 
-	mockResolver := NewMockDNSResolver()
+	mockResolver := verification.NewMockDNSResolver()
 	mockResolver.SetTXTRecord(testDomain, "v=spf1 -all", "some-other-record")
 
-	config := DefaultDNSConfig()
+	config := verification.DefaultDNSConfig()
 	config.Resolver = mockResolver
 
-	result, err := VerifyDNSRecordWithConfig(testDomain, token, config)
+	result, err := verification.VerifyDNSRecordWithConfig(testDomain, token, config)
 
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
@@ -92,12 +94,12 @@ func TestVerifyDNSRecordWithMockTokenNotFound(t *testing.T) {
 }
 
 func TestVerifyDNSRecordWithMockDNSError(t *testing.T) {
-	token, err := GenerateVerificationToken()
+	token, err := verification.GenerateVerificationToken()
 	if err != nil {
 		t.Fatalf("Failed to generate test token: %v", err)
 	}
 
-	mockResolver := NewMockDNSResolver()
+	mockResolver := verification.NewMockDNSResolver()
 	mockResolver.SetError(testDomain, &net.DNSError{
 		Err:         "no such host",
 		Name:        testDomain,
@@ -106,13 +108,13 @@ func TestVerifyDNSRecordWithMockDNSError(t *testing.T) {
 		IsTemporary: false,
 	})
 
-	config := DefaultDNSConfig()
+	config := verification.DefaultDNSConfig()
 	config.Resolver = mockResolver
 	config.MaxRetries = 0
 
-	result, err := VerifyDNSRecordWithConfig(testDomain, token, config)
+	result, err := verification.VerifyDNSRecordWithConfig(testDomain, token, config)
 
-	var dnsErr *DNSVerificationError
+	var dnsErr *verification.DNSVerificationError
 	if !errors.As(err, &dnsErr) {
 		t.Errorf("Expected DNSVerificationError, got: %T", err)
 	}
@@ -131,21 +133,21 @@ func TestVerifyDNSRecordWithMockDNSError(t *testing.T) {
 }
 
 func TestVerifyDNSRecordWithMockTimeout(t *testing.T) {
-	token, err := GenerateVerificationToken()
+	token, err := verification.GenerateVerificationToken()
 	if err != nil {
 		t.Fatalf("Failed to generate test token: %v", err)
 	}
 
-	mockResolver := NewMockDNSResolver()
+	mockResolver := verification.NewMockDNSResolver()
 	mockResolver.Delay = 200 * time.Millisecond
 	mockResolver.SetVerificationToken(testDomain, token)
 
-	config := DefaultDNSConfig()
+	config := verification.DefaultDNSConfig()
 	config.Resolver = mockResolver
 	config.Timeout = 50 * time.Millisecond
 	config.MaxRetries = 0
 
-	_, err = VerifyDNSRecordWithConfig(testDomain, token, config)
+	_, err = verification.VerifyDNSRecordWithConfig(testDomain, token, config)
 
 	if err == nil {
 		t.Error("Expected timeout error")
@@ -157,7 +159,7 @@ func TestVerifyDNSRecordWithMockTimeout(t *testing.T) {
 }
 
 func TestMockDNSResolverHelperMethods(t *testing.T) {
-	mock := NewMockDNSResolver()
+	mock := verification.NewMockDNSResolver()
 
 	token := "test-token-123"
 	mock.SetVerificationToken(testDomain, token)
