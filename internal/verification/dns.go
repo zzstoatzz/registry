@@ -290,26 +290,27 @@ func IsRetryableDNSError(err error) bool {
 		return false
 	}
 
-	// Check for temporary network errors
-	var netErr *net.OpError
-	if errors.As(err, &netErr) {
-		return netErr.Temporary()
-	}
+	// Use iterative approach to prevent stack overflow with deeply nested errors
+	for err != nil {
+		// Check for temporary network errors
+		var netErr *net.OpError
+		if errors.As(err, &netErr) {
+			return netErr.Temporary()
+		}
 
-	// Check for context timeout (might be temporary)
-	if errors.Is(err, context.DeadlineExceeded) {
-		return true
-	}
+		// Check for context timeout (might be temporary)
+		if errors.Is(err, context.DeadlineExceeded) {
+			return true
+		}
 
-	// Check for DNS-specific temporary failures
-	var dnsErr *net.DNSError
-	if errors.As(err, &dnsErr) {
-		return dnsErr.Temporary()
-	}
+		// Check for DNS-specific temporary failures
+		var dnsErr *net.DNSError
+		if errors.As(err, &dnsErr) {
+			return dnsErr.Temporary()
+		}
 
-	// Unwrap and check nested errors
-	if unwrapped := errors.Unwrap(err); unwrapped != nil {
-		return IsRetryableDNSError(unwrapped)
+		// Move to next error in chain
+		err = errors.Unwrap(err)
 	}
 
 	return false
