@@ -30,7 +30,7 @@ type TokenInfo struct {
 //
 // This function is designed for use in both DNS TXT record verification
 // (mcp-verify=<token>) and HTTP-01 web challenge verification
-// (https://domain/.well-known/mcp-challenge/<token>).
+// (https://domain/.well-known/mcp-verify).
 //
 // Security considerations:
 // - Uses crypto/rand for cryptographically secure random number generation
@@ -49,7 +49,7 @@ type TokenInfo struct {
 //	    return fmt.Errorf("failed to generate verification token: %w", err)
 //	}
 //	// Use token in DNS: mcp-verify=<token>
-//	// Or HTTP: /.well-known/mcp-challenge/<token>
+//	// Or HTTP: /.well-known/mcp-verify
 func GenerateVerificationToken() (string, error) {
 	// Allocate byte slice for random data
 	randomBytes := make([]byte, TokenLength)
