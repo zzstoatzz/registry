@@ -16,13 +16,19 @@ import (
 
 // MongoDB is an implementation of the Database interface using MongoDB
 type MongoDB struct {
-	client     *mongo.Client
-	database   *mongo.Database
-	collection *mongo.Collection
+	client             *mongo.Client
+	database           *mongo.Database
+	serverCollection   *mongo.Collection
+	metadataCollection *mongo.Collection
 }
 
 // NewMongoDB creates a new instance of the MongoDB database
-func NewMongoDB(ctx context.Context, connectionURI, databaseName, collectionName string) (*MongoDB, error) {
+func NewMongoDB(ctx context.Context, connectionURI, databaseName, collectionName, metadataCollectionName string) (*MongoDB, error) {
+	// Set default metadata collection name if not provided
+	if metadataCollectionName == "" {
+		metadataCollectionName = collectionName + "_metadata"
+	}
+
 	// Set client options and connect to MongoDB
 	clientOptions := options.Client().ApplyURI(connectionURI)
 	client, err := mongo.Connect(ctx, clientOptions)
@@ -37,7 +43,8 @@ func NewMongoDB(ctx context.Context, connectionURI, databaseName, collectionName
 
 	// Get database and collection
 	database := client.Database(databaseName)
-	collection := database.Collection(collectionName)
+	serverCollection := database.Collection(collectionName)
+	metadataCollection := database.Collection(metadataCollectionName)
 
 	// Create indexes for better query performance
 	models := []mongo.IndexModel{
@@ -55,7 +62,7 @@ func NewMongoDB(ctx context.Context, connectionURI, databaseName, collectionName
 		},
 	}
 
-	_, err = collection.Indexes().CreateMany(ctx, models)
+	_, err = serverCollection.Indexes().CreateMany(ctx, models)
 	if err != nil {
 		// Mongo will error if the index already exists, we can ignore this and continue.
 		var commandError mongo.CommandError
@@ -65,10 +72,29 @@ func NewMongoDB(ctx context.Context, connectionURI, databaseName, collectionName
 		log.Printf("Indexes already exists, skipping.")
 	}
 
+	// Create indexes for metadata collection
+	tokenIndexes := []mongo.IndexModel{
+		{
+			Keys:    bson.D{bson.E{Key: "server_id", Value: 1}},
+			Options: options.Index().SetUnique(true),
+		},
+	}
+
+	_, err = metadataCollection.Indexes().CreateMany(ctx, tokenIndexes)
+	if err != nil {
+		// Mongo will error if the index already exists, we can ignore this and continue.
+		var commandError mongo.CommandError
+		if errors.As(err, &commandError) && commandError.Code != 86 {
+			return nil, err
+		}
+		log.Printf("Metadata collection indexes already exist, skipping.")
+	}
+
 	return &MongoDB{
-		client:     client,
-		database:   database,
-		collection: collection,
+		client:             client,
+		database:           database,
+		serverCollection:   serverCollection,
+		metadataCollection: metadataCollection,
 	}, nil
 }
 
@@ -117,7 +143,7 @@ func (db *MongoDB) List(
 
 		// Fetch the document at the cursor to get its sort values
 		var cursorDoc model.Server
-		err := db.collection.FindOne(ctx, bson.M{"id": cursor}).Decode(&cursorDoc)
+		err := db.serverCollection.FindOne(ctx, bson.M{"id": cursor}).Decode(&cursorDoc)
 		if err != nil {
 			if !errors.Is(err, mongo.ErrNoDocuments) {
 				return nil, "", err
@@ -138,7 +164,7 @@ func (db *MongoDB) List(
 	}
 
 	// Execute find operation with options
-	mongoCursor, err := db.collection.Find(ctx, mongoFilter, findOptions)
+	mongoCursor, err := db.serverCollection.Find(ctx, mongoFilter, findOptions)
 	if err != nil {
 		return nil, "", err
 	}
@@ -171,7 +197,7 @@ func (db *MongoDB) GetByID(ctx context.Context, id string) (*model.ServerDetail,
 
 	// Find the entry in the database
 	var entry model.ServerDetail
-	err := db.collection.FindOne(ctx, filter).Decode(&entry)
+	err := db.serverCollection.FindOne(ctx, filter).Decode(&entry)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, ErrNotFound
@@ -195,7 +221,7 @@ func (db *MongoDB) Publish(ctx context.Context, serverDetail *model.ServerDetail
 	}
 
 	var existingEntry model.ServerDetail
-	err := db.collection.FindOne(ctx, filter).Decode(&existingEntry)
+	err := db.serverCollection.FindOne(ctx, filter).Decode(&existingEntry)
 	if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
 		return fmt.Errorf("error checking existing entry: %w", err)
 	}
@@ -210,7 +236,7 @@ func (db *MongoDB) Publish(ctx context.Context, serverDetail *model.ServerDetail
 	serverDetail.VersionDetail.ReleaseDate = time.Now().Format(time.RFC3339)
 
 	// Insert the entry into the database
-	_, err = db.collection.InsertOne(ctx, serverDetail)
+	_, err = db.serverCollection.InsertOne(ctx, serverDetail)
 	if err != nil {
 		if mongo.IsDuplicateKeyError(err) {
 			return ErrAlreadyExists
@@ -220,7 +246,7 @@ func (db *MongoDB) Publish(ctx context.Context, serverDetail *model.ServerDetail
 
 	// update the existing entry to not be the latest version
 	if existingEntry.ID != "" {
-		_, err = db.collection.UpdateOne(
+		_, err = db.serverCollection.UpdateOne(
 			ctx,
 			bson.M{"id": existingEntry.ID},
 			bson.M{"$set": bson.M{"version_detail.islatest": false}})
@@ -240,7 +266,7 @@ func (db *MongoDB) ImportSeed(ctx context.Context, seedFilePath string) error {
 		return fmt.Errorf("failed to read seed file: %w", err)
 	}
 
-	collection := db.collection
+	collection := db.serverCollection
 
 	log.Printf("Importing %d servers into collection %s", len(servers), collection.Name())
 
@@ -306,4 +332,49 @@ func (db *MongoDB) Connection() *ConnectionInfo {
 		IsConnected: isConnected,
 		Raw:         db.client,
 	}
+}
+
+// StoreVerificationToken stores a verification token for a server
+func (db *MongoDB) StoreVerificationToken(ctx context.Context, serverID string, token *model.VerificationToken) error {
+	metadata := &model.Metadata{
+		ServerID:          serverID,
+		VerificationToken: token,
+	}
+
+	_, err := db.metadataCollection.InsertOne(ctx, metadata)
+	if err != nil {
+		// Check if it's a duplicate key error
+		var writeErr mongo.WriteException
+		if errors.As(err, &writeErr) {
+			for _, writeError := range writeErr.WriteErrors {
+				if writeError.Code == 11000 { // Duplicate key error
+					return ErrAlreadyExists
+				}
+			}
+		}
+		return fmt.Errorf("failed to store verification token: %w", err)
+	}
+	return nil
+}
+
+// GetVerificationToken retrieves a verification token by server ID
+func (db *MongoDB) GetVerificationToken(ctx context.Context, serverID string) (*model.VerificationToken, error) {
+	filter := bson.M{
+		"server_id": serverID,
+	}
+
+	var metadata model.Metadata
+	err := db.metadataCollection.FindOne(ctx, filter).Decode(&metadata)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, ErrNotFound
+		}
+		return nil, fmt.Errorf("failed to get verification token: %w", err)
+	}
+
+	if metadata.VerificationToken == nil {
+		return nil, fmt.Errorf("verification token data is missing from metadata")
+	}
+
+	return metadata.VerificationToken, nil
 }

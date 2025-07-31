@@ -16,8 +16,9 @@ import (
 
 // MemoryDB is an in-memory implementation of the Database interface
 type MemoryDB struct {
-	entries map[string]*model.ServerDetail
-	mu      sync.RWMutex
+	entries  map[string]*model.ServerDetail
+	metadata map[string]*model.Metadata // key: serverID
+	mu       sync.RWMutex
 }
 
 // NewMemoryDB creates a new instance of the in-memory database
@@ -30,7 +31,8 @@ func NewMemoryDB(e map[string]*model.Server) *MemoryDB {
 		}
 	}
 	return &MemoryDB{
-		entries: serverDetails,
+		entries:  serverDetails,
+		metadata: make(map[string]*model.Metadata),
 	}
 }
 
@@ -305,4 +307,35 @@ func (db *MemoryDB) Connection() *ConnectionInfo {
 		IsConnected: true, // Memory DB is always connected
 		Raw:         db.entries,
 	}
+}
+
+// StoreVerificationToken stores a verification token for a server
+func (db *MemoryDB) StoreVerificationToken(ctx context.Context, serverID string, token *model.VerificationToken) error {
+	db.mu.Lock()
+	defer db.mu.Unlock()
+
+	metadata := &model.Metadata{
+		ServerID:          serverID,
+		VerificationToken: token,
+	}
+
+	db.metadata[serverID] = metadata
+	return nil
+}
+
+// GetVerificationToken retrieves a verification token by server ID
+func (db *MemoryDB) GetVerificationToken(ctx context.Context, serverID string) (*model.VerificationToken, error) {
+	db.mu.RLock()
+	defer db.mu.RUnlock()
+
+	metadata, exists := db.metadata[serverID]
+	if !exists {
+		return nil, ErrNotFound
+	}
+
+	if metadata.VerificationToken == nil {
+		return nil, fmt.Errorf("verification token data is missing from metadata")
+	}
+
+	return metadata.VerificationToken, nil
 }
