@@ -7,7 +7,7 @@ This package provides cryptographically secure token generation and DNS verifica
 The verification package generates 128-bit cryptographically secure random tokens used for proving domain ownership through two verification methods:
 
 1. **DNS TXT Record Verification**: Add `mcp-verify=<token>` to your domain's DNS
-2. **HTTP-01 Web Challenge**: Serve the token at `https://domain/.well-known/mcp-challenge/<token>`
+2. **HTTP-01 Web Challenge**: Serve the token at `https://domain/.well-known/mcp-verify`
 
 ## Functions
 
