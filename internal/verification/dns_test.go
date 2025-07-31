@@ -3,6 +3,7 @@ package verification_test
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net"
 	"strings"
 	"testing"
@@ -276,6 +277,97 @@ func TestDefaultDNSConfig(t *testing.T) {
 	}
 
 	t.Logf("Default DNS config: %+v", config)
+}
+
+func TestVerifyDNSRecordWithCustomPrefix(t *testing.T) {
+	token, err := verification.GenerateVerificationToken()
+	if err != nil {
+		t.Fatalf("Failed to generate test token: %v", err)
+	}
+
+	domain := testDomain
+	customPrefix := "my-custom-prefix"
+
+	// Create mock resolver with custom prefix verification token
+	mockResolver := verification.NewMockDNSResolver()
+	customRecord := fmt.Sprintf("%s=%s", customPrefix, token)
+	mockResolver.SetTXTRecord(domain, customRecord)
+
+	// Use custom config with custom record prefix
+	config := verification.DefaultDNSConfig()
+	config.Resolver = mockResolver
+	config.RecordPrefix = customPrefix
+
+	result, err := verification.VerifyDNSRecordWithConfig(domain, token, config)
+	if err != nil {
+		t.Errorf("VerifyDNSRecord returned unexpected error: %v", err)
+	}
+
+	if result == nil {
+		t.Fatal("VerifyDNSRecord returned nil result")
+	}
+
+	if !result.Success {
+		t.Errorf("Expected successful verification with custom prefix, got: %s", result.Message)
+	}
+
+	if result.Domain != domain {
+		t.Errorf("Result domain = %s, want %s", result.Domain, domain)
+	}
+
+	if result.Token != token {
+		t.Errorf("Result token = %s, want %s", result.Token, token)
+	}
+
+	// Verify the mock was called
+	if mockResolver.CallCount != 1 {
+		t.Errorf("Expected 1 DNS call, got %d", mockResolver.CallCount)
+	}
+
+	if mockResolver.LastDomain != domain {
+		t.Errorf("Expected DNS query for %s, got %s", domain, mockResolver.LastDomain)
+	}
+
+	t.Logf("DNS verification with custom prefix '%s' successful: %+v", customPrefix, result)
+}
+
+func TestVerifyDNSRecordCustomPrefixFailsWithWrongRecord(t *testing.T) {
+	token, err := verification.GenerateVerificationToken()
+	if err != nil {
+		t.Fatalf("Failed to generate test token: %v", err)
+	}
+
+	domain := testDomain
+	customPrefix := "my-custom-prefix"
+
+	// Create mock resolver with default prefix (should fail with custom prefix config)
+	mockResolver := verification.NewMockDNSResolver()
+	defaultRecord := fmt.Sprintf("mcp-verify=%s", token)
+	mockResolver.SetTXTRecord(domain, defaultRecord)
+
+	// Use custom config with custom record prefix
+	config := verification.DefaultDNSConfig()
+	config.Resolver = mockResolver
+	config.RecordPrefix = customPrefix
+
+	result, err := verification.VerifyDNSRecordWithConfig(domain, token, config)
+	if err != nil {
+		t.Errorf("VerifyDNSRecord returned unexpected error: %v", err)
+	}
+
+	if result == nil {
+		t.Fatal("VerifyDNSRecord returned nil result")
+	}
+
+	if result.Success {
+		t.Error("Expected verification to fail when custom prefix doesn't match record")
+	}
+
+	if !strings.Contains(result.Message, "verification token not found") {
+		t.Errorf("Expected 'token not found' message, got: %s", result.Message)
+	}
+
+	t.Logf("DNS verification correctly failed with custom prefix when record has default prefix: %+v", result)
 }
 
 func TestDNSVerificationError(t *testing.T) {

@@ -56,6 +56,9 @@ type DNSVerificationConfig struct {
 	// CustomResolvers allows specifying custom DNS servers
 	CustomResolvers []string
 
+	// RecordPrefix specifies the prefix for DNS TXT records (default: "mcp-verify")
+	RecordPrefix string
+
 	// Resolver allows injecting a custom DNS resolver (primarily for testing)
 	Resolver DNSResolver
 }
@@ -68,6 +71,7 @@ func DefaultDNSConfig() *DNSVerificationConfig {
 		RetryDelay:         1 * time.Second,
 		UseSecureResolvers: true,
 		CustomResolvers:    []string{"8.8.8.8:53", "1.1.1.1:53"}, // Google and Cloudflare DNS
+		RecordPrefix:       "mcp-verify",
 	}
 }
 
@@ -76,7 +80,7 @@ func DefaultDNSConfig() *DNSVerificationConfig {
 //
 // This function implements the DNS TXT record verification method described in
 // the Server Name Verification system. It looks for a TXT record with the format:
-// "mcp-verify=<token>"
+// "<prefix>=<token>" where prefix defaults to "mcp-verify"
 //
 // Security considerations:
 // - Uses secure DNS resolvers to prevent spoofing attacks
@@ -91,6 +95,9 @@ func DefaultDNSConfig() *DNSVerificationConfig {
 // Returns:
 // - DNSVerificationResult with verification status and details
 // - An error if the verification process fails critically
+//
+// The default configuration uses "mcp-verify" as the record prefix. To use a custom
+// prefix, use VerifyDNSRecordWithConfig with a configured DNSVerificationConfig.
 //
 // Example usage:
 //
@@ -253,7 +260,7 @@ func performDNSVerification(ctx context.Context, domain, expectedToken string, c
 	log.Printf("Found %d TXT records for domain %s", len(txtRecords), domain)
 
 	// Check for verification token
-	expectedRecord := fmt.Sprintf("mcp-verify=%s", expectedToken)
+	expectedRecord := fmt.Sprintf("%s=%s", config.RecordPrefix, expectedToken)
 
 	for _, record := range txtRecords {
 		log.Printf("Checking TXT record: %s", record)
