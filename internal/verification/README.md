@@ -1,27 +1,19 @@
 # Domain Verification Package
 
-<<<<<<< HEAD
 This package provides cryptographically secure token generation and DNS verification for domain ownership verification in the MCP Registry. It implements the requirements specified in the Server Name Verification system.
-=======
-This package provides cryptographically secure token generation for domain ownership verification in the MCP Registry. It implements the requirements specified in the Server Name Verification system.
->>>>>>> origin/remote-verification
 
 ## Overview
 
 The verification package generates 128-bit cryptographically secure random tokens used for proving domain ownership through two verification methods:
 
 1. **DNS TXT Record Verification**: Add `mcp-verify=<token>` to your domain's DNS
-2. **HTTP-01 Web Challenge**: Serve the token at `https://domain/.well-known/mcp-verify`
+2. **HTTP-01 Web Challenge**: Serve the token at `https://domain/.well-known/mcp-challenge/<token>`
 
 ## Functions
 
-<<<<<<< HEAD
 ### Token Generation
 
 #### GenerateVerificationToken()
-=======
-### GenerateVerificationToken()
->>>>>>> origin/remote-verification
 
 Generates a cryptographically secure 128-bit random token encoded in base64url format.
 
@@ -40,7 +32,6 @@ if err != nil {
 - No padding characters
 - 22-character output length
 
-<<<<<<< HEAD
 #### GenerateTokenWithInfo()
 
 Generates a token with additional metadata about how to use it.
@@ -102,6 +93,7 @@ config := &verification.DNSVerificationConfig{
     RetryDelay:         1 * time.Second,
     UseSecureResolvers: true,
     CustomResolvers:    []string{"8.8.8.8:53", "1.1.1.1:53"},
+    RecordPrefix:       "my-custom-prefix", // Custom prefix instead of "mcp-verify"
 }
 
 result, err := verification.VerifyDNSRecordWithConfig("example.com", token, config)
@@ -119,6 +111,7 @@ config := verification.DefaultDNSConfig()
 //     RetryDelay:         1 * time.Second,
 //     UseSecureResolvers: true,
 //     CustomResolvers:    []string{"8.8.8.8:53", "1.1.1.1:53"},
+//     RecordPrefix:       "mcp-verify",
 // }
 ```
 
@@ -146,6 +139,7 @@ type DNSVerificationConfig struct {
     RetryDelay         time.Duration // Default: 1 second
     UseSecureResolvers bool          // Default: true
     CustomResolvers    []string      // Default: ["8.8.8.8:53", "1.1.1.1:53"]
+    RecordPrefix       string        // Default: "mcp-verify"
 }
 ```
 
@@ -160,8 +154,6 @@ type DNSVerificationError struct {
 }
 ```
 
-=======
->>>>>>> origin/remote-verification
 ## Security Considerations
 
 ### Cryptographic Security
@@ -169,45 +161,30 @@ type DNSVerificationError struct {
 - 128 bits provides 2^128 possible values (negligible collision probability)
 - Suitable for cryptographic applications requiring unpredictable tokens
 
-<<<<<<< HEAD
 ### DNS Security
 - Uses secure DNS resolvers (8.8.8.8, 1.1.1.1) by default to prevent DNS spoofing
 - Implements retry logic for transient DNS failures
 - Validates domain ownership through industry-standard DNS TXT records
 - Supports DNSSEC-aware resolvers
 
-=======
->>>>>>> origin/remote-verification
 ### Token Properties
 - **Single-use**: Tokens should be used only once for verification
 - **Time-limited**: Implement appropriate expiration policies
 - **Secure transmission**: Always use HTTPS when transmitting tokens
 - **Secure storage**: Store tokens securely on both client and server side
 
-<<<<<<< HEAD
 ## Usage Examples
 
 ### Complete DNS Verification Workflow
 
-=======
-### Platform Compatibility
-- Works on all platforms supported by Go's `crypto/rand`
-- Automatically uses platform-appropriate entropy sources:
-  - Linux/Unix: `/dev/urandom`
-  - Windows: CryptGenRandom
-  - macOS: SecRandomCopyBytes
-
-## Usage Examples
-
-### DNS Verification Setup
->>>>>>> origin/remote-verification
 ```go
 package main
 
 import (
+    "errors"
     "fmt"
-<<<<<<< HEAD
     "log"
+    "time"
     "github.com/modelcontextprotocol/registry/internal/verification"
 )
 
@@ -255,30 +232,40 @@ func verifyWithCustomConfig(domain, token string) error {
     }
     
     result, err := verification.VerifyDNSRecordWithConfig(domain, token, config)
-=======
-    "github.com/modelcontextprotocol/registry/internal/verification"
-)
-
-func setupDNSVerification(domain string) error {
-    token, err := verification.GenerateVerificationToken()
->>>>>>> origin/remote-verification
     if err != nil {
         return err
     }
     
-<<<<<<< HEAD
     log.Printf("Verification result: %+v", result)
-=======
-    fmt.Printf("Add this TXT record to %s:\n", domain)
-    fmt.Printf("Record: mcp-verify=%s\n", token)
-    fmt.Printf("Value: %s\n", token)
-    
->>>>>>> origin/remote-verification
     return nil
 }
 ```
 
-<<<<<<< HEAD
+### Custom Record Prefix
+
+You can configure a custom DNS record prefix instead of the default "mcp-verify":
+
+```go
+func verifyWithCustomPrefix(domain, token string) error {
+    config := verification.DefaultDNSConfig()
+    config.RecordPrefix = "my-service-verify"
+    
+    // This will look for: my-service-verify=<token>
+    result, err := verification.VerifyDNSRecordWithConfig(domain, token, config)
+    if err != nil {
+        return err
+    }
+    
+    if result.Success {
+        log.Printf("✅ Domain verified with custom prefix!")
+    } else {
+        log.Printf("❌ Verification failed: %s", result.Message)
+    }
+    
+    return nil
+}
+```
+
 ### Error Handling and Retry Logic
 
 ```go
@@ -313,7 +300,9 @@ func robustDNSVerification(domain, token string) error {
     }
     
     return fmt.Errorf("domain verification failed after %d attempts", maxAttempts)
-=======
+}
+```
+
 ### HTTP-01 Challenge Setup
 ```go
 func setupHTTPChallenge(domain string) error {
@@ -335,7 +324,6 @@ func validateUserToken(userToken, expectedToken string) bool {
     // For verification, simply compare the token strings
     // No format validation needed - just string comparison
     return userToken == expectedToken
->>>>>>> origin/remote-verification
 }
 ```
 
@@ -345,7 +333,6 @@ func validateUserToken(userToken, expectedToken string) bool {
 
 ## Error Handling
 
-<<<<<<< HEAD
 ### DNS Verification Errors
 
 The DNS verification functions can return various types of errors:
@@ -371,13 +358,11 @@ if err != nil {
 ```
 
 ### Token Generation Errors
-=======
 The function returns errors in the following case:
 
 - `GenerateVerificationToken()`: When the system's entropy source is unavailable
 
 Always check for errors and handle them appropriately:
->>>>>>> origin/remote-verification
 
 ```go
 token, err := verification.GenerateVerificationToken()
@@ -390,23 +375,12 @@ if err != nil {
 
 ## Performance
 
-<<<<<<< HEAD
 The DNS verification system is designed for real-world performance:
 
 - **Token generation**: Sub-microsecond performance
 - **DNS queries**: Typically 10-100ms depending on network conditions
 - **Retry logic**: Exponential backoff prevents overwhelming DNS servers
 - **Concurrent verification**: Safe for use in goroutines
-=======
-Benchmark results on Apple M4 Max:
-
-```
-BenchmarkGenerateVerificationToken-16    5726528    196.1 ns/op
-```
-
-Note: These benchmark results are provided as examples and were obtained on an Apple M4 Max system. Performance may vary significantly on different hardware configurations.
-Token generation is fast enough for real-time use in web applications.
->>>>>>> origin/remote-verification
 
 ## Testing
 
@@ -414,15 +388,10 @@ The package includes comprehensive tests covering:
 
 - Token generation and uniqueness
 - Entropy validation (exactly 128 bits)
-<<<<<<< HEAD
 - Format validation
 - URL and DNS safety
 - DNS verification functionality
 - Error handling scenarios
-=======
-- URL and DNS safety
-- Error handling
->>>>>>> origin/remote-verification
 - Performance benchmarks
 
 Run tests with:
@@ -433,7 +402,6 @@ go test ./internal/verification -bench=.
 
 ## Integration
 
-<<<<<<< HEAD
 This package is designed to integrate with the MCP Registry's domain verification system as specified in `server-name-verification.md`. It provides both token generation and DNS verification capabilities required for the dual-method verification approach.
 
 ### Integration Points
@@ -444,6 +412,3 @@ This package is designed to integrate with the MCP Registry's domain verificatio
 4. **Admin tools**: Use for debugging verification issues
 
 ````
-=======
-This package is designed to integrate with the MCP Registry's domain verification system as specified in `server-name-verification.md`. It provides the foundational token generation capability required for both DNS and HTTP verification methods.
->>>>>>> origin/remote-verification
