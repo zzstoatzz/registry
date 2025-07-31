@@ -8,18 +8,25 @@ import (
 	"github.com/modelcontextprotocol/registry/internal/auth"
 	"github.com/modelcontextprotocol/registry/internal/config"
 	"github.com/modelcontextprotocol/registry/internal/service"
+	"github.com/modelcontextprotocol/registry/internal/verification"
 )
 
 // RegisterV0Routes registers all v0 API routes to the provided router
 func RegisterV0Routes(
 	mux *http.ServeMux, cfg *config.Config, registry service.RegistryService, authService auth.Service,
 ) {
+	// Initialize domain verifier
+	domainVerifier := verification.NewDomainVerifier()
+
 	// Register v0 endpoints
 	mux.HandleFunc("/v0/health", v0.HealthHandler(cfg))
 	mux.HandleFunc("/v0/servers", v0.ServersHandler(registry))
 	mux.HandleFunc("/v0/servers/{id}", v0.ServersDetailHandler(registry))
 	mux.HandleFunc("/v0/ping", v0.PingHandler(cfg))
 	mux.HandleFunc("/v0/publish", v0.PublishHandler(registry, authService))
+
+	// Register domain verification endpoints
+	mux.HandleFunc("/v0/verify-domain", v0.DomainVerificationHandler(authService, domainVerifier))
 
 	// Register Swagger UI routes
 	mux.HandleFunc("/v0/swagger/", v0.SwaggerHandler())
