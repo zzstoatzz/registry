@@ -74,7 +74,7 @@ func TestNamespaceValidationIntegration(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := namespace.ValidateNamespace(tt.serverName)
-			
+
 			if tt.shouldPass {
 				if err != nil {
 					t.Errorf("Expected namespace '%s' to be valid, but got error: %v", tt.serverName, err)

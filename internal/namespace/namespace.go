@@ -20,26 +20,26 @@ var ErrReservedNamespace = errors.New("reserved namespace")
 
 // reservedNamespaces contains namespaces that are reserved and cannot be used
 var reservedNamespaces = map[string]bool{
-	"com.localhost":      true,
-	"org.localhost":      true,
-	"net.localhost":      true,
-	"localhost":          true,
-	"com.example":        true,
-	"org.example":        true,
-	"net.example":        true,
-	"example":            true,
-	"com.test":           true,
-	"org.test":           true,
-	"net.test":           true,
-	"test":               true,
-	"com.invalid":        true,
-	"org.invalid":        true,
-	"net.invalid":        true,
-	"invalid":            true,
-	"com.local":          true,
-	"org.local":          true,
-	"net.local":          true,
-	"local":              true,
+	"com.localhost": true,
+	"org.localhost": true,
+	"net.localhost": true,
+	"localhost":     true,
+	"com.example":   true,
+	"org.example":   true,
+	"net.example":   true,
+	"example":       true,
+	"com.test":      true,
+	"org.test":      true,
+	"net.test":      true,
+	"test":          true,
+	"com.invalid":   true,
+	"org.invalid":   true,
+	"net.invalid":   true,
+	"invalid":       true,
+	"com.local":     true,
+	"org.local":     true,
+	"net.local":     true,
+	"local":         true,
 }
 
 // Namespace represents a parsed namespace with its components
@@ -60,7 +60,11 @@ var domainPattern = regexp.MustCompile(`^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-
 // reverseNotationPattern matches reverse domain notation with server name
 // Format: tld.domain/server-name (e.g., com.github/my-server)
 // This pattern ensures we start with a TLD-like identifier followed by domain components
-var reverseNotationPattern = regexp.MustCompile(`^([a-zA-Z]{2,4}\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(?:\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)*)/([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)$`)
+var reverseNotationPattern = regexp.MustCompile(
+	`^([a-zA-Z]{2,4}\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?` +
+		`(?:\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)*)/` +
+		`([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)$`,
+)
 
 // ParseDomainFromNamespace extracts the domain from a domain-scoped namespace
 // Supports reverse domain notation (e.g., com.github/my-server -> github.com)
@@ -82,7 +86,7 @@ func ParseNamespace(namespace string) (*Namespace, error) {
 
 	// Normalize namespace to lowercase for consistent processing
 	normalizedNamespace := strings.ToLower(strings.TrimSpace(namespace))
-	
+
 	// Check if it matches the reverse domain notation pattern
 	matches := reverseNotationPattern.FindStringSubmatch(normalizedNamespace)
 	if len(matches) < 5 {
@@ -92,25 +96,26 @@ func ParseNamespace(namespace string) (*Namespace, error) {
 	reverseDomain := matches[1]
 	serverName := matches[4]
 
+	// Check for reserved domains before conversion
+	if isReservedNamespace(reverseDomain) {
+		return nil, fmt.Errorf("%w: namespace %s is reserved", ErrReservedNamespace, reverseDomain)
+	}
+
 	// Convert reverse domain notation to normal domain
 	domain, err := reverseNotationToDomain(reverseDomain)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrInvalidNamespace, err)
+		return nil, fmt.Errorf("%w: %w", ErrInvalidNamespace, err)
 	}
 
 	// Validate the extracted domain
-	if err := validateDomain(domain); err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrInvalidDomain, err)
-	}
-
-	// Check for reserved namespaces
-	if isReservedNamespace(reverseDomain) {
-		return nil, fmt.Errorf("%w: '%s' is a reserved namespace", ErrReservedNamespace, reverseDomain)
+	err = validateDomain(domain)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %w", ErrInvalidNamespace, err)
 	}
 
 	// Validate server name
 	if err := validateServerName(serverName); err != nil {
-		return nil, fmt.Errorf("%w: invalid server name: %v", ErrInvalidNamespace, err)
+		return nil, fmt.Errorf("%w: invalid server name: %w", ErrInvalidNamespace, err)
 	}
 
 	return &Namespace{
@@ -141,10 +146,10 @@ func reverseNotationToDomain(reverseDomain string) (string, error) {
 	}
 
 	domain := strings.Join(parts, ".")
-	
+
 	// Normalize domain (lowercase, remove trailing dots)
 	domain = strings.ToLower(strings.TrimRight(domain, "."))
-	
+
 	return domain, nil
 }
 
@@ -180,7 +185,7 @@ func validateDomain(domain string) error {
 
 	for _, label := range labels {
 		if err := validateDomainLabel(label); err != nil {
-			return fmt.Errorf("invalid domain label '%s': %v", label, err)
+			return fmt.Errorf("invalid domain label '%s': %w", label, err)
 		}
 	}
 
@@ -190,9 +195,11 @@ func validateDomain(domain string) error {
 	}
 
 	// Validate using Go's net package for additional checks
+	//nolint:staticcheck // Empty branch is intentional - this is a soft validation
 	if _, err := net.LookupTXT(domain); err != nil {
 		// Note: This is a soft validation - we don't require DNS resolution to succeed
 		// as the domain might be newly registered or not yet propagated
+		// This is just a basic sanity check for obvious invalid domains
 	}
 
 	return nil
@@ -253,7 +260,7 @@ func containsSuspiciousUnicode(domain string) bool {
 		// a proper Unicode confusables database
 		if unicode.Is(unicode.Mn, r) || // Mark, nonspacing
 			unicode.Is(unicode.Me, r) || // Mark, enclosing
-			unicode.Is(unicode.Mc, r) {  // Mark, spacing combining
+			unicode.Is(unicode.Mc, r) { // Mark, spacing combining
 			return true
 		}
 

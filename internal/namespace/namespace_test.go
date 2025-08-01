@@ -20,10 +20,10 @@ const (
 
 func TestParseNamespaceValidCases(t *testing.T) {
 	tests := []struct {
-		name        string
-		namespace   string
-		wantDomain  string
-		wantServer  string
+		name       string
+		namespace  string
+		wantDomain string
+		wantServer string
 	}{
 		{
 			name:       "simple github namespace",
@@ -192,7 +192,7 @@ func TestParseDomainFromNamespace(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			domain, err := ParseDomainFromNamespace(tt.namespace)
-			
+
 			if tt.wantErr {
 				if err == nil {
 					t.Errorf("ParseDomainFromNamespace() expected error but got none")
@@ -264,7 +264,7 @@ func TestReverseNotationToDomain(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			domain, err := reverseNotationToDomain(tt.reverseDomain)
-			
+
 			if tt.wantErr {
 				if err == nil {
 					t.Errorf("reverseNotationToDomain() expected error but got none")
@@ -357,11 +357,11 @@ func TestValidateDomain(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := validateDomain(tt.domain)
-			
+
 			if tt.wantErr && err == nil {
 				t.Errorf("validateDomain() expected error but got none")
 			}
-			
+
 			if !tt.wantErr && err != nil {
 				t.Errorf("validateDomain() unexpected error: %v", err)
 			}
@@ -432,11 +432,11 @@ func TestValidateServerName(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := validateServerName(tt.serverName)
-			
+
 			if tt.wantErr && err == nil {
 				t.Errorf("validateServerName() expected error but got none")
 			}
-			
+
 			if !tt.wantErr && err != nil {
 				t.Errorf("validateServerName() unexpected error: %v", err)
 			}
@@ -518,11 +518,11 @@ func TestValidateNamespace(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := ValidateNamespace(tt.namespace)
-			
+
 			if tt.wantErr && err == nil {
 				t.Errorf("ValidateNamespace() expected error but got none")
 			}
-			
+
 			if !tt.wantErr && err != nil {
 				t.Errorf("ValidateNamespace() unexpected error: %v", err)
 			}

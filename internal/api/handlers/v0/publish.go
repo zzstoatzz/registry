@@ -87,7 +87,7 @@ func PublishHandler(registry service.RegistryService, authService auth.Service) 
 
 		// Determine authentication method based on server name format
 		var authMethod model.AuthMethod
-		
+
 		// Check if the namespace is domain-scoped and extract domain for auth
 		if parsed, err := namespace.ParseNamespace(serverDetail.Name); err == nil {
 			// For domain-scoped namespaces, determine auth method based on domain
@@ -97,7 +97,7 @@ func PublishHandler(registry service.RegistryService, authService auth.Service) 
 			// Additional domain-specific auth methods can be added here
 			default:
 				// For other domains, require GitHub auth for now
-				// TODO: Implement domain verification system
+				// NOTE: Domain verification system needs to be implemented
 				authMethod = model.AuthMethodGitHub
 			}
 		} else {
