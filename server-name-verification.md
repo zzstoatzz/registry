@@ -224,4 +224,4 @@ Metaregistry delivers high assurance of domain ownership while remaining flexibl
   publish if any passes; flag if both fail.
 
 - Web-server dependency for HTTP-01. Projects choosing only HTTP must keep the well-known file reachable; transient 
-  5xx outages could momentarily block publishes. Continuous checks mitigate but do not eliminate this risk.
+  5xx outages could momentarily block publishes. Continuous checks mitigate but do not elimintate this risk.
