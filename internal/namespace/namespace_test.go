@@ -1,3 +1,4 @@
+//nolint:testpackage // Internal package testing allows access to private functions
 package namespace
 
 import (
