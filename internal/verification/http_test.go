@@ -52,7 +52,7 @@ func TestVerifyHTTPChallenge(t *testing.T) {
 	config := verification.DefaultHTTPConfig()
 	config.CustomTransport = server.Client().Transport
 
-	result, err := verification.VerifyHTTPChallengeWithConfig(domain, token, config)
+	result, err := verification.VerifyHTTPChallengeWithConfig(context.Background(), domain, token, config)
 
 	if err != nil {
 		t.Errorf(errMsgUnexpectedHTTP, err)
@@ -103,7 +103,7 @@ func TestVerifyHTTPChallengeTokenNotFound(t *testing.T) {
 	config := verification.DefaultHTTPConfig()
 	config.CustomTransport = server.Client().Transport
 
-	result, err := verification.VerifyHTTPChallengeWithConfig(domain, token, config)
+	result, err := verification.VerifyHTTPChallengeWithConfig(context.Background(), domain, token, config)
 
 	if err != nil {
 		t.Errorf("VerifyHTTPChallenge returned unexpected error: %v", err)
@@ -154,7 +154,7 @@ func TestVerifyHTTPChallengeTokenMismatch(t *testing.T) {
 	config := verification.DefaultHTTPConfig()
 	config.CustomTransport = server.Client().Transport
 
-	result, err := verification.VerifyHTTPChallengeWithConfig(domain, token, config)
+	result, err := verification.VerifyHTTPChallengeWithConfig(context.Background(), domain, token, config)
 
 	if err != nil {
 		t.Errorf(errMsgUnexpectedHTTP, err)
@@ -248,7 +248,7 @@ func TestVerifyHTTPChallengeWithTimeout(t *testing.T) {
 		CustomTransport: server.Client().Transport,
 	}
 
-	result, err := verification.VerifyHTTPChallengeWithConfig(domain, token, config)
+	result, err := verification.VerifyHTTPChallengeWithConfig(context.Background(), domain, token, config)
 
 	if err == nil {
 		t.Error("Expected timeout error but got none")
@@ -339,8 +339,8 @@ func TestHTTPVerificationError(t *testing.T) {
 	}
 
 	// Test Unwrap
-	if err2.Unwrap() != cause {
-		t.Errorf("Unwrap() = %v, want %v", err2.Unwrap(), cause)
+	if !errors.Is(err2, cause) {
+		t.Errorf("Expected error to wrap cause, but errors.Is returned false")
 	}
 }
 
@@ -354,7 +354,7 @@ func TestIsRetryableHTTPError(t *testing.T) {
 		{"context timeout", context.DeadlineExceeded, true},
 		{"validation error", &verification.HTTPVerificationError{Message: "validation failed"}, false},
 		{"network error", &mockNetError{timeout: true, temporary: false}, true},
-		{"temporary network error", &mockNetError{timeout: false, temporary: true}, true},
+		{"temporary network error", &mockNetError{timeout: false, temporary: true}, false}, // No longer retryable since Temporary() is deprecated
 		{"permanent network error", &mockNetError{timeout: false, temporary: false}, false},
 		{"unknown error", errors.New("unknown"), false},
 	}

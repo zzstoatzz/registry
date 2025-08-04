@@ -3,6 +3,7 @@ package verification
 import (
 	"context"
 	"crypto/tls"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -123,49 +124,33 @@ func DefaultHTTPConfig() *HTTPVerificationConfig {
 //	    log.Printf("Domain %s verification failed: %s", result.Domain, result.Message)
 //	}
 func VerifyHTTPChallenge(domain, expectedToken string) (*HTTPVerificationResult, error) {
-	return VerifyHTTPChallengeWithConfig(domain, expectedToken, DefaultHTTPConfig())
+	return VerifyHTTPChallengeWithConfig(context.Background(), domain, expectedToken, DefaultHTTPConfig())
 }
 
 // VerifyHTTPChallengeWithConfig performs HTTP verification with custom configuration
-func VerifyHTTPChallengeWithConfig(domain, expectedToken string, config *HTTPVerificationConfig) (*HTTPVerificationResult, error) {
+func VerifyHTTPChallengeWithConfig(
+	ctx context.Context, domain, expectedToken string, config *HTTPVerificationConfig,
+) (*HTTPVerificationResult, error) {
 	startTime := time.Now()
 
-	// Input validation
-	if domain == "" {
-		return nil, &HTTPVerificationError{
-			Domain:  domain,
-			Token:   expectedToken,
-			Message: "domain cannot be empty",
+	// Validate inputs and normalize domain
+	normalizedDomain, err := ValidateVerificationInputs(domain, expectedToken)
+	if err != nil {
+		var validationErr *ValidationError
+		if errors.As(err, &validationErr) {
+			return nil, &HTTPVerificationError{
+				Domain:  validationErr.Domain,
+				Token:   validationErr.Token,
+				Message: validationErr.Message,
+			}
 		}
+		return nil, err
 	}
-
-	if expectedToken == "" {
-		return nil, &HTTPVerificationError{
-			Domain:  domain,
-			Token:   expectedToken,
-			Message: "token cannot be empty",
-		}
-	}
-
-	// Validate token format
-	if !ValidateTokenFormat(expectedToken) {
-		return nil, &HTTPVerificationError{
-			Domain:  domain,
-			Token:   expectedToken,
-			Message: "invalid token format",
-		}
-	}
-
-	// Normalize domain (remove trailing dots, convert to lowercase)
-	domain = strings.ToLower(strings.TrimSuffix(domain, "."))
+	domain = normalizedDomain
 
 	log.Printf("Starting HTTP verification for domain: %s with token: %s", domain, expectedToken)
 
-	// Create context with timeout
-	ctx, cancel := context.WithTimeout(context.Background(), config.Timeout)
-	defer cancel()
-
-	// Perform verification with retries
+	// Perform verification with retries using the provided context
 	result, err := performHTTPVerificationWithRetries(ctx, domain, expectedToken, config)
 
 	// Calculate duration
@@ -181,6 +166,8 @@ func VerifyHTTPChallengeWithConfig(domain, expectedToken string, config *HTTPVer
 }
 
 // performHTTPVerificationWithRetries implements the retry logic for HTTP verification
+// This function handles HTTP-01 challenge verification with retry patterns including
+// exponential backoff and HTTP error classification for web-based domain verification.
 func performHTTPVerificationWithRetries(
 	ctx context.Context,
 	domain, expectedToken string,
@@ -189,52 +176,55 @@ func performHTTPVerificationWithRetries(
 	var lastErr error
 	var lastResult *HTTPVerificationResult
 
-	retryDelay := config.RetryDelay
+	initialDelay := config.RetryDelay
+	currentDelay := initialDelay
+	httpAttempts := 0
 
 	for attempt := 0; attempt <= config.MaxRetries; attempt++ {
+		httpAttempts++
 		if attempt > 0 {
-			log.Printf("HTTP verification retry %d/%d for domain %s after %v delay",
-				attempt+1, config.MaxRetries, domain, retryDelay)
+			log.Printf("HTTP-01 challenge verification retry %d/%d for domain %s after %v delay",
+				attempt+1, config.MaxRetries, domain, currentDelay)
 
 			// Wait before retry with context cancellation support
-			timer := time.NewTimer(retryDelay)
-			select {
-			case <-timer.C:
-				// Timer fired normally, continue with retry
-			case <-ctx.Done():
-				// Context canceled, stop timer to prevent leak
-				timer.Stop()
+			if !WaitWithContext(ctx, currentDelay) {
 				return nil, &HTTPVerificationError{
 					Domain:  domain,
 					Token:   expectedToken,
-					Message: "verification canceled",
+					Message: "HTTP verification canceled",
 					Cause:   ctx.Err(),
 				}
 			}
 
-			// Exponential backoff
-			retryDelay *= 2
+			// Exponential backoff with HTTP-specific multiplier
+			currentDelay *= 2
 		}
 
+		// Perform HTTP-01 challenge request
 		result, err := performHTTPVerification(ctx, domain, expectedToken, config)
 		if err == nil {
+			log.Printf("HTTP verification succeeded on attempt %d for domain %s", httpAttempts, domain)
 			return result, nil
 		}
 
 		lastErr = err
 		lastResult = result
 
-		// Check if error is retryable
+		// Check if HTTP error is retryable
 		if !IsRetryableHTTPError(err) {
-			log.Printf("Non-retryable HTTP error for domain %s: %v", domain, err)
+			log.Printf("Non-retryable HTTP-01 challenge error for domain %s: %v", domain, err)
 			break
 		}
 
-		log.Printf("Retryable HTTP error for domain %s (attempt %d/%d): %v",
+		log.Printf("Retryable HTTP-01 challenge error for domain %s (attempt %d/%d): %v",
 			domain, attempt+1, config.MaxRetries, err)
 	}
 
-	// All retries exhausted
+	// All retries exhausted for HTTP verification
+	if lastResult != nil {
+		log.Printf("HTTP verification completed with %d total attempts and %d failures for domain %s",
+			httpAttempts, config.MaxRetries+1, domain)
+	}
 	return lastResult, lastErr
 }
 
@@ -251,7 +241,7 @@ func performHTTPVerification(ctx context.Context, domain, expectedToken string, 
 	client := createHTTPClient(config)
 
 	// Create request
-	req, err := http.NewRequestWithContext(ctx, "GET", challengeURL, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, challengeURL, nil)
 	if err != nil {
 		httpErr := &HTTPVerificationError{
 			Domain:  domain,
@@ -404,6 +394,8 @@ func createHTTPClient(config *HTTPVerificationConfig) *http.Client {
 		TLSClientConfig: &tls.Config{
 			// Require valid certificates (no self-signed)
 			InsecureSkipVerify: false,
+			// Set minimum TLS version to 1.2 for security
+			MinVersion: tls.VersionTLS12,
 		},
 		DisableKeepAlives: true, // Don't reuse connections for verification requests
 	}
@@ -431,22 +423,25 @@ func IsRetryableHTTPError(err error) bool {
 	}
 
 	// Check for network timeouts and temporary failures
-	if netErr, ok := err.(net.Error); ok {
-		return netErr.Timeout() || netErr.Temporary()
+	var netErr net.Error
+	if errors.As(err, &netErr) {
+		return netErr.Timeout()
 	}
 
 	// Check for context timeout
-	if err == context.DeadlineExceeded {
+	if errors.Is(err, context.DeadlineExceeded) {
 		return true
 	}
 
 	// Check for DNS errors (might be temporary)
-	if dnsErr, ok := err.(*net.DNSError); ok {
-		return dnsErr.Temporary()
+	var dnsErr *net.DNSError
+	if errors.As(err, &dnsErr) {
+		return dnsErr.Timeout()
 	}
 
 	// Don't retry on validation errors or permanent failures
-	if _, ok := err.(*HTTPVerificationError); ok {
+	var httpErr *HTTPVerificationError
+	if errors.As(err, &httpErr) {
 		return false
 	}
 

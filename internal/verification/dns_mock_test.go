@@ -27,7 +27,7 @@ func TestVerifyDNSRecordWithMockSuccess(t *testing.T) {
 	config.Resolver = mockResolver
 	config.Timeout = 1 * time.Second
 
-	result, err := verification.VerifyDNSRecordWithConfig(testDomain, token, config)
+	result, err := verification.VerifyDNSRecordWithConfig(context.Background(), testDomain, token, config)
 
 	if err != nil {
 		t.Errorf("VerifyDNSRecord returned unexpected error: %v", err)
@@ -70,7 +70,7 @@ func TestVerifyDNSRecordWithMockTokenNotFound(t *testing.T) {
 	config := verification.DefaultDNSConfig()
 	config.Resolver = mockResolver
 
-	result, err := verification.VerifyDNSRecordWithConfig(testDomain, token, config)
+	result, err := verification.VerifyDNSRecordWithConfig(context.Background(), testDomain, token, config)
 
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
@@ -112,7 +112,7 @@ func TestVerifyDNSRecordWithMockDNSError(t *testing.T) {
 	config.Resolver = mockResolver
 	config.MaxRetries = 0
 
-	result, err := verification.VerifyDNSRecordWithConfig(testDomain, token, config)
+	result, err := verification.VerifyDNSRecordWithConfig(context.Background(), testDomain, token, config)
 
 	var dnsErr *verification.DNSVerificationError
 	if !errors.As(err, &dnsErr) {
@@ -147,7 +147,7 @@ func TestVerifyDNSRecordWithMockTimeout(t *testing.T) {
 	config.Timeout = 50 * time.Millisecond
 	config.MaxRetries = 0
 
-	_, err = verification.VerifyDNSRecordWithConfig(testDomain, token, config)
+	_, err = verification.VerifyDNSRecordWithConfig(context.Background(), testDomain, token, config)
 
 	if err == nil {
 		t.Error("Expected timeout error")

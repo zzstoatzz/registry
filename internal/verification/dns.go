@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"strings"
 	"time"
 )
 
@@ -112,50 +111,36 @@ func DefaultDNSConfig() *DNSVerificationConfig {
 //	    log.Printf("Domain %s verification failed: %s", result.Domain, result.Message)
 //	}
 func VerifyDNSRecord(domain, expectedToken string) (*DNSVerificationResult, error) {
-	return VerifyDNSRecordWithConfig(domain, expectedToken, DefaultDNSConfig())
+	return VerifyDNSRecordWithConfig(context.Background(), domain, expectedToken, DefaultDNSConfig())
 }
 
 // VerifyDNSRecordWithConfig performs DNS verification with custom configuration
-func VerifyDNSRecordWithConfig(domain, expectedToken string, config *DNSVerificationConfig) (*DNSVerificationResult, error) {
+func VerifyDNSRecordWithConfig(ctx context.Context, domain, expectedToken string, config *DNSVerificationConfig) (*DNSVerificationResult, error) {
 	startTime := time.Now()
 
-	// Input validation
-	if domain == "" {
-		return nil, &DNSVerificationError{
-			Domain:  domain,
-			Token:   expectedToken,
-			Message: "domain cannot be empty",
+	// Validate inputs and normalize domain
+	normalizedDomain, err := ValidateVerificationInputs(domain, expectedToken)
+	if err != nil {
+		var validationErr *ValidationError
+		if errors.As(err, &validationErr) {
+			return nil, &DNSVerificationError{
+				Domain:  validationErr.Domain,
+				Token:   validationErr.Token,
+				Message: validationErr.Message,
+			}
 		}
+		return nil, err
 	}
-
-	if expectedToken == "" {
-		return nil, &DNSVerificationError{
-			Domain:  domain,
-			Token:   expectedToken,
-			Message: "token cannot be empty",
-		}
-	}
-
-	// Validate token format
-	if !ValidateTokenFormat(expectedToken) {
-		return nil, &DNSVerificationError{
-			Domain:  domain,
-			Token:   expectedToken,
-			Message: "invalid token format",
-		}
-	}
-
-	// Normalize domain (remove trailing dots, convert to lowercase)
-	domain = strings.ToLower(strings.TrimSuffix(domain, "."))
+	domain = normalizedDomain
 
 	log.Printf("Starting DNS verification for domain: %s with token: %s", domain, expectedToken)
 
-	// Create context with timeout
-	ctx, cancel := context.WithTimeout(context.Background(), config.Timeout)
+	// Create context with timeout based on the passed context
+	timeoutCtx, cancel := context.WithTimeout(ctx, config.Timeout)
 	defer cancel()
 
 	// Perform verification with retries
-	result, err := performDNSVerificationWithRetries(ctx, domain, expectedToken, config)
+	result, err := performDNSVerificationWithRetries(timeoutCtx, domain, expectedToken, config)
 
 	// Calculate duration
 	duration := time.Since(startTime)
@@ -170,6 +155,8 @@ func VerifyDNSRecordWithConfig(domain, expectedToken string, config *DNSVerifica
 }
 
 // performDNSVerificationWithRetries implements the retry logic for DNS verification
+// This function handles DNS-specific retry patterns including exponential backoff
+// and DNS error classification for domain ownership verification via TXT records.
 func performDNSVerificationWithRetries(
 	ctx context.Context,
 	domain, expectedToken string,
@@ -179,51 +166,54 @@ func performDNSVerificationWithRetries(
 	var lastResult *DNSVerificationResult
 
 	retryDelay := config.RetryDelay
+	maxRetries := config.MaxRetries
+	dnsRetryCount := 0
 
-	for attempt := 0; attempt <= config.MaxRetries; attempt++ {
+	for attempt := 0; attempt <= maxRetries; attempt++ {
+		dnsRetryCount++
 		if attempt > 0 {
-			log.Printf("DNS verification retry %d/%d for domain %s after %v delay",
-				attempt+1, config.MaxRetries, domain, retryDelay)
+			log.Printf("DNS TXT record verification retry %d/%d for domain %s after %v delay",
+				attempt+1, maxRetries, domain, retryDelay)
 
 			// Wait before retry with context cancellation support
-			timer := time.NewTimer(retryDelay)
-			select {
-			case <-timer.C:
-				// Timer fired normally, continue with retry
-			case <-ctx.Done():
-				// Context canceled, stop timer to prevent leak
-				timer.Stop()
+			if !WaitWithContext(ctx, retryDelay) {
 				return nil, &DNSVerificationError{
 					Domain:  domain,
 					Token:   expectedToken,
-					Message: "verification canceled",
+					Message: "DNS verification canceled",
 					Cause:   ctx.Err(),
 				}
 			}
 
-			// Exponential backoff
+			// Exponential backoff with DNS-specific multiplier
 			retryDelay *= 2
 		}
 
+		// Perform DNS TXT record lookup
 		result, err := performDNSVerification(ctx, domain, expectedToken, config)
 		if err == nil {
+			log.Printf("DNS verification succeeded on attempt %d for domain %s", dnsRetryCount, domain)
 			return result, nil
 		}
 
 		lastErr = err
 		lastResult = result
 
-		// Check if error is retryable
+		// Check if DNS error is retryable
 		if !IsRetryableDNSError(err) {
-			log.Printf("Non-retryable DNS error for domain %s: %v", domain, err)
+			log.Printf("Non-retryable DNS TXT record error for domain %s: %v", domain, err)
 			break
 		}
 
-		log.Printf("Retryable DNS error for domain %s (attempt %d/%d): %v",
-			domain, attempt+1, config.MaxRetries, err)
+		log.Printf("Retryable DNS TXT record error for domain %s (attempt %d/%d): %v",
+			domain, attempt+1, maxRetries, err)
 	}
 
-	// All retries exhausted
+	// All retries exhausted for DNS verification
+	if lastResult != nil {
+		log.Printf("DNS verification completed with %d total attempts and %d failures for domain %s",
+			dnsRetryCount, maxRetries+1, domain)
+	}
 	return lastResult, lastErr
 }
 

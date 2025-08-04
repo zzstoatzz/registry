@@ -2,6 +2,7 @@ package verification
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"sync"
@@ -9,7 +10,7 @@ import (
 
 	"github.com/modelcontextprotocol/registry/internal/database"
 	"github.com/modelcontextprotocol/registry/internal/model"
-	"github.com/robfig/cron/v3"
+	cron "github.com/robfig/cron/v3"
 )
 
 // BackgroundVerificationJob handles continuous domain verification
@@ -170,7 +171,7 @@ func (bvj *BackgroundVerificationJob) monitor(ctx context.Context) {
 
 	select {
 	case <-ctx.Done():
-		log.Println("Background verification job context cancelled")
+		log.Println("Background verification job context canceled")
 	case <-bvj.stopChan:
 		log.Println("Background verification job stop signal received")
 	}
@@ -254,7 +255,7 @@ func (bvj *BackgroundVerificationJob) verifyDomain(ctx context.Context, domain s
 	var lastError error
 
 	for _, method := range methods {
-		success, err := bvj.runSingleVerification(domain, token, method)
+		success, err := bvj.runSingleVerification(ctx, domain, token, method)
 		if err != nil {
 			lastError = err
 			log.Printf("%s verification failed for %s: %v", method, domain, err)
@@ -271,17 +272,29 @@ func (bvj *BackgroundVerificationJob) verifyDomain(ctx context.Context, domain s
 }
 
 // runSingleVerification performs a single verification attempt
-func (bvj *BackgroundVerificationJob) runSingleVerification(domain, token string, method model.VerificationMethod) (bool, error) {
+func (bvj *BackgroundVerificationJob) runSingleVerification(
+	ctx context.Context, domain, token string, method model.VerificationMethod,
+) (bool, error) {
 	switch method {
 	case model.VerificationMethodDNS:
-		result, err := VerifyDNSRecord(domain, token)
+		// Create a custom config with the provided context's timeout
+		config := DefaultDNSConfig()
+		if deadline, ok := ctx.Deadline(); ok {
+			config.Timeout = time.Until(deadline)
+		}
+		result, err := VerifyDNSRecordWithConfig(ctx, domain, token, config)
 		if err != nil {
 			return false, err
 		}
 		return result.Success, nil
 
 	case model.VerificationMethodHTTP:
-		result, err := VerifyHTTPChallenge(domain, token)
+		// Create a custom config with the provided context's timeout
+		config := DefaultHTTPConfig()
+		if deadline, ok := ctx.Deadline(); ok {
+			config.Timeout = time.Until(deadline)
+		}
+		result, err := VerifyHTTPChallengeWithConfig(ctx, domain, token, config)
 		if err != nil {
 			return false, err
 		}
@@ -338,7 +351,7 @@ func (bvj *BackgroundVerificationJob) updateVerificationFailure(ctx context.Cont
 	domainVerification, err := bvj.db.GetDomainVerification(ctx, domain)
 	if err != nil {
 		// If record doesn't exist, create a new one
-		if err == database.ErrNotFound {
+		if errors.Is(err, database.ErrNotFound) {
 			now := time.Now()
 			domainVerification = &model.DomainVerification{
 				Domain:    domain,
@@ -364,7 +377,6 @@ func (bvj *BackgroundVerificationJob) updateVerificationFailure(ctx context.Cont
 		// Send notification if cooldown period has passed
 		if domainVerification.LastNotificationSent.IsZero() ||
 			now.Sub(domainVerification.LastNotificationSent) >= bvj.config.NotificationCooldown {
-
 			// Send notification (only if we have an error)
 			if lastError != nil {
 				bvj.notifyFunc(ctx, domain, domainVerification.ConsecutiveFailures, lastError)
@@ -406,11 +418,11 @@ func defaultNotificationFunc(ctx context.Context, domain string, failures int, l
 }
 
 // GetStatus returns the current status of the background verification job
-func (bvj *BackgroundVerificationJob) GetStatus() map[string]interface{} {
+func (bvj *BackgroundVerificationJob) GetStatus() map[string]any {
 	bvj.mu.RLock()
 	defer bvj.mu.RUnlock()
 
-	status := map[string]interface{}{
+	status := map[string]any{
 		"running":       bvj.running,
 		"cron_schedule": bvj.config.CronSchedule,
 		"config":        bvj.config,

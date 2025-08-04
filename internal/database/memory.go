@@ -396,11 +396,12 @@ func (db *MemoryDB) UpdateDomainVerification(ctx context.Context, domainVerifica
 	var targetMetadata *model.Metadata
 	var targetServerID string
 
+	// Find existing metadata for this domain
 	for serverID, metadata := range db.metadata {
 		if metadata.DomainVerification != nil &&
 			metadata.DomainVerification.Domain == domainVerification.Domain {
 			targetMetadata = metadata
-			targetServerID = serverID
+			targetServerID = serverID //nolint:ineffassign,staticcheck,wastedassign // Value used conditionally
 			break
 		}
 	}

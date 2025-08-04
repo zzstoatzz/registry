@@ -28,7 +28,7 @@ func TestVerifyDNSRecordSuccess(t *testing.T) {
 	config := verification.DefaultDNSConfig()
 	config.Resolver = mockResolver
 
-	result, err := verification.VerifyDNSRecordWithConfig(domain, token, config)
+	result, err := verification.VerifyDNSRecordWithConfig(context.Background(), domain, token, config)
 	if err != nil {
 		t.Errorf("VerifyDNSRecord returned unexpected error: %v", err)
 	}
@@ -77,7 +77,7 @@ func TestVerifyDNSRecordTokenNotFound(t *testing.T) {
 	config := verification.DefaultDNSConfig()
 	config.Resolver = mockResolver
 
-	result, err := verification.VerifyDNSRecordWithConfig(domain, token, config)
+	result, err := verification.VerifyDNSRecordWithConfig(context.Background(), domain, token, config)
 	if err != nil {
 		t.Errorf("VerifyDNSRecord returned unexpected error: %v", err)
 	}
@@ -178,7 +178,7 @@ func TestVerifyDNSRecordTokenFormatValidation(t *testing.T) {
 	config := verification.DefaultDNSConfig()
 	config.Resolver = mockResolver
 
-	result, err := verification.VerifyDNSRecordWithConfig(domain, token, config)
+	result, err := verification.VerifyDNSRecordWithConfig(context.Background(), domain, token, config)
 
 	if err != nil {
 		var dnsErr *verification.DNSVerificationError
@@ -226,7 +226,7 @@ func TestVerifyDNSRecordWithConfigTimeout(t *testing.T) {
 	}
 
 	domain := testDomain
-	result, err := verification.VerifyDNSRecordWithConfig(domain, token, config)
+	result, err := verification.VerifyDNSRecordWithConfig(context.Background(), domain, token, config)
 
 	if err == nil {
 		t.Error("Expected timeout error but got none")
@@ -298,7 +298,7 @@ func TestVerifyDNSRecordWithCustomPrefix(t *testing.T) {
 	config.Resolver = mockResolver
 	config.RecordPrefix = customPrefix
 
-	result, err := verification.VerifyDNSRecordWithConfig(domain, token, config)
+	result, err := verification.VerifyDNSRecordWithConfig(context.Background(), domain, token, config)
 	if err != nil {
 		t.Errorf("VerifyDNSRecord returned unexpected error: %v", err)
 	}
@@ -350,7 +350,7 @@ func TestVerifyDNSRecordCustomPrefixFailsWithWrongRecord(t *testing.T) {
 	config.Resolver = mockResolver
 	config.RecordPrefix = customPrefix
 
-	result, err := verification.VerifyDNSRecordWithConfig(domain, token, config)
+	result, err := verification.VerifyDNSRecordWithConfig(context.Background(), domain, token, config)
 	if err != nil {
 		t.Errorf("VerifyDNSRecord returned unexpected error: %v", err)
 	}
