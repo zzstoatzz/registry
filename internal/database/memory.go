@@ -344,15 +344,15 @@ func (db *MemoryDB) GetVerificationToken(ctx context.Context, serverID string) (
 func (db *MemoryDB) GetVerifiedDomains(ctx context.Context) ([]string, error) {
 	db.mu.RLock()
 	defer db.mu.RUnlock()
-	
+
 	var domains []string
 	for _, metadata := range db.metadata {
-		if metadata.DomainVerification != nil && 
-		   metadata.DomainVerification.Status == model.VerificationStatusVerified {
+		if metadata.DomainVerification != nil &&
+			metadata.DomainVerification.Status == model.VerificationStatusVerified {
 			domains = append(domains, metadata.DomainVerification.Domain)
 		}
 	}
-	
+
 	return domains, nil
 }
 
@@ -360,14 +360,14 @@ func (db *MemoryDB) GetVerifiedDomains(ctx context.Context) ([]string, error) {
 func (db *MemoryDB) GetDomainVerification(ctx context.Context, domain string) (*model.DomainVerification, error) {
 	db.mu.RLock()
 	defer db.mu.RUnlock()
-	
+
 	for _, metadata := range db.metadata {
-		if metadata.DomainVerification != nil && 
-		   metadata.DomainVerification.Domain == domain {
+		if metadata.DomainVerification != nil &&
+			metadata.DomainVerification.Domain == domain {
 			return metadata.DomainVerification, nil
 		}
 	}
-	
+
 	return nil, ErrNotFound
 }
 
@@ -375,20 +375,20 @@ func (db *MemoryDB) GetDomainVerification(ctx context.Context, domain string) (*
 func (db *MemoryDB) UpdateDomainVerification(ctx context.Context, domainVerification *model.DomainVerification) error {
 	db.mu.Lock()
 	defer db.mu.Unlock()
-	
+
 	// Find existing metadata entry for this domain or create a new one
 	var targetMetadata *model.Metadata
 	var targetServerID string
-	
+
 	for serverID, metadata := range db.metadata {
-		if metadata.DomainVerification != nil && 
-		   metadata.DomainVerification.Domain == domainVerification.Domain {
+		if metadata.DomainVerification != nil &&
+			metadata.DomainVerification.Domain == domainVerification.Domain {
 			targetMetadata = metadata
 			targetServerID = serverID
 			break
 		}
 	}
-	
+
 	if targetMetadata == nil {
 		// Create new metadata entry
 		targetServerID = uuid.New().String()
@@ -397,7 +397,7 @@ func (db *MemoryDB) UpdateDomainVerification(ctx context.Context, domainVerifica
 		}
 		db.metadata[targetServerID] = targetMetadata
 	}
-	
+
 	targetMetadata.DomainVerification = domainVerification
 	return nil
 }
@@ -406,18 +406,18 @@ func (db *MemoryDB) UpdateDomainVerification(ctx context.Context, domainVerifica
 func (db *MemoryDB) CleanupOldVerifications(ctx context.Context, before time.Time) (int, error) {
 	db.mu.Lock()
 	defer db.mu.Unlock()
-	
+
 	count := 0
 	for serverID, metadata := range db.metadata {
 		if metadata.DomainVerification != nil {
 			// Remove records that are old and have failed status
 			if metadata.DomainVerification.Status == model.VerificationStatusFailed &&
-			   metadata.DomainVerification.LastVerificationAttempt.Before(before) {
+				metadata.DomainVerification.LastVerificationAttempt.Before(before) {
 				delete(db.metadata, serverID)
 				count++
 			}
 		}
 	}
-	
+
 	return count, nil
 }

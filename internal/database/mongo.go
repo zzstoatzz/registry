@@ -384,13 +384,13 @@ func (db *MongoDB) GetVerifiedDomains(ctx context.Context) ([]string, error) {
 	filter := bson.M{
 		"domain_verification.status": model.VerificationStatusVerified,
 	}
-	
+
 	cursor, err := db.metadataCollection.Find(ctx, filter)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query verified domains: %w", err)
 	}
 	defer cursor.Close(ctx)
-	
+
 	var domains []string
 	for cursor.Next(ctx) {
 		var metadata model.Metadata
@@ -398,16 +398,16 @@ func (db *MongoDB) GetVerifiedDomains(ctx context.Context) ([]string, error) {
 			log.Printf("Failed to decode metadata: %v", err)
 			continue
 		}
-		
+
 		if metadata.DomainVerification != nil {
 			domains = append(domains, metadata.DomainVerification.Domain)
 		}
 	}
-	
+
 	if err := cursor.Err(); err != nil {
 		return nil, fmt.Errorf("cursor error: %w", err)
 	}
-	
+
 	return domains, nil
 }
 
@@ -416,7 +416,7 @@ func (db *MongoDB) GetDomainVerification(ctx context.Context, domain string) (*m
 	filter := bson.M{
 		"domain_verification.domain": domain,
 	}
-	
+
 	var metadata model.Metadata
 	err := db.metadataCollection.FindOne(ctx, filter).Decode(&metadata)
 	if err != nil {
@@ -425,11 +425,11 @@ func (db *MongoDB) GetDomainVerification(ctx context.Context, domain string) (*m
 		}
 		return nil, fmt.Errorf("failed to get domain verification: %w", err)
 	}
-	
+
 	if metadata.DomainVerification == nil {
 		return nil, ErrNotFound
 	}
-	
+
 	return metadata.DomainVerification, nil
 }
 
@@ -438,7 +438,7 @@ func (db *MongoDB) UpdateDomainVerification(ctx context.Context, domainVerificat
 	filter := bson.M{
 		"domain_verification.domain": domainVerification.Domain,
 	}
-	
+
 	update := bson.M{
 		"$set": bson.M{
 			"domain_verification": domainVerification,
@@ -447,13 +447,13 @@ func (db *MongoDB) UpdateDomainVerification(ctx context.Context, domainVerificat
 			"server_id": uuid.New().String(),
 		},
 	}
-	
+
 	opts := options.Update().SetUpsert(true)
 	_, err := db.metadataCollection.UpdateOne(ctx, filter, update, opts)
 	if err != nil {
 		return fmt.Errorf("failed to update domain verification: %w", err)
 	}
-	
+
 	return nil
 }
 
@@ -465,11 +465,11 @@ func (db *MongoDB) CleanupOldVerifications(ctx context.Context, before time.Time
 			"$lt": before,
 		},
 	}
-	
+
 	result, err := db.metadataCollection.DeleteMany(ctx, filter)
 	if err != nil {
 		return 0, fmt.Errorf("failed to cleanup old verifications: %w", err)
 	}
-	
+
 	return int(result.DeletedCount), nil
 }

@@ -155,27 +155,27 @@ const (
 
 // DomainVerification represents comprehensive domain verification tracking
 type DomainVerification struct {
-	Domain                   string              `json:"domain" bson:"domain"`
-	DNSToken                string              `json:"dns_token,omitempty" bson:"dns_token,omitempty"`
-	HTTPToken               string              `json:"http_token,omitempty" bson:"http_token,omitempty"`
-	Status                  VerificationStatus  `json:"status" bson:"status"`
-	CreatedAt               time.Time           `json:"created_at" bson:"created_at"`
-	LastVerified            time.Time           `json:"last_verified" bson:"last_verified"`
-	LastVerificationAttempt time.Time           `json:"last_verification_attempt" bson:"last_verification_attempt"`
-	ConsecutiveFailures     int                 `json:"consecutive_failures" bson:"consecutive_failures"`
-	LastError               string              `json:"last_error,omitempty" bson:"last_error,omitempty"`
-	LastSuccessfulMethod    VerificationMethod  `json:"last_successful_method,omitempty" bson:"last_successful_method,omitempty"`
-	NextVerification        time.Time           `json:"next_verification" bson:"next_verification"`
-	LastNotificationSent    time.Time           `json:"last_notification_sent" bson:"last_notification_sent"`
-	
+	Domain                  string             `json:"domain" bson:"domain"`
+	DNSToken                string             `json:"dns_token,omitempty" bson:"dns_token,omitempty"`
+	HTTPToken               string             `json:"http_token,omitempty" bson:"http_token,omitempty"`
+	Status                  VerificationStatus `json:"status" bson:"status"`
+	CreatedAt               time.Time          `json:"created_at" bson:"created_at"`
+	LastVerified            time.Time          `json:"last_verified" bson:"last_verified"`
+	LastVerificationAttempt time.Time          `json:"last_verification_attempt" bson:"last_verification_attempt"`
+	ConsecutiveFailures     int                `json:"consecutive_failures" bson:"consecutive_failures"`
+	LastError               string             `json:"last_error,omitempty" bson:"last_error,omitempty"`
+	LastSuccessfulMethod    VerificationMethod `json:"last_successful_method,omitempty" bson:"last_successful_method,omitempty"`
+	NextVerification        time.Time          `json:"next_verification" bson:"next_verification"`
+	LastNotificationSent    time.Time          `json:"last_notification_sent" bson:"last_notification_sent"`
+
 	// Legacy fields for backward compatibility
-	LastVerifiedAt        *time.Time          `json:"last_verified_at,omitempty" bson:"last_verified_at,omitempty"`
-	LastFailureAt         *time.Time          `json:"last_failure_at,omitempty" bson:"last_failure_at,omitempty"`
-	WarningNotifiedAt     *time.Time          `json:"warning_notified_at,omitempty" bson:"warning_notified_at,omitempty"`
-	DowngradeNotifiedAt   *time.Time          `json:"downgrade_notified_at,omitempty" bson:"downgrade_notified_at,omitempty"`
-	SuccessfulMethods     []VerificationMethod `json:"successful_methods,omitempty" bson:"successful_methods,omitempty"`
-	LastDNSVerificationAt *time.Time          `json:"last_dns_verification_at,omitempty" bson:"last_dns_verification_at,omitempty"`
-	LastHTTPVerificationAt *time.Time         `json:"last_http_verification_at,omitempty" bson:"last_http_verification_at,omitempty"`
+	LastVerifiedAt         *time.Time           `json:"last_verified_at,omitempty" bson:"last_verified_at,omitempty"`
+	LastFailureAt          *time.Time           `json:"last_failure_at,omitempty" bson:"last_failure_at,omitempty"`
+	WarningNotifiedAt      *time.Time           `json:"warning_notified_at,omitempty" bson:"warning_notified_at,omitempty"`
+	DowngradeNotifiedAt    *time.Time           `json:"downgrade_notified_at,omitempty" bson:"downgrade_notified_at,omitempty"`
+	SuccessfulMethods      []VerificationMethod `json:"successful_methods,omitempty" bson:"successful_methods,omitempty"`
+	LastDNSVerificationAt  *time.Time           `json:"last_dns_verification_at,omitempty" bson:"last_dns_verification_at,omitempty"`
+	LastHTTPVerificationAt *time.Time           `json:"last_http_verification_at,omitempty" bson:"last_http_verification_at,omitempty"`
 }
 
 // VerificationToken represents a domain verification token for a server (legacy, will be replaced by DomainVerification)
@@ -188,7 +188,7 @@ type VerificationToken struct {
 
 // Metadata represents a metadata entry for a server
 type Metadata struct {
-	ServerID          string             `json:"server_id" bson:"server_id"`
-	VerificationToken *VerificationToken `json:"verification_token,omitempty" bson:"verification_token,omitempty"`
+	ServerID           string              `json:"server_id" bson:"server_id"`
+	VerificationToken  *VerificationToken  `json:"verification_token,omitempty" bson:"verification_token,omitempty"`
 	DomainVerification *DomainVerification `json:"domain_verification,omitempty" bson:"domain_verification,omitempty"`
 }

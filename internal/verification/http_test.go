@@ -14,16 +14,16 @@ import (
 )
 
 const (
-	errMsgGenTokenHTTP        = "Failed to generate test token: %v"
+	errMsgGenTokenHTTP         = "Failed to generate test token: %v"
 	wellKnownChallengePathHTTP = "/.well-known/mcp-challenge/%s"
-	httpsScheme               = "https://"
-	errMsgUnexpectedHTTP      = "VerifyHTTPChallenge returned unexpected error: %v"
-	errMsgNilResultHTTP       = "VerifyHTTPChallenge returned nil result"
-	logMsgResultHTTP          = "HTTP verification result: %+v"
-	testDomainHTTP            = "example.com"
-	wrongTokenHTTP            = "wrong-token"
-	resultStatusCodeHTTP      = "Result status code = %d, want %d"
-	resultResponseBodyHTTP    = "Result response body = %s, want %s"
+	httpsScheme                = "https://"
+	errMsgUnexpectedHTTP       = "VerifyHTTPChallenge returned unexpected error: %v"
+	errMsgNilResultHTTP        = "VerifyHTTPChallenge returned nil result"
+	logMsgResultHTTP           = "HTTP verification result: %+v"
+	testDomainHTTP             = "example.com"
+	wrongTokenHTTP             = "wrong-token"
+	resultStatusCodeHTTP       = "Result status code = %d, want %d"
+	resultResponseBodyHTTP     = "Result response body = %s, want %s"
 )
 
 func TestVerifyHTTPChallenge(t *testing.T) {

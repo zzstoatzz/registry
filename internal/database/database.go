@@ -33,7 +33,7 @@ type Database interface {
 	ImportSeed(ctx context.Context, seedFilePath string) error
 	// Close closes the database connection
 	Close() error
-	
+
 	// Domain verification methods
 	// GetVerifiedDomains retrieves all domains that are currently verified
 	GetVerifiedDomains(ctx context.Context) ([]string, error)

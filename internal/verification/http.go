@@ -23,7 +23,7 @@ type HTTPVerificationError struct {
 
 func (e *HTTPVerificationError) Error() string {
 	if e.Cause != nil {
-		return fmt.Sprintf("HTTP verification failed for domain %s: %s (cause: %v)", 
+		return fmt.Sprintf("HTTP verification failed for domain %s: %s (cause: %v)",
 			e.Domain, e.Message, e.Cause)
 	}
 	return fmt.Sprintf("HTTP verification failed for domain %s: %s", e.Domain, e.Message)
