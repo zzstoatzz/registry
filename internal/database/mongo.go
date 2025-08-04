@@ -378,3 +378,98 @@ func (db *MongoDB) GetVerificationToken(ctx context.Context, serverID string) (*
 
 	return metadata.VerificationToken, nil
 }
+
+// GetVerifiedDomains retrieves all domains that are currently verified
+func (db *MongoDB) GetVerifiedDomains(ctx context.Context) ([]string, error) {
+	filter := bson.M{
+		"domain_verification.status": model.VerificationStatusVerified,
+	}
+	
+	cursor, err := db.metadataCollection.Find(ctx, filter)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query verified domains: %w", err)
+	}
+	defer cursor.Close(ctx)
+	
+	var domains []string
+	for cursor.Next(ctx) {
+		var metadata model.Metadata
+		if err := cursor.Decode(&metadata); err != nil {
+			log.Printf("Failed to decode metadata: %v", err)
+			continue
+		}
+		
+		if metadata.DomainVerification != nil {
+			domains = append(domains, metadata.DomainVerification.Domain)
+		}
+	}
+	
+	if err := cursor.Err(); err != nil {
+		return nil, fmt.Errorf("cursor error: %w", err)
+	}
+	
+	return domains, nil
+}
+
+// GetDomainVerification retrieves domain verification details
+func (db *MongoDB) GetDomainVerification(ctx context.Context, domain string) (*model.DomainVerification, error) {
+	filter := bson.M{
+		"domain_verification.domain": domain,
+	}
+	
+	var metadata model.Metadata
+	err := db.metadataCollection.FindOne(ctx, filter).Decode(&metadata)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, ErrNotFound
+		}
+		return nil, fmt.Errorf("failed to get domain verification: %w", err)
+	}
+	
+	if metadata.DomainVerification == nil {
+		return nil, ErrNotFound
+	}
+	
+	return metadata.DomainVerification, nil
+}
+
+// UpdateDomainVerification updates or creates domain verification record
+func (db *MongoDB) UpdateDomainVerification(ctx context.Context, domainVerification *model.DomainVerification) error {
+	filter := bson.M{
+		"domain_verification.domain": domainVerification.Domain,
+	}
+	
+	update := bson.M{
+		"$set": bson.M{
+			"domain_verification": domainVerification,
+		},
+		"$setOnInsert": bson.M{
+			"server_id": uuid.New().String(),
+		},
+	}
+	
+	opts := options.Update().SetUpsert(true)
+	_, err := db.metadataCollection.UpdateOne(ctx, filter, update, opts)
+	if err != nil {
+		return fmt.Errorf("failed to update domain verification: %w", err)
+	}
+	
+	return nil
+}
+
+// CleanupOldVerifications removes old verification records before the given time
+func (db *MongoDB) CleanupOldVerifications(ctx context.Context, before time.Time) (int, error) {
+	filter := bson.M{
+		"domain_verification.status": model.VerificationStatusFailed,
+		"domain_verification.last_verification_attempt": bson.M{
+			"$lt": before,
+		},
+	}
+	
+	result, err := db.metadataCollection.DeleteMany(ctx, filter)
+	if err != nil {
+		return 0, fmt.Errorf("failed to cleanup old verifications: %w", err)
+	}
+	
+	return int(result.DeletedCount), nil
+}

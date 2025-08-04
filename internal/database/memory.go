@@ -339,3 +339,85 @@ func (db *MemoryDB) GetVerificationToken(ctx context.Context, serverID string) (
 
 	return metadata.VerificationToken, nil
 }
+
+// GetVerifiedDomains retrieves all domains that are currently verified
+func (db *MemoryDB) GetVerifiedDomains(ctx context.Context) ([]string, error) {
+	db.mu.RLock()
+	defer db.mu.RUnlock()
+	
+	var domains []string
+	for _, metadata := range db.metadata {
+		if metadata.DomainVerification != nil && 
+		   metadata.DomainVerification.Status == model.VerificationStatusVerified {
+			domains = append(domains, metadata.DomainVerification.Domain)
+		}
+	}
+	
+	return domains, nil
+}
+
+// GetDomainVerification retrieves domain verification details
+func (db *MemoryDB) GetDomainVerification(ctx context.Context, domain string) (*model.DomainVerification, error) {
+	db.mu.RLock()
+	defer db.mu.RUnlock()
+	
+	for _, metadata := range db.metadata {
+		if metadata.DomainVerification != nil && 
+		   metadata.DomainVerification.Domain == domain {
+			return metadata.DomainVerification, nil
+		}
+	}
+	
+	return nil, ErrNotFound
+}
+
+// UpdateDomainVerification updates or creates domain verification record
+func (db *MemoryDB) UpdateDomainVerification(ctx context.Context, domainVerification *model.DomainVerification) error {
+	db.mu.Lock()
+	defer db.mu.Unlock()
+	
+	// Find existing metadata entry for this domain or create a new one
+	var targetMetadata *model.Metadata
+	var targetServerID string
+	
+	for serverID, metadata := range db.metadata {
+		if metadata.DomainVerification != nil && 
+		   metadata.DomainVerification.Domain == domainVerification.Domain {
+			targetMetadata = metadata
+			targetServerID = serverID
+			break
+		}
+	}
+	
+	if targetMetadata == nil {
+		// Create new metadata entry
+		targetServerID = uuid.New().String()
+		targetMetadata = &model.Metadata{
+			ServerID: targetServerID,
+		}
+		db.metadata[targetServerID] = targetMetadata
+	}
+	
+	targetMetadata.DomainVerification = domainVerification
+	return nil
+}
+
+// CleanupOldVerifications removes old verification records before the given time
+func (db *MemoryDB) CleanupOldVerifications(ctx context.Context, before time.Time) (int, error) {
+	db.mu.Lock()
+	defer db.mu.Unlock()
+	
+	count := 0
+	for serverID, metadata := range db.metadata {
+		if metadata.DomainVerification != nil {
+			// Remove records that are old and have failed status
+			if metadata.DomainVerification.Status == model.VerificationStatusFailed &&
+			   metadata.DomainVerification.LastVerificationAttempt.Before(before) {
+				delete(db.metadata, serverID)
+				count++
+			}
+		}
+	}
+	
+	return count, nil
+}

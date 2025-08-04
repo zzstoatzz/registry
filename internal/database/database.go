@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/modelcontextprotocol/registry/internal/model"
 )
@@ -32,6 +33,16 @@ type Database interface {
 	ImportSeed(ctx context.Context, seedFilePath string) error
 	// Close closes the database connection
 	Close() error
+	
+	// Domain verification methods
+	// GetVerifiedDomains retrieves all domains that are currently verified
+	GetVerifiedDomains(ctx context.Context) ([]string, error)
+	// GetDomainVerification retrieves domain verification details
+	GetDomainVerification(ctx context.Context, domain string) (*model.DomainVerification, error)
+	// UpdateDomainVerification updates or creates domain verification record
+	UpdateDomainVerification(ctx context.Context, domainVerification *model.DomainVerification) error
+	// CleanupOldVerifications removes old verification records before the given time
+	CleanupOldVerifications(ctx context.Context, before time.Time) (int, error)
 }
 
 // ConnectionType represents the type of database connection
