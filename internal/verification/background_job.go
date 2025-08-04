@@ -27,7 +27,7 @@ type BackgroundVerificationJob struct {
 
 // BackgroundJobConfig contains configuration for the background verification job
 type BackgroundJobConfig struct {
-	// CronSchedule defines when to run verification (default: "0 2 * * *" - daily at 2 AM)
+	// CronSchedule defines when to run verification (default: "0 0 2 * * *" - daily at 2 AM)
 	CronSchedule string
 
 	// MaxConcurrentVerifications limits parallel verifications (default: 10)
