@@ -20,6 +20,7 @@ type MongoDB struct {
 	database               *mongo.Database
 	serverCollection       *mongo.Collection
 	verificationCollection *mongo.Collection
+	metadataCollection     *mongo.Collection
 }
 
 // NewMongoDB creates a new instance of the MongoDB database
@@ -40,6 +41,7 @@ func NewMongoDB(ctx context.Context, connectionURI, databaseName, collectionName
 	database := client.Database(databaseName)
 	serverCollection := database.Collection(collectionName)
 	verificationCollection := database.Collection(verificationCollectionName)
+	metadataCollection := database.Collection("metadata")
 
 	// Create indexes for better query performance
 	models := []mongo.IndexModel{
@@ -90,6 +92,7 @@ func NewMongoDB(ctx context.Context, connectionURI, databaseName, collectionName
 		database:               database,
 		serverCollection:       serverCollection,
 		verificationCollection: verificationCollection,
+		metadataCollection:     metadataCollection,
 	}, nil
 }
 

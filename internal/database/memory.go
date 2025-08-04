@@ -18,6 +18,7 @@ import (
 type MemoryDB struct {
 	entries             map[string]*model.ServerDetail
 	domainVerifications map[string]*model.DomainVerification // key: domain
+	metadata            map[string]*model.Metadata           // key: serverID
 	mu                  sync.RWMutex
 }
 
@@ -33,6 +34,7 @@ func NewMemoryDB(e map[string]*model.Server) *MemoryDB {
 	return &MemoryDB{
 		entries:             serverDetails,
 		domainVerifications: make(map[string]*model.DomainVerification),
+		metadata:            make(map[string]*model.Metadata),
 	}
 }
 

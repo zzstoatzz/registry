@@ -168,6 +168,9 @@ type DomainVerification struct {
 	NextVerification        time.Time          `json:"next_verification" bson:"next_verification"`
 	LastNotificationSent    time.Time          `json:"last_notification_sent" bson:"last_notification_sent"`
 
+	// Legacy compatibility field
+	VerificationTokens *VerificationTokens `json:"verification_tokens,omitempty" bson:"verification_tokens,omitempty"`
+
 	// Legacy fields for backward compatibility
 	LastVerifiedAt         *time.Time           `json:"last_verified_at,omitempty" bson:"last_verified_at,omitempty"`
 	LastFailureAt          *time.Time           `json:"last_failure_at,omitempty" bson:"last_failure_at,omitempty"`
@@ -192,17 +195,11 @@ type Metadata struct {
 	VerificationToken  *VerificationToken  `json:"verification_token,omitempty" bson:"verification_token,omitempty"`
 	DomainVerification *DomainVerification `json:"domain_verification,omitempty" bson:"domain_verification,omitempty"`
 }
-  
+
 // VerificationTokens represents the collection of verification tokens for a domain
 type VerificationTokens struct {
 	VerifiedToken *VerificationToken  `json:"verified_token,omitempty" bson:"verified_token,omitempty"`
 	PendingTokens []VerificationToken `json:"pending_tokens,omitempty" bson:"pending_tokens,omitempty"`
-}
-
-// DomainVerification represents verification data for a specific domain
-type DomainVerification struct {
-	Domain             string              `json:"domain" bson:"domain"`
-	VerificationTokens *VerificationTokens `json:"verification_tokens,omitempty" bson:"verification_tokens,omitempty"`
 }
 
 // DomainVerificationRequest represents a request to generate a verification token for a domain

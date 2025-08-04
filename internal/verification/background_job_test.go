@@ -97,6 +97,20 @@ func (m *mockDatabase) CleanupOldVerifications(ctx context.Context, before time.
 	return 1, nil
 }
 
+func (m *mockDatabase) GetVerificationTokens(ctx context.Context, domain string) (*model.VerificationTokens, error) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+
+	dv, exists := m.domainVerifications[domain]
+	if !exists || dv.VerificationTokens == nil {
+		return nil, database.ErrNotFound
+	}
+
+	// Return a copy to avoid race conditions
+	result := *dv.VerificationTokens
+	return &result, nil
+}
+
 func (m *mockDatabase) addVerifiedDomain(domain string) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
