@@ -354,7 +354,11 @@ func TestIsRetryableHTTPError(t *testing.T) {
 		{"context timeout", context.DeadlineExceeded, true},
 		{"validation error", &verification.HTTPVerificationError{Message: "validation failed"}, false},
 		{"network error", &mockNetError{timeout: true, temporary: false}, true},
-		{"non-retryable temporary network error (Temporary() deprecated)", &mockNetError{timeout: false, temporary: true}, false}, // Not retryable: Temporary() is deprecated
+		{
+			"non-retryable temporary network error (Temporary() deprecated)",
+			&mockNetError{timeout: false, temporary: true},
+			false, // Not retryable: Temporary() is deprecated
+		},
 		{"permanent network error", &mockNetError{timeout: false, temporary: false}, false},
 		{"unknown error", errors.New("unknown"), false},
 	}

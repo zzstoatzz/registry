@@ -3,7 +3,7 @@ module github.com/modelcontextprotocol/registry
 go 1.23.0
 
 require (
-	github.com/caarlos0/env/v10 v10.0.0
+	github.com/caarlos0/env/v11 v11.3.1
 	github.com/google/uuid v1.6.0
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/santhosh-tekuri/jsonschema/v5 v5.3.1
