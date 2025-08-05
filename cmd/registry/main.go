@@ -96,7 +96,7 @@ func main() {
 
 	// Initialize background verification job
 	backgroundJob := verification.NewBackgroundVerificationJob(db, nil, nil)
-	
+
 	// Start background verification job
 	ctx := context.Background()
 	if err := backgroundJob.Start(ctx); err != nil {
