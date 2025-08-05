@@ -17,6 +17,7 @@ import (
 	"github.com/modelcontextprotocol/registry/internal/database"
 	"github.com/modelcontextprotocol/registry/internal/model"
 	"github.com/modelcontextprotocol/registry/internal/service"
+	"github.com/modelcontextprotocol/registry/internal/verification"
 )
 
 func main() {
@@ -92,6 +93,26 @@ func main() {
 			log.Println("Data import completed successfully")
 		}
 	}
+
+	// Initialize background verification job
+	backgroundJob := verification.NewBackgroundVerificationJob(db, nil, nil)
+	
+	// Start background verification job
+	ctx := context.Background()
+	if err := backgroundJob.Start(ctx); err != nil {
+		log.Printf("Failed to start background verification job: %v", err)
+	} else {
+		log.Println("Background verification job started successfully")
+	}
+
+	// Defer stopping the background job
+	defer func() {
+		if err := backgroundJob.Stop(); err != nil {
+			log.Printf("Error stopping background verification job: %v", err)
+		} else {
+			log.Println("Background verification job stopped successfully")
+		}
+	}()
 
 	// Initialize authentication services
 	authService := auth.NewAuthService(cfg)
