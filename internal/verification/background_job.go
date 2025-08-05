@@ -280,7 +280,11 @@ func (bvj *BackgroundVerificationJob) runSingleVerification(
 		// Create a custom config with the provided context's timeout
 		config := DefaultDNSConfig()
 		if deadline, ok := ctx.Deadline(); ok {
-			config.Timeout = time.Until(deadline)
+			remaining := time.Until(deadline)
+			if remaining > 0 {
+				config.Timeout = remaining
+			}
+			// If remaining <= 0, keep the default timeout
 		}
 		result, err := VerifyDNSRecordWithConfig(ctx, domain, token, config)
 		if err != nil {
@@ -292,7 +296,11 @@ func (bvj *BackgroundVerificationJob) runSingleVerification(
 		// Create a custom config with the provided context's timeout
 		config := DefaultHTTPConfig()
 		if deadline, ok := ctx.Deadline(); ok {
-			config.Timeout = time.Until(deadline)
+			remaining := time.Until(deadline)
+			if remaining > 0 {
+				config.Timeout = remaining
+			}
+			// If remaining <= 0, keep the default timeout
 		}
 		result, err := VerifyHTTPChallengeWithConfig(ctx, domain, token, config)
 		if err != nil {
