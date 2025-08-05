@@ -22,7 +22,7 @@ func (d *DefaultDNSResolver) LookupTXT(ctx context.Context, name string) ([]stri
 
 // NewDefaultDNSResolver creates a DNS resolver with the given configuration
 //
-//nolint:ireturn // Factory function returning interface is acceptable for dependency injection
+//nolint:ireturn // Factory function returns interface for dependency injection
 func NewDefaultDNSResolver(config *DNSVerificationConfig) DNSResolver {
 	if config.UseSecureResolvers && len(config.CustomResolvers) > 0 {
 		// Create custom dialer for secure resolvers

@@ -94,25 +94,41 @@ func main() {
 		}
 	}
 
-	// Initialize background verification job
-	backgroundJob := verification.NewBackgroundVerificationJob(db, nil, nil)
-
-	// Start background verification job
-	ctx := context.Background()
-	if err := backgroundJob.Start(ctx); err != nil {
-		log.Printf("Failed to start background verification job: %v", err)
-	} else {
-		log.Println("Background verification job started successfully")
-	}
-
-	// Defer stopping the background job
-	defer func() {
-		if err := backgroundJob.Stop(); err != nil {
-			log.Printf("Error stopping background verification job: %v", err)
-		} else {
-			log.Println("Background verification job stopped successfully")
+	// Initialize background verification job (if enabled)
+	var backgroundJob *verification.BackgroundVerificationJob
+	if cfg.BackgroundJobEnabled {
+		// Convert config to verification background job config
+		backgroundJobConfig := &verification.BackgroundJobConfig{
+			CronSchedule:               cfg.BackgroundJobCronSchedule,
+			MaxConcurrentVerifications: cfg.BackgroundJobMaxConcurrentVerifications,
+			VerificationTimeout:        time.Duration(cfg.BackgroundJobVerificationTimeoutSeconds) * time.Second,
+			FailureThreshold:           cfg.BackgroundJobFailureThreshold,
+			RetryDelay:                 time.Second,
+			NotificationCooldown:       time.Duration(cfg.BackgroundJobNotificationCooldownHours) * time.Hour,
+			CleanupInterval:            time.Duration(cfg.BackgroundJobCleanupIntervalDays) * 24 * time.Hour,
 		}
-	}()
+
+		backgroundJob = verification.NewBackgroundVerificationJob(db, backgroundJobConfig, nil)
+
+		// Start background verification job
+		ctx := context.Background()
+		if err := backgroundJob.Start(ctx); err != nil {
+			log.Printf("Failed to start background verification job: %v", err)
+		} else {
+			log.Println("Background verification job started successfully")
+		}
+
+		// Defer stopping the background job
+		defer func() {
+			if err := backgroundJob.Stop(); err != nil {
+				log.Printf("Error stopping background verification job: %v", err)
+			} else {
+				log.Println("Background verification job stopped successfully")
+			}
+		}()
+	} else {
+		log.Println("Background verification job is disabled")
+	}
 
 	// Initialize authentication services
 	authService := auth.NewAuthService(cfg)

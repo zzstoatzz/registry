@@ -333,6 +333,29 @@ The service can be configured using environment variables:
 | `MCP_REGISTRY_SEED_IMPORT`           | Import `seed.json` on first run | `true` |
 | `MCP_REGISTRY_SERVER_ADDRESS`        | Listen address for the server | `:8080` |
 
+### Background Job Configuration
+
+The registry includes a background verification job that continuously validates domain ownership for registered servers:
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `MCP_REGISTRY_BACKGROUND_JOB_ENABLED` | Enable background verification job | `true` |
+| `MCP_REGISTRY_BACKGROUND_JOB_CRON_SCHEDULE` | Cron schedule for verification runs | `0 0 2 * * *` (daily at 2 AM) |
+| `MCP_REGISTRY_BACKGROUND_JOB_MAX_CONCURRENT` | Maximum concurrent verifications | `10` |
+| `MCP_REGISTRY_BACKGROUND_JOB_VERIFICATION_TIMEOUT_SECONDS` | Timeout for each verification (seconds) | `30` |
+| `MCP_REGISTRY_BACKGROUND_JOB_FAILURE_THRESHOLD` | Consecutive failures before marking as failed | `3` |
+| `MCP_REGISTRY_BACKGROUND_JOB_NOTIFICATION_COOLDOWN_HOURS` | Hours between failure notifications | `24` |
+| `MCP_REGISTRY_BACKGROUND_JOB_CLEANUP_INTERVAL_DAYS` | Days between cleanup of old records | `7` |
+
+Example production configuration:
+```bash
+# Enable background job with custom schedule (every 6 hours)
+MCP_REGISTRY_BACKGROUND_JOB_ENABLED=true
+MCP_REGISTRY_BACKGROUND_JOB_CRON_SCHEDULE="0 0 */6 * * *"
+MCP_REGISTRY_BACKGROUND_JOB_MAX_CONCURRENT=20
+MCP_REGISTRY_BACKGROUND_JOB_VERIFICATION_TIMEOUT_SECONDS=60
+```
+
 
 ## Testing
 

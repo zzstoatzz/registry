@@ -1,7 +1,7 @@
 package config
 
 import (
-	env "github.com/caarlos0/env/v11"
+	"github.com/caarlos0/env/v10"
 )
 
 type DatabaseType string
@@ -25,6 +25,15 @@ type Config struct {
 	Version                    string       `env:"VERSION" envDefault:"dev"`
 	GithubClientID             string       `env:"GITHUB_CLIENT_ID" envDefault:""`
 	GithubClientSecret         string       `env:"GITHUB_CLIENT_SECRET" envDefault:""`
+
+	// Background verification job configuration
+	BackgroundJobEnabled                    bool   `env:"BACKGROUND_JOB_ENABLED" envDefault:"true"`
+	BackgroundJobCronSchedule               string `env:"BACKGROUND_JOB_CRON_SCHEDULE" envDefault:"0 0 2 * * *"`
+	BackgroundJobMaxConcurrentVerifications int    `env:"BACKGROUND_JOB_MAX_CONCURRENT" envDefault:"10"`
+	BackgroundJobVerificationTimeoutSeconds int    `env:"BACKGROUND_JOB_VERIFICATION_TIMEOUT_SECONDS" envDefault:"30"`
+	BackgroundJobFailureThreshold           int    `env:"BACKGROUND_JOB_FAILURE_THRESHOLD" envDefault:"3"`
+	BackgroundJobNotificationCooldownHours  int    `env:"BACKGROUND_JOB_NOTIFICATION_COOLDOWN_HOURS" envDefault:"24"`
+	BackgroundJobCleanupIntervalDays        int    `env:"BACKGROUND_JOB_CLEANUP_INTERVAL_DAYS" envDefault:"7"`
 }
 
 // NewConfig creates a new configuration with default values
