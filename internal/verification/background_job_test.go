@@ -117,12 +117,19 @@ func (m *mockDatabase) addVerifiedDomain(domain string) {
 
 	m.verifiedDomains = append(m.verifiedDomains, domain)
 	now := time.Now()
+
+	// Generate test tokens for the domain
+	dnsToken, _ := GenerateVerificationToken()
+	httpToken, _ := GenerateVerificationToken()
+
 	m.domainVerifications[domain] = &model.DomainVerification{
 		Domain:              domain,
 		Status:              model.VerificationStatusVerified,
 		CreatedAt:           now,
 		LastVerified:        now,
 		ConsecutiveFailures: 0,
+		DNSToken:            dnsToken,
+		HTTPToken:           httpToken,
 	}
 }
 

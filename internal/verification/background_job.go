@@ -243,18 +243,46 @@ func (bvj *BackgroundVerificationJob) runVerificationCycle(ctx context.Context) 
 func (bvj *BackgroundVerificationJob) verifyDomain(ctx context.Context, domain string) bool {
 	log.Printf("Starting background verification for domain: %s", domain)
 
-	// Generate new verification token
-	token, err := GenerateVerificationToken()
+	// Get existing domain verification record to fetch stored tokens
+	domainVerification, err := bvj.db.GetDomainVerification(ctx, domain)
 	if err != nil {
-		log.Printf("Failed to generate verification token for %s: %v", domain, err)
+		log.Printf("Failed to get domain verification record for %s: %v", domain, err)
 		return false
 	}
 
-	// Try both DNS and HTTP verification methods
+	// Extract tokens for verification
+	var dnsToken, httpToken string
+	if domainVerification.DNSToken != "" {
+		dnsToken = domainVerification.DNSToken
+	}
+	if domainVerification.HTTPToken != "" {
+		httpToken = domainVerification.HTTPToken
+	}
+
+	// If no tokens are available, we can't verify
+	if dnsToken == "" && httpToken == "" {
+		log.Printf("No verification tokens found for domain %s", domain)
+		return false
+	}
+
+	// Try both DNS and HTTP verification methods using stored tokens
 	methods := []model.VerificationMethod{model.VerificationMethodDNS, model.VerificationMethodHTTP}
 	var lastError error
 
 	for _, method := range methods {
+		var token string
+		switch method {
+		case model.VerificationMethodDNS:
+			token = dnsToken
+		case model.VerificationMethodHTTP:
+			token = httpToken
+		}
+
+		// Skip this method if we don't have a token for it
+		if token == "" {
+			continue
+		}
+
 		success, err := bvj.runSingleVerification(ctx, domain, token, method)
 		if err != nil {
 			lastError = err
