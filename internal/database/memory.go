@@ -16,8 +16,9 @@ import (
 
 // MemoryDB is an in-memory implementation of the Database interface
 type MemoryDB struct {
-	entries map[string]*model.ServerDetail
-	mu      sync.RWMutex
+	entries             map[string]*model.ServerDetail
+	domainVerifications map[string]*model.DomainVerification // key: domain
+	mu                  sync.RWMutex
 }
 
 // NewMemoryDB creates a new instance of the in-memory database
@@ -30,7 +31,8 @@ func NewMemoryDB(e map[string]*model.Server) *MemoryDB {
 		}
 	}
 	return &MemoryDB{
-		entries: serverDetails,
+		entries:             serverDetails,
+		domainVerifications: make(map[string]*model.DomainVerification),
 	}
 }
 
@@ -305,4 +307,52 @@ func (db *MemoryDB) Connection() *ConnectionInfo {
 		IsConnected: true, // Memory DB is always connected
 		Raw:         db.entries,
 	}
+}
+
+// StoreVerificationToken stores a verification token for a domain (adds to pending tokens)
+func (db *MemoryDB) StoreVerificationToken(ctx context.Context, domain string, token *model.VerificationToken) error {
+	db.mu.Lock()
+	defer db.mu.Unlock()
+
+	// Get existing domain verification
+	existingVerification, exists := db.domainVerifications[domain]
+
+	var verificationTokens *model.VerificationTokens
+
+	if exists && existingVerification.VerificationTokens != nil {
+		// Add to existing pending tokens
+		verificationTokens = existingVerification.VerificationTokens
+		verificationTokens.PendingTokens = append(verificationTokens.PendingTokens, *token)
+	} else {
+		// No existing record or no verification tokens - create new structure
+		verificationTokens = &model.VerificationTokens{
+			PendingTokens: []model.VerificationToken{*token},
+		}
+	}
+
+	// Create or update domain verification
+	domainVerification := &model.DomainVerification{
+		Domain:             domain,
+		VerificationTokens: verificationTokens,
+	}
+
+	db.domainVerifications[domain] = domainVerification
+	return nil
+}
+
+// GetVerificationTokens retrieves verification tokens by domain
+func (db *MemoryDB) GetVerificationTokens(ctx context.Context, domain string) (*model.VerificationTokens, error) {
+	db.mu.RLock()
+	defer db.mu.RUnlock()
+
+	domainVerification, exists := db.domainVerifications[domain]
+	if !exists {
+		return nil, ErrNotFound
+	}
+
+	if domainVerification.VerificationTokens == nil {
+		return nil, fmt.Errorf("verification tokens data is missing from domain verification")
+	}
+
+	return domainVerification.VerificationTokens, nil
 }

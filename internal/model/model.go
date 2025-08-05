@@ -1,5 +1,7 @@
 package model
 
+import "time"
+
 // AuthMethod represents the authentication method used
 type AuthMethod string
 
@@ -123,4 +125,37 @@ type ServerDetail struct {
 	Server   `json:",inline" bson:",inline"`
 	Packages []Package `json:"packages,omitempty" bson:"packages,omitempty"`
 	Remotes  []Remote  `json:"remotes,omitempty" bson:"remotes,omitempty"`
+}
+
+// VerificationToken represents a domain verification token for a server
+type VerificationToken struct {
+	Token          string     `json:"token" bson:"token"`
+	CreatedAt      time.Time  `json:"created_at" bson:"created_at"`
+	DisabledAt     *time.Time `json:"disabled_at,omitempty" bson:"disabled_at,omitempty"`
+	LastVerifiedAt *time.Time `json:"last_verified_at,omitempty" bson:"last_verified_at,omitempty"`
+}
+
+// VerificationTokens represents the collection of verification tokens for a domain
+type VerificationTokens struct {
+	VerifiedToken *VerificationToken  `json:"verified_token,omitempty" bson:"verified_token,omitempty"`
+	PendingTokens []VerificationToken `json:"pending_tokens,omitempty" bson:"pending_tokens,omitempty"`
+}
+
+// DomainVerification represents verification data for a specific domain
+type DomainVerification struct {
+	Domain             string              `json:"domain" bson:"domain"`
+	VerificationTokens *VerificationTokens `json:"verification_tokens,omitempty" bson:"verification_tokens,omitempty"`
+}
+
+// DomainVerificationRequest represents a request to generate a verification token for a domain
+type DomainVerificationRequest struct {
+	Domain string `json:"domain"`
+}
+
+// DomainVerificationResponse represents the response for domain verification operations
+type DomainVerificationResponse struct {
+	Domain    string `json:"domain"`
+	Token     string `json:"token"`
+	CreatedAt string `json:"created_at"`
+	DNSRecord string `json:"dns_record"`
 }

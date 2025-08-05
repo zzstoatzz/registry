@@ -55,7 +55,7 @@ func main() {
 		defer cancel()
 
 		// Connect to MongoDB
-		db, err = database.NewMongoDB(ctx, cfg.DatabaseURL, cfg.DatabaseName, cfg.CollectionName)
+		db, err = database.NewMongoDB(ctx, cfg.DatabaseURL, cfg.DatabaseName, cfg.CollectionName, cfg.VerificationCollectionName)
 		if err != nil {
 			log.Printf("Failed to connect to MongoDB: %v", err)
 			return
@@ -65,6 +65,7 @@ func main() {
 		registryService = service.NewRegistryServiceWithDB(db)
 		log.Printf("MongoDB database name: %s", cfg.DatabaseName)
 		log.Printf("MongoDB collection name: %s", cfg.CollectionName)
+		log.Printf("MongoDB verification collection name: %s", cfg.VerificationCollectionName)
 
 		// Store the MongoDB instance for later cleanup
 		defer func() {
