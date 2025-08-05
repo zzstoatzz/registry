@@ -12,9 +12,9 @@ import (
 )
 
 const (
-	defaultCronScheduleBG   = "0 0 2 * * *"
-	testDomainBG            = "example.com"
-	errMsgGetDomainVerifyBG = "Failed to get domain verification: %v"
+	defaultCronScheduleBackgroundJob   = "0 0 2 * * *"
+	testDomainBackgroundJob            = "example.com"
+	errMsgGetDomainVerifyBackgroundJob = "Failed to get domain verification: %v"
 )
 
 // mockDatabase is a mock implementation of the Database interface for testing
@@ -193,8 +193,8 @@ func TestNewBackgroundVerificationJobWithDefaults(t *testing.T) {
 		t.Error("Default config not set")
 	}
 
-	if job.config.CronSchedule != defaultCronScheduleBG {
-		t.Errorf("Default cron schedule = %s, want %s", job.config.CronSchedule, defaultCronScheduleBG)
+	if job.config.CronSchedule != defaultCronScheduleBackgroundJob {
+		t.Errorf("Default cron schedule = %s, want %s", job.config.CronSchedule, defaultCronScheduleBackgroundJob)
 	}
 }
 
@@ -205,8 +205,8 @@ func TestDefaultBackgroundJobConfig(t *testing.T) {
 		t.Fatal("DefaultBackgroundJobConfig returned nil")
 	}
 
-	if config.CronSchedule != defaultCronScheduleBG {
-		t.Errorf("CronSchedule = %s, want %s", config.CronSchedule, defaultCronScheduleBG)
+	if config.CronSchedule != defaultCronScheduleBackgroundJob {
+		t.Errorf("CronSchedule = %s, want %s", config.CronSchedule, defaultCronScheduleBackgroundJob)
 	}
 
 	if config.MaxConcurrentVerifications != 10 {
@@ -273,7 +273,7 @@ func TestBackgroundJobStartStop(t *testing.T) {
 
 func TestRunNow(t *testing.T) {
 	db := newMockDatabase()
-	db.addVerifiedDomain(testDomainBG)
+	db.addVerifiedDomain(testDomainBackgroundJob)
 
 	mockNotify := &mockNotificationFunc{}
 	job := NewBackgroundVerificationJob(db, DefaultBackgroundJobConfig(), mockNotify.notify)
@@ -341,7 +341,7 @@ func TestUpdateVerificationSuccess(t *testing.T) {
 	job := NewBackgroundVerificationJob(db, DefaultBackgroundJobConfig(), mockNotify.notify)
 
 	ctx := context.Background()
-	domain := testDomainBG
+	domain := testDomainBackgroundJob
 	method := model.VerificationMethodDNS
 
 	err := job.updateVerificationSuccess(ctx, domain, method)
@@ -352,7 +352,7 @@ func TestUpdateVerificationSuccess(t *testing.T) {
 	// Verify the domain verification was updated
 	dv, err := db.GetDomainVerification(ctx, domain)
 	if err != nil {
-		t.Fatalf(errMsgGetDomainVerifyBG, err)
+		t.Fatalf(errMsgGetDomainVerifyBackgroundJob, err)
 	}
 
 	if dv.Status != model.VerificationStatusVerified {
@@ -378,7 +378,7 @@ func TestUpdateVerificationFailure(t *testing.T) {
 	job := NewBackgroundVerificationJob(db, config, mockNotify.notify)
 
 	ctx := context.Background()
-	domain := testDomainBG
+	domain := testDomainBackgroundJob
 	testError := errors.New("verification failed")
 
 	// Set up initial domain verification
@@ -399,7 +399,7 @@ func TestUpdateVerificationFailure(t *testing.T) {
 
 	dv, err := db.GetDomainVerification(ctx, domain)
 	if err != nil {
-		t.Fatalf(errMsgGetDomainVerifyBG, err)
+		t.Fatalf(errMsgGetDomainVerifyBackgroundJob, err)
 	}
 
 	if dv.ConsecutiveFailures != 1 {
@@ -421,7 +421,7 @@ func TestUpdateVerificationFailure(t *testing.T) {
 
 	dv, err = db.GetDomainVerification(ctx, domain)
 	if err != nil {
-		t.Fatalf(errMsgGetDomainVerifyBG, err)
+		t.Fatalf(errMsgGetDomainVerifyBackgroundJob, err)
 	}
 
 	if dv.Status != model.VerificationStatusFailed {
@@ -448,7 +448,7 @@ func TestRunSingleVerification(t *testing.T) {
 	db := newMockDatabase()
 	job := NewBackgroundVerificationJob(db, DefaultBackgroundJobConfig(), nil)
 
-	domain := testDomainBG
+	domain := testDomainBackgroundJob
 	token := "test-token"
 	ctx := context.Background()
 

@@ -385,10 +385,8 @@ func (bvj *BackgroundVerificationJob) updateVerificationFailure(ctx context.Cont
 		// Send notification if cooldown period has passed
 		if domainVerification.LastNotificationSent.IsZero() ||
 			now.Sub(domainVerification.LastNotificationSent) >= bvj.config.NotificationCooldown {
-			// Send notification (only if we have an error)
-			if lastError != nil {
-				bvj.notifyFunc(ctx, domain, domainVerification.ConsecutiveFailures, lastError)
-			}
+			// Send notification when threshold is exceeded, regardless of whether we have a specific error
+			bvj.notifyFunc(ctx, domain, domainVerification.ConsecutiveFailures, lastError)
 			domainVerification.LastNotificationSent = now
 		}
 	}
@@ -421,8 +419,13 @@ func (bvj *BackgroundVerificationJob) runCleanup(ctx context.Context) error {
 
 // defaultNotificationFunc is a simple notification function that logs failures
 func defaultNotificationFunc(ctx context.Context, domain string, failures int, lastError error) {
-	log.Printf("ALERT: Domain %s has failed verification %d times consecutively. Last error: %v",
-		domain, failures, lastError)
+	if lastError != nil {
+		log.Printf("ALERT: Domain %s has failed verification %d times consecutively. Last error: %v",
+			domain, failures, lastError)
+	} else {
+		log.Printf("ALERT: Domain %s has failed verification %d times consecutively. No specific error available.",
+			domain, failures)
+	}
 }
 
 // GetStatus returns the current status of the background verification job
