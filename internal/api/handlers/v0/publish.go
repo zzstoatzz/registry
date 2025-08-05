@@ -11,6 +11,7 @@ import (
 	"github.com/modelcontextprotocol/registry/internal/auth"
 	"github.com/modelcontextprotocol/registry/internal/database"
 	"github.com/modelcontextprotocol/registry/internal/model"
+	"github.com/modelcontextprotocol/registry/internal/namespace"
 	"github.com/modelcontextprotocol/registry/internal/service"
 	"golang.org/x/net/html"
 )
@@ -54,6 +55,17 @@ func PublishHandler(registry service.RegistryService, authService auth.Service) 
 			return
 		}
 
+		// Validate namespace format if it follows domain-scoped convention
+		if err := namespace.ValidateNamespace(serverDetail.Name); err != nil {
+			// If the namespace doesn't follow domain-scoped format, check if it's a legacy format
+			if !errors.Is(err, namespace.ErrInvalidNamespace) {
+				http.Error(w, "Invalid namespace: "+err.Error(), http.StatusBadRequest)
+				return
+			}
+			// For legacy formats, we'll allow them to pass through for now
+			// This provides backward compatibility while encouraging new domain-scoped formats
+		}
+
 		// Version is required
 		if serverDetail.VersionDetail.Version == "" {
 			http.Error(w, "Version is required", http.StatusBadRequest)
@@ -73,15 +85,31 @@ func PublishHandler(registry service.RegistryService, authService auth.Service) 
 			token = authHeader[7:]
 		}
 
-		// Determine authentication method based on server name prefix
+		// Determine authentication method based on server name format
 		var authMethod model.AuthMethod
-		switch {
-		case strings.HasPrefix(serverDetail.Name, "io.github"):
-			authMethod = model.AuthMethodGitHub
-		// Additional cases can be added here for other prefixes
-		default:
-			// Keep the default auth method as AuthMethodNone
-			authMethod = model.AuthMethodNone
+
+		// Check if the namespace is domain-scoped and extract domain for auth
+		if parsed, err := namespace.ParseNamespace(serverDetail.Name); err == nil {
+			// For domain-scoped namespaces, determine auth method based on domain
+			switch parsed.Domain {
+			case "github.com":
+				authMethod = model.AuthMethodGitHub
+			// Additional domain-specific auth methods can be added here
+			default:
+				// For other domains, require GitHub auth for now
+				// NOTE: Domain verification system needs to be implemented
+				authMethod = model.AuthMethodGitHub
+			}
+		} else {
+			// Legacy namespace format - use existing logic
+			switch {
+			case strings.HasPrefix(serverDetail.Name, "io.github"):
+				authMethod = model.AuthMethodGitHub
+			// Additional cases can be added here for other prefixes
+			default:
+				// Keep the default auth method as AuthMethodNone
+				authMethod = model.AuthMethodNone
+			}
 		}
 
 		serverName := html.EscapeString(serverDetail.Name)
