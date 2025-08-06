@@ -123,6 +123,13 @@ func (s *fakeRegistryService) Publish(serverDetail *model.ServerDetail) error {
 	return s.db.Publish(ctx, serverDetail)
 }
 
+// GetDatabase returns the underlying database instance for advanced operations
+//
+//nolint:ireturn // Interface return is intentional for database abstraction
+func (s *fakeRegistryService) GetDatabase() database.Database {
+	return s.db
+}
+
 // Close closes the in-memory database connection
 func (s *fakeRegistryService) Close() error {
 	return s.db.Close()

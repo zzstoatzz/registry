@@ -7,9 +7,11 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	v0 "github.com/modelcontextprotocol/registry/internal/api/handlers/v0"
 	"github.com/modelcontextprotocol/registry/internal/auth"
+	"github.com/modelcontextprotocol/registry/internal/database"
 	"github.com/modelcontextprotocol/registry/internal/model"
 	"github.com/modelcontextprotocol/registry/internal/service"
 	"github.com/stretchr/testify/assert"
@@ -35,6 +37,56 @@ func (m *MockRegistryService) GetByID(id string) (*model.ServerDetail, error) {
 func (m *MockRegistryService) Publish(serverDetail *model.ServerDetail) error {
 	args := m.Mock.Called(serverDetail)
 	return args.Error(0)
+}
+
+//nolint:ireturn // Interface return is intentional for testing database abstraction
+func (m *MockRegistryService) GetDatabase() database.Database {
+	args := m.Mock.Called()
+	return args.Get(0).(database.Database)
+}
+
+// setupDatabaseMock sets up the database mock for testing
+func setupDatabaseMock(registry *MockRegistryService) {
+	// Create a memory database for testing
+	memDB := database.NewMemoryDB(make(map[string]*model.Server))
+
+	// Add domain verification records for test domains
+	ctx := context.Background()
+
+	// Add verification for io.github.example domain
+	memDB.UpdateDomainVerification(ctx, &model.DomainVerification{
+		Domain:               "io.github.example",
+		DNSToken:             "test-dns-token-github-example",
+		HTTPToken:            "test-http-token-github-example",
+		Status:               model.VerificationStatusVerified,
+		CreatedAt:            time.Now().Add(-24 * time.Hour),
+		LastVerified:         time.Now(),
+		LastSuccessfulMethod: model.VerificationMethodDNS,
+	})
+
+	// Add verification for io.github.malicious domain (for HTML injection test)
+	memDB.UpdateDomainVerification(ctx, &model.DomainVerification{
+		Domain:               "io.github.malicious",
+		DNSToken:             "test-dns-token-github-malicious",
+		HTTPToken:            "test-http-token-github-malicious",
+		Status:               model.VerificationStatusVerified,
+		CreatedAt:            time.Now().Add(-24 * time.Hour),
+		LastVerified:         time.Now(),
+		LastSuccessfulMethod: model.VerificationMethodDNS,
+	})
+
+	// Add verification for malicious.com domain (for second HTML injection test)
+	memDB.UpdateDomainVerification(ctx, &model.DomainVerification{
+		Domain:               "malicious.com",
+		DNSToken:             "test-dns-token-malicious-com",
+		HTTPToken:            "test-http-token-malicious-com",
+		Status:               model.VerificationStatusVerified,
+		CreatedAt:            time.Now().Add(-24 * time.Hour),
+		LastVerified:         time.Now(),
+		LastSuccessfulMethod: model.VerificationMethodDNS,
+	})
+
+	registry.Mock.On("GetDatabase").Return(memDB)
 }
 
 // MockAuthService is a mock implementation of the auth.Service interface
@@ -92,6 +144,7 @@ func TestPublishHandler(t *testing.T) {
 			},
 			authHeader: "Bearer github_token_123",
 			setupMocks: func(registry *MockRegistryService, authSvc *MockAuthService) {
+				setupDatabaseMock(registry) // This test uses domain-scoped namespace: io.github.example/test-server
 				authSvc.Mock.On("ValidateAuth", mock.Anything, model.Authentication{
 					Method:  model.AuthMethodGitHub,
 					Token:   "github_token_123",
@@ -127,6 +180,7 @@ func TestPublishHandler(t *testing.T) {
 			},
 			authHeader: "Bearer some_token",
 			setupMocks: func(registry *MockRegistryService, authSvc *MockAuthService) {
+				// No database setup needed - this server name is not domain-scoped
 				authSvc.Mock.On("ValidateAuth", mock.Anything, model.Authentication{
 					Method:  model.AuthMethodNone,
 					Token:   "some_token",
@@ -141,22 +195,26 @@ func TestPublishHandler(t *testing.T) {
 			},
 		},
 		{
-			name:           "method not allowed",
-			method:         http.MethodGet,
-			requestBody:    nil,
-			authHeader:     "",
-			setupMocks:     func(_ *MockRegistryService, _ *MockAuthService) {},
+			name:        "method not allowed",
+			method:      http.MethodGet,
+			requestBody: nil,
+			authHeader:  "",
+			setupMocks: func(registry *MockRegistryService, _ *MockAuthService) {
+				// No mocks needed - method validation happens before any service calls
+			},
 			expectedStatus: http.StatusMethodNotAllowed,
 			expectedError:  "Method not allowed",
 		},
 		{
-			name:           "missing request body",
-			method:         http.MethodPost,
-			requestBody:    "",
-			authHeader:     "",
-			setupMocks:     func(_ *MockRegistryService, _ *MockAuthService) {},
+			name:        "missing request body",
+			method:      http.MethodPost,
+			requestBody: "",
+			authHeader:  "",
+			setupMocks: func(registry *MockRegistryService, _ *MockAuthService) {
+				// No mocks needed - JSON parsing fails before any service calls
+			},
 			expectedStatus: http.StatusBadRequest,
-			expectedError:  "Invalid request payload:",
+			expectedError:  "invalid request payload:",
 		},
 		{
 			name:   "missing server name",
@@ -173,10 +231,12 @@ func TestPublishHandler(t *testing.T) {
 					},
 				},
 			},
-			authHeader:     "",
-			setupMocks:     func(_ *MockRegistryService, _ *MockAuthService) {},
+			authHeader: "",
+			setupMocks: func(registry *MockRegistryService, _ *MockAuthService) {
+				// No mocks needed - name validation fails before any service calls
+			},
 			expectedStatus: http.StatusBadRequest,
-			expectedError:  "Name is required",
+			expectedError:  "name is required",
 		},
 		{
 			name:   "missing version",
@@ -193,10 +253,12 @@ func TestPublishHandler(t *testing.T) {
 					},
 				},
 			},
-			authHeader:     "",
-			setupMocks:     func(_ *MockRegistryService, _ *MockAuthService) {},
+			authHeader: "",
+			setupMocks: func(registry *MockRegistryService, _ *MockAuthService) {
+				// No mocks needed - version validation fails before any service calls
+			},
 			expectedStatus: http.StatusBadRequest,
-			expectedError:  "Version is required",
+			expectedError:  "version is required",
 		},
 		{
 			name:   "missing authorization header",
@@ -213,10 +275,12 @@ func TestPublishHandler(t *testing.T) {
 					},
 				},
 			},
-			authHeader:     "", // Missing auth header
-			setupMocks:     func(_ *MockRegistryService, _ *MockAuthService) {},
+			authHeader: "", // Missing auth header
+			setupMocks: func(registry *MockRegistryService, _ *MockAuthService) {
+				// No mocks needed - auth header validation fails before any service calls
+			},
 			expectedStatus: http.StatusUnauthorized,
-			expectedError:  "Authorization header is required",
+			expectedError:  "authorization header is required",
 		},
 		{
 			name:   "authentication required error",
@@ -234,7 +298,8 @@ func TestPublishHandler(t *testing.T) {
 				},
 			},
 			authHeader: "Bearer token",
-			setupMocks: func(_ *MockRegistryService, authSvc *MockAuthService) {
+			setupMocks: func(registry *MockRegistryService, authSvc *MockAuthService) {
+				// No database mock needed - server name is not domain-scoped
 				authSvc.Mock.On("ValidateAuth", mock.Anything, mock.Anything).Return(false, auth.ErrAuthRequired)
 			},
 			expectedStatus: http.StatusUnauthorized,
@@ -256,11 +321,12 @@ func TestPublishHandler(t *testing.T) {
 				},
 			},
 			authHeader: "Bearer invalid_token",
-			setupMocks: func(_ *MockRegistryService, authSvc *MockAuthService) {
+			setupMocks: func(registry *MockRegistryService, authSvc *MockAuthService) {
+				// No database mock needed - server name is not domain-scoped
 				authSvc.Mock.On("ValidateAuth", mock.Anything, mock.Anything).Return(false, nil)
 			},
 			expectedStatus: http.StatusUnauthorized,
-			expectedError:  "Invalid authentication credentials",
+			expectedError:  "invalid authentication credentials",
 		},
 		{
 			name:   "registry service error",
@@ -279,6 +345,7 @@ func TestPublishHandler(t *testing.T) {
 			},
 			authHeader: "Bearer token",
 			setupMocks: func(registry *MockRegistryService, authSvc *MockAuthService) {
+				// No database mock needed - server name is not domain-scoped
 				authSvc.Mock.On("ValidateAuth", mock.Anything, mock.Anything).Return(true, nil)
 				registry.Mock.On("Publish", mock.AnythingOfType("*model.ServerDetail")).Return(assert.AnError)
 			},
@@ -307,6 +374,7 @@ func TestPublishHandler(t *testing.T) {
 			},
 			authHeader: "Bearer github_token_123",
 			setupMocks: func(registry *MockRegistryService, authSvc *MockAuthService) {
+				// No database mock needed - HTML in server name prevents domain-scoped parsing
 				// The auth service should receive the escaped HTML version of the name
 				authSvc.Mock.On("ValidateAuth", mock.Anything, mock.MatchedBy(func(auth model.Authentication) bool {
 					// Verify that the RepoRef contains escaped HTML, not the raw script tag
@@ -344,6 +412,7 @@ func TestPublishHandler(t *testing.T) {
 			},
 			authHeader: "Bearer some_token",
 			setupMocks: func(registry *MockRegistryService, authSvc *MockAuthService) {
+				// No database mock needed - HTML in server name prevents domain-scoped parsing
 				// The auth service should receive the escaped HTML version of the name with AuthMethodNone
 				authSvc.Mock.On("ValidateAuth", mock.Anything, mock.MatchedBy(func(auth model.Authentication) bool {
 					// Verify that the RepoRef contains escaped HTML, not the raw script tag
@@ -519,6 +588,9 @@ func TestPublishHandlerAuthMethodSelection(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			mockRegistry := new(MockRegistryService)
 			mockAuthService := new(MockAuthService)
+
+			// Setup database mock
+			setupDatabaseMock(mockRegistry)
 
 			// Setup mock to capture the auth method
 			mockAuthService.Mock.On("ValidateAuth", mock.Anything, mock.MatchedBy(func(auth model.Authentication) bool {

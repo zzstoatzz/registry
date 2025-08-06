@@ -101,3 +101,10 @@ func (s *registryServiceImpl) Publish(serverDetail *model.ServerDetail) error {
 
 	return nil
 }
+
+// GetDatabase returns the underlying database instance for advanced operations
+//
+//nolint:ireturn // Interface return is intentional for database abstraction
+func (s *registryServiceImpl) GetDatabase() database.Database {
+	return s.db
+}
