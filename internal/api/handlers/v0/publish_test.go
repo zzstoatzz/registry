@@ -780,7 +780,7 @@ func TestPublishIntegration(t *testing.T) {
 		handler(recorder, req)
 
 		assert.Equal(t, http.StatusBadRequest, recorder.Code)
-		assert.Contains(t, recorder.Body.String(), "Name is required")
+		assert.Contains(t, recorder.Body.String(), "name is required")
 	})
 
 	t.Run("publish fails with missing version", func(t *testing.T) {
@@ -805,7 +805,7 @@ func TestPublishIntegration(t *testing.T) {
 		handler(recorder, req)
 
 		assert.Equal(t, http.StatusBadRequest, recorder.Code)
-		assert.Contains(t, recorder.Body.String(), "Version is required")
+		assert.Contains(t, recorder.Body.String(), "version is required")
 	})
 
 	t.Run("publish fails with missing authorization header", func(t *testing.T) {
@@ -830,7 +830,7 @@ func TestPublishIntegration(t *testing.T) {
 		handler(recorder, req)
 
 		assert.Equal(t, http.StatusUnauthorized, recorder.Code)
-		assert.Contains(t, recorder.Body.String(), "Authorization header is required")
+		assert.Contains(t, recorder.Body.String(), "authorization header is required")
 	})
 
 	t.Run("publish fails with invalid JSON", func(t *testing.T) {
@@ -844,7 +844,7 @@ func TestPublishIntegration(t *testing.T) {
 		handler(recorder, req)
 
 		assert.Equal(t, http.StatusBadRequest, recorder.Code)
-		assert.Contains(t, recorder.Body.String(), "Invalid")
+		assert.Contains(t, recorder.Body.String(), "invalid")
 	})
 
 	t.Run("publish fails with unsupported HTTP method", func(t *testing.T) {
