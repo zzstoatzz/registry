@@ -4,8 +4,6 @@ services:
     container_name: registry
     build:
       dockerfile: Dockerfile
-    links:
-      - mongodb
     depends_on:
       - mongodb
     environment:
