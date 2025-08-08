@@ -62,8 +62,8 @@ func PublishHandler(registry service.RegistryService, authService auth.Service) 
 				http.Error(w, "Invalid namespace: "+err.Error(), http.StatusBadRequest)
 				return
 			}
-			// For legacy formats, we'll allow them to pass through for now
-			// This provides backward compatibility while encouraging new domain-scoped formats
+			// For pseudo-domain io.github format/borrowed domain, we'll allow them to pass through
+			// This provides support for the borrowed io.github domain while encouraging new domain-scoped formats
 		}
 
 		// Version is required
