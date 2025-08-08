@@ -73,6 +73,15 @@ func NewMongoDB(ctx context.Context, connectionURI, databaseName, collectionName
 			Keys:    bson.D{bson.E{Key: "domain", Value: 1}},
 			Options: options.Index().SetUnique(true),
 		},
+		// Create a sparse unique index on verification tokens to ensure global token uniqueness
+		{
+			Keys:    bson.D{bson.E{Key: "verification_tokens.verified_token.token", Value: 1}},
+			Options: options.Index().SetUnique(true).SetSparse(true),
+		},
+		{
+			Keys:    bson.D{bson.E{Key: "verification_tokens.pending_tokens.token", Value: 1}},
+			Options: options.Index().SetUnique(true).SetSparse(true),
+		},
 	}
 
 	_, err = verificationCollection.Indexes().CreateMany(ctx, verificationIndexes)
@@ -329,52 +338,26 @@ func (db *MongoDB) Connection() *ConnectionInfo {
 	}
 }
 
-// StoreVerificationToken stores a verification token for a domain (adds to pending tokens)
+// StoreVerificationToken atomically stores a verification token for a domain if the token is unique
 func (db *MongoDB) StoreVerificationToken(ctx context.Context, domain string, token *model.VerificationToken) error {
-	// Try to get existing verification data first
-	filter := bson.M{"domain": domain}
+	domainFilter := bson.M{"domain": domain}
 
-	var existingVerification model.DomainVerification
-	err := db.verificationCollection.FindOne(ctx, filter).Decode(&existingVerification)
-
-	var verificationTokens *model.VerificationTokens
-
-	if err != nil {
-		if errors.Is(err, mongo.ErrNoDocuments) {
-			// No existing record - create new verification tokens structure
-			verificationTokens = &model.VerificationTokens{
-				VerifiedToken: nil,
-				PendingTokens: []model.VerificationToken{*token},
-			}
-		} else {
-			// Real error occurred
-			return fmt.Errorf("failed to check existing verification tokens: %w", err)
-		}
-	} else {
-		// Document exists - check if it has verification tokens
-		if existingVerification.VerificationTokens != nil {
-			// Add to existing pending tokens
-			verificationTokens = existingVerification.VerificationTokens
-			verificationTokens.PendingTokens = append(verificationTokens.PendingTokens, *token)
-		} else {
-			// Document exists but has no verification tokens - create new structure
-			verificationTokens = &model.VerificationTokens{
-				VerifiedToken: nil,
-				PendingTokens: []model.VerificationToken{*token},
-			}
-		}
+	update := bson.M{
+		"$setOnInsert": bson.M{
+			"domain": domain,
+		},
+		"$addToSet": bson.M{
+			"verification_tokens.pending_tokens": token,
+		},
 	}
 
-	// Prepare the domain verification
-	domainVerification := &model.DomainVerification{
-		Domain:             domain,
-		VerificationTokens: verificationTokens,
-	}
-
-	// Use upsert to either insert or update
-	opts := options.Replace().SetUpsert(true)
-	_, err = db.verificationCollection.ReplaceOne(ctx, filter, domainVerification, opts)
+	opts := options.Update().SetUpsert(true)
+	_, err := db.verificationCollection.UpdateOne(ctx, domainFilter, update, opts)
 	if err != nil {
+		// Check if this is a duplicate key error due to token uniqueness constraint
+		if mongo.IsDuplicateKeyError(err) {
+			return ErrTokenAlreadyExists
+		}
 		return fmt.Errorf("failed to store verification token: %w", err)
 	}
 

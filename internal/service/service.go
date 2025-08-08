@@ -7,4 +7,6 @@ type RegistryService interface {
 	List(cursor string, limit int) ([]model.Server, string, error)
 	GetByID(id string) (*model.ServerDetail, error)
 	Publish(serverDetail *model.ServerDetail) error
+	ClaimDomain(domain string) (*model.VerificationToken, error)
+	GetDomainVerificationStatus(domain string) (*model.VerificationTokens, error)
 }
