@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/modelcontextprotocol/registry/internal/database"
 	"github.com/modelcontextprotocol/registry/internal/model"
+	"github.com/modelcontextprotocol/registry/internal/verification"
 )
 
 // fakeRegistryService implements RegistryService interface with an in-memory database
@@ -121,6 +122,62 @@ func (s *fakeRegistryService) Publish(serverDetail *model.ServerDetail) error {
 
 	// Use the database's Publish method to add the server detail
 	return s.db.Publish(ctx, serverDetail)
+}
+
+// ClaimDomain generates a verification token for a domain and stores it as pending
+func (s *fakeRegistryService) ClaimDomain(domain string) (*model.VerificationToken, error) {
+	// Create a timeout context for the database operation
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	const maxAttempts = 10
+	for attempt := 1; attempt <= maxAttempts; attempt++ {
+		// Generate a verification token
+		token, err := verification.GenerateVerificationToken()
+		if err != nil {
+			return nil, err
+		}
+
+		// Create the verification token
+		verificationToken := &model.VerificationToken{
+			Token:     token,
+			CreatedAt: time.Now(),
+		}
+
+		// Try to store the token in the database as pending for the domain
+		// The unique index will ensure token uniqueness
+		err = s.db.StoreVerificationToken(ctx, domain, verificationToken)
+		if err == nil {
+			// Successfully stored, return the token
+			return verificationToken, nil
+		}
+
+		// If it's a token already exists error, retry with a new token
+		if err == database.ErrTokenAlreadyExists {
+			continue
+		}
+
+		// For any other error, return it
+		return nil, err
+	}
+
+	// If we've exhausted all attempts, return an error
+	return nil, database.ErrMaxAttemptsExceeded
+}
+
+// GetDomainVerificationStatus retrieves the verification status for a domain
+func (s *fakeRegistryService) GetDomainVerificationStatus(domain string) (*model.VerificationTokens, error) {
+	// Create a timeout context for the database operation
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	// Get the verification tokens from the database
+	tokens, err := s.db.GetVerificationTokens(ctx, domain)
+	if err != nil {
+		return nil, err
+	}
+
+	return tokens, nil
 }
 
 // Close closes the in-memory database connection

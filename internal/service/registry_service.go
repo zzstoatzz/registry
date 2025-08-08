@@ -2,10 +2,12 @@ package service
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/modelcontextprotocol/registry/internal/database"
 	"github.com/modelcontextprotocol/registry/internal/model"
+	"github.com/modelcontextprotocol/registry/internal/verification"
 )
 
 // registryServiceImpl implements the RegistryService interface using our Database
@@ -100,4 +102,58 @@ func (s *registryServiceImpl) Publish(serverDetail *model.ServerDetail) error {
 	}
 
 	return nil
+}
+
+// ClaimDomain generates a verification token for a domain and stores it as pending
+func (s *registryServiceImpl) ClaimDomain(domain string) (*model.VerificationToken, error) {
+	// Create a timeout context for the database operation
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	const maxAttempts = 10
+	for attempt := 1; attempt <= maxAttempts; attempt++ {
+		// Generate a verification token
+		token, err := verification.GenerateVerificationToken()
+		if err != nil {
+			return nil, err
+		}
+
+		// Create the verification token object
+		verificationToken := &model.VerificationToken{
+			Token:     token,
+			CreatedAt: time.Now(),
+		}
+
+		// Try to store the token atomically
+		err = s.db.StoreVerificationToken(ctx, domain, verificationToken)
+		if err != nil {
+			if errors.Is(err, database.ErrTokenAlreadyExists) {
+				// Token collision, try again with a new token
+				continue
+			}
+			// Other error, return it
+			return nil, err
+		}
+
+		// Success! Token was stored atomically
+		return verificationToken, nil
+	}
+
+	// If we've exhausted all attempts, return an error
+	return nil, database.ErrMaxAttemptsExceeded
+}
+
+// GetDomainVerificationStatus retrieves the verification status for a domain
+func (s *registryServiceImpl) GetDomainVerificationStatus(domain string) (*model.VerificationTokens, error) {
+	// Create a timeout context for the database operation
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	// Get the verification tokens from the database
+	tokens, err := s.db.GetVerificationTokens(ctx, domain)
+	if err != nil {
+		return nil, err
+	}
+
+	return tokens, nil
 }
