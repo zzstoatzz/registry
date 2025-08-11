@@ -10,5 +10,5 @@ validate-schemas
 .idea/
 coverage.out
 coverage.html
-
+deploy/infra/infra
 registry
