@@ -8,6 +8,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/danielgtaylor/huma/v2"
+	"github.com/danielgtaylor/huma/v2/adapters/humago"
 	"github.com/google/uuid"
 	v0 "github.com/modelcontextprotocol/registry/internal/api/handlers/v0"
 	"github.com/modelcontextprotocol/registry/internal/model"
@@ -15,10 +17,9 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func TestServersHandler(t *testing.T) {
+func TestServersListEndpoint(t *testing.T) {
 	testCases := []struct {
 		name            string
-		method          string
 		queryParams     string
 		setupMocks      func(*MockRegistryService)
 		expectedStatus  int
@@ -27,8 +28,7 @@ func TestServersHandler(t *testing.T) {
 		expectedError   string
 	}{
 		{
-			name:   "successful list with default parameters",
-			method: http.MethodGet,
+			name: "successful list with default parameters",
 			setupMocks: func(registry *MockRegistryService) {
 				servers := []model.Server{
 					{
@@ -100,8 +100,7 @@ func TestServersHandler(t *testing.T) {
 		},
 		{
 			name:        "successful list with cursor and limit",
-			method:      http.MethodGet,
-			queryParams: "?cursor=550e8400-e29b-41d4-a716-446655440000" + "&limit=10",
+			queryParams: "?cursor=550e8400-e29b-41d4-a716-446655440000&limit=10",
 			setupMocks: func(registry *MockRegistryService) {
 				servers := []model.Server{
 					{
@@ -148,62 +147,46 @@ func TestServersHandler(t *testing.T) {
 		},
 		{
 			name:        "successful list with limit capping at 100",
-			method:      http.MethodGet,
 			queryParams: "?limit=150",
-			setupMocks: func(registry *MockRegistryService) {
-				servers := []model.Server{}
-				registry.Mock.On("List", "", 100).Return(servers, "", nil)
-			},
-			expectedStatus:  http.StatusOK,
-			expectedServers: []model.Server{},
+			setupMocks: func(_ *MockRegistryService) {},
+			expectedStatus:  http.StatusUnprocessableEntity, // Huma rejects values > maximum
+			expectedError:   "validation failed",
 		},
 		{
 			name:           "invalid cursor parameter",
-			method:         http.MethodGet,
 			queryParams:    "?cursor=invalid-uuid",
 			setupMocks:     func(_ *MockRegistryService) {},
-			expectedStatus: http.StatusBadRequest,
-			expectedError:  "Invalid cursor parameter",
+			expectedStatus: http.StatusUnprocessableEntity, // Huma returns 422 for validation errors
+			expectedError:  "validation failed",
 		},
 		{
 			name:           "invalid limit parameter - non-numeric",
-			method:         http.MethodGet,
 			queryParams:    "?limit=abc",
 			setupMocks:     func(_ *MockRegistryService) {},
-			expectedStatus: http.StatusBadRequest,
-			expectedError:  "Invalid limit parameter",
+			expectedStatus: http.StatusUnprocessableEntity, // Huma returns 422 for validation errors
+			expectedError:  "validation failed",
 		},
 		{
 			name:           "invalid limit parameter - zero",
-			method:         http.MethodGet,
 			queryParams:    "?limit=0",
 			setupMocks:     func(_ *MockRegistryService) {},
-			expectedStatus: http.StatusBadRequest,
-			expectedError:  "Limit must be greater than 0",
+			expectedStatus: http.StatusUnprocessableEntity, // Huma returns 422 for validation errors
+			expectedError:  "validation failed",
 		},
 		{
 			name:           "invalid limit parameter - negative",
-			method:         http.MethodGet,
 			queryParams:    "?limit=-5",
 			setupMocks:     func(_ *MockRegistryService) {},
-			expectedStatus: http.StatusBadRequest,
-			expectedError:  "Limit must be greater than 0",
+			expectedStatus: http.StatusUnprocessableEntity, // Huma returns 422 for validation errors
+			expectedError:  "validation failed",
 		},
 		{
-			name:   "registry service error",
-			method: http.MethodGet,
+			name: "registry service error",
 			setupMocks: func(registry *MockRegistryService) {
 				registry.Mock.On("List", "", 30).Return([]model.Server{}, "", errors.New("database connection error"))
 			},
 			expectedStatus: http.StatusInternalServerError,
-			expectedError:  "database connection error",
-		},
-		{
-			name:           "method not allowed",
-			method:         http.MethodPost,
-			setupMocks:     func(_ *MockRegistryService) {},
-			expectedStatus: http.StatusMethodNotAllowed,
-			expectedError:  "Method not allowed",
+			expectedError:  "Failed to get registry list",
 		},
 	}
 
@@ -213,36 +196,40 @@ func TestServersHandler(t *testing.T) {
 			mockRegistry := new(MockRegistryService)
 			tc.setupMocks(mockRegistry)
 
-			// Create handler
-			handler := v0.ServersHandler(mockRegistry)
+			// Create a new test API
+			mux := http.NewServeMux()
+			api := humago.New(mux, huma.DefaultConfig("Test API", "1.0.0"))
+
+			// Register the servers endpoints
+			v0.RegisterServersEndpoints(api, mockRegistry)
 
 			// Create request
 			url := "/v0/servers" + tc.queryParams
-			req, err := http.NewRequestWithContext(context.Background(), tc.method, url, nil)
-			if err != nil {
-				t.Fatal(err)
-			}
+			req := httptest.NewRequest(http.MethodGet, url, nil)
+			w := httptest.NewRecorder()
 
-			// Create response recorder
-			rr := httptest.NewRecorder()
-
-			// Call the handler
-			handler.ServeHTTP(rr, req)
+			// Serve the request
+			mux.ServeHTTP(w, req)
 
 			// Check status code
-			assert.Equal(t, tc.expectedStatus, rr.Code)
+			assert.Equal(t, tc.expectedStatus, w.Code)
 
 			if tc.expectedStatus == http.StatusOK {
 				// Check content type
-				assert.Equal(t, "application/json", rr.Header().Get("Content-Type"))
+				assert.Equal(t, "application/json", w.Header().Get("Content-Type"))
 
 				// Parse response body
-				var resp v0.PaginatedResponse
-				err = json.NewDecoder(rr.Body).Decode(&resp)
+				var resp struct {
+					Servers  []model.Server `json:"servers"`
+					Metadata *v0.Metadata   `json:"metadata,omitempty"`
+				}
+				err := json.NewDecoder(w.Body).Decode(&resp)
 				assert.NoError(t, err)
 
 				// Check the response data
-				assert.Equal(t, tc.expectedServers, resp.Data)
+				if tc.expectedServers != nil {
+					assert.Equal(t, tc.expectedServers, resp.Servers)
+				}
 
 				// Check metadata if expected
 				if tc.expectedMeta != nil {
@@ -253,7 +240,7 @@ func TestServersHandler(t *testing.T) {
 				}
 			} else if tc.expectedError != "" {
 				// Check error message for non-200 responses
-				assert.Contains(t, rr.Body.String(), tc.expectedError)
+				assert.Contains(t, w.Body.String(), tc.expectedError)
 			}
 
 			// Verify mock expectations
@@ -262,14 +249,124 @@ func TestServersHandler(t *testing.T) {
 	}
 }
 
-// TestServersHandlerIntegration tests the servers list handler with actual HTTP requests
-func TestServersHandlerIntegration(t *testing.T) {
+func TestServersDetailEndpoint(t *testing.T) {
+	testCases := []struct {
+		name           string
+		serverID       string
+		setupMocks     func(*MockRegistryService, string)
+		expectedStatus int
+		expectedServer *model.ServerDetail
+		expectedError  string
+	}{
+		{
+			name:     "successful get server detail",
+			serverID: uuid.New().String(),
+			setupMocks: func(registry *MockRegistryService, serverID string) {
+				serverDetail := &model.ServerDetail{
+					Server: model.Server{
+						ID:          serverID,
+						Name:        "test-server-detail",
+						Description: "Test server detail",
+						Repository: model.Repository{
+							URL:    "https://github.com/example/test-server-detail",
+							Source: "github",
+							ID:     "example/test-server-detail",
+						},
+						VersionDetail: model.VersionDetail{
+							Version:     "2.0.0",
+							ReleaseDate: "2025-05-27T12:00:00Z",
+							IsLatest:    true,
+						},
+					},
+				}
+				registry.Mock.On("GetByID", serverID).Return(serverDetail, nil)
+			},
+			expectedStatus: http.StatusOK,
+		},
+		{
+			name:           "invalid server ID format",
+			serverID:       "invalid-uuid",
+			setupMocks:     func(_ *MockRegistryService, _ string) {},
+			expectedStatus: http.StatusUnprocessableEntity,
+			expectedError:  "validation failed",
+		},
+		{
+			name:     "server not found",
+			serverID: uuid.New().String(),
+			setupMocks: func(registry *MockRegistryService, serverID string) {
+				registry.Mock.On("GetByID", serverID).Return(nil, errors.New("record not found"))
+			},
+			expectedStatus: http.StatusNotFound,
+			expectedError:  "Server not found",
+		},
+		{
+			name:     "registry service error",
+			serverID: uuid.New().String(),
+			setupMocks: func(registry *MockRegistryService, serverID string) {
+				registry.Mock.On("GetByID", serverID).Return(nil, errors.New("database connection error"))
+			},
+			expectedStatus: http.StatusInternalServerError,
+			expectedError:  "Failed to get server details",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			// Create mock registry service
+			mockRegistry := new(MockRegistryService)
+			tc.setupMocks(mockRegistry, tc.serverID)
+
+			// Create a new test API
+			mux := http.NewServeMux()
+			api := humago.New(mux, huma.DefaultConfig("Test API", "1.0.0"))
+
+			// Register the servers endpoints
+			v0.RegisterServersEndpoints(api, mockRegistry)
+
+			// Create request
+			url := "/v0/servers/" + tc.serverID
+			req := httptest.NewRequest(http.MethodGet, url, nil)
+			w := httptest.NewRecorder()
+
+			// Serve the request
+			mux.ServeHTTP(w, req)
+
+			// Check status code
+			assert.Equal(t, tc.expectedStatus, w.Code)
+
+			if tc.expectedStatus == http.StatusOK {
+				// Check content type
+				assert.Equal(t, "application/json", w.Header().Get("Content-Type"))
+
+				// Parse response body
+				var serverDetailResp model.ServerDetail
+				err := json.NewDecoder(w.Body).Decode(&serverDetailResp)
+				assert.NoError(t, err)
+
+				// Check that we got a valid response
+				assert.NotEmpty(t, serverDetailResp.ID)
+				assert.NotEmpty(t, serverDetailResp.Name)
+			} else if tc.expectedError != "" {
+				// Check error message for non-200 responses
+				assert.Contains(t, w.Body.String(), tc.expectedError)
+			}
+
+			// Verify mock expectations
+			mockRegistry.AssertExpectations(t)
+		})
+	}
+}
+
+// TestServersEndpointsIntegration tests the servers endpoints with actual HTTP requests
+func TestServersEndpointsIntegration(t *testing.T) {
 	// Create mock registry service
 	mockRegistry := new(MockRegistryService)
 
+	// Test data
+	serverID := uuid.New().String()
 	servers := []model.Server{
 		{
-			ID:          "550e8400-e29b-41d4-a716-446655440004",
+			ID:          serverID,
 			Name:        "integration-test-server",
 			Description: "Integration test server",
 			Repository: model.Repository{
@@ -285,106 +382,86 @@ func TestServersHandlerIntegration(t *testing.T) {
 		},
 	}
 
-	mockRegistry.Mock.On("List", "", 30).Return(servers, "", nil)
-
-	// Create test server
-	server := httptest.NewServer(v0.ServersHandler(mockRegistry))
-	defer server.Close()
-
-	// Send request to the test server
-	ctx := context.Background()
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, server.URL, nil)
-	if err != nil {
-		t.Fatalf("Failed to create request: %v", err)
-	}
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		t.Fatalf("Failed to send request: %v", err)
-	}
-	defer resp.Body.Close()
-
-	// Check status code
-	assert.Equal(t, http.StatusOK, resp.StatusCode)
-
-	// Check content type
-	assert.Equal(t, "application/json", resp.Header.Get("Content-Type"))
-
-	// Parse response body
-	var paginatedResp v0.PaginatedResponse
-	err = json.NewDecoder(resp.Body).Decode(&paginatedResp)
-	assert.NoError(t, err)
-
-	// Check the response data
-	assert.Equal(t, servers, paginatedResp.Data)
-	assert.Empty(t, paginatedResp.Metadata.NextCursor)
-
-	// Verify mock expectations
-	mockRegistry.AssertExpectations(t)
-}
-
-// TestServersDetailHandlerIntegration tests the servers detail handler with actual HTTP requests
-func TestServersDetailHandlerIntegration(t *testing.T) {
-	serverID := uuid.New().String()
-
-	// Create mock registry service
-	mockRegistry := new(MockRegistryService)
-
 	serverDetail := &model.ServerDetail{
-		Server: model.Server{
-			ID:          serverID,
-			Name:        "integration-test-server-detail",
-			Description: "Integration test server detail",
-			Repository: model.Repository{
-				URL:    "https://github.com/example/integration-test-detail",
-				Source: "github",
-				ID:     "example/integration-test-detail",
-			},
-			VersionDetail: model.VersionDetail{
-				Version:     "2.0.0",
-				ReleaseDate: "2025-05-27T12:00:00Z",
-				IsLatest:    true,
-			},
-		},
+		Server: servers[0],
 	}
 
+	// Setup mocks
+	mockRegistry.Mock.On("List", "", 30).Return(servers, "", nil)
 	mockRegistry.Mock.On("GetByID", serverID).Return(serverDetail, nil)
 
+	// Create a new test API
+	mux := http.NewServeMux()
+	api := humago.New(mux, huma.DefaultConfig("Test API", "1.0.0"))
+
+	// Register the servers endpoints
+	v0.RegisterServersEndpoints(api, mockRegistry)
+
 	// Create test server
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		r.SetPathValue("id", serverID)
-		v0.ServersDetailHandler(mockRegistry).ServeHTTP(w, r)
-	}))
+	server := httptest.NewServer(mux)
 	defer server.Close()
 
-	// Send request to the test server
-	ctx := context.Background()
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, server.URL, nil)
-	if err != nil {
-		t.Fatalf("Failed to create request: %v", err)
-	}
+	// Test list endpoint
+	t.Run("list servers integration", func(t *testing.T) {
+		ctx := context.Background()
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, server.URL+"/v0/servers", nil)
+		if err != nil {
+			t.Fatalf("Failed to create request: %v", err)
+		}
+		
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		if err != nil {
+			t.Fatalf("Failed to send request: %v", err)
+		}
+		defer resp.Body.Close()
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		t.Fatalf("Failed to send request: %v", err)
-	}
-	defer resp.Body.Close()
+		// Check status code
+		assert.Equal(t, http.StatusOK, resp.StatusCode)
 
-	// Check status code
-	assert.Equal(t, http.StatusOK, resp.StatusCode)
+		// Check content type
+		assert.Equal(t, "application/json", resp.Header.Get("Content-Type"))
 
-	// Check content type
-	assert.Equal(t, "application/json", resp.Header.Get("Content-Type"))
+		// Parse response body
+		var listResp struct {
+			Servers []model.Server `json:"servers"`
+		}
+		err = json.NewDecoder(resp.Body).Decode(&listResp)
+		assert.NoError(t, err)
 
-	// Parse response body
-	var serverDetailResp model.ServerDetail
-	err = json.NewDecoder(resp.Body).Decode(&serverDetailResp)
-	assert.NoError(t, err)
+		// Check the response data
+		assert.Equal(t, servers, listResp.Servers)
+	})
 
-	// Check the response data
-	assert.Equal(t, *serverDetail, serverDetailResp)
+	// Test get server detail endpoint
+	t.Run("get server detail integration", func(t *testing.T) {
+		ctx := context.Background()
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, server.URL+"/v0/servers/"+serverID, nil)
+		if err != nil {
+			t.Fatalf("Failed to create request: %v", err)
+		}
+		
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		if err != nil {
+			t.Fatalf("Failed to send request: %v", err)
+		}
+		defer resp.Body.Close()
+
+		// Check status code
+		assert.Equal(t, http.StatusOK, resp.StatusCode)
+
+		// Check content type
+		assert.Equal(t, "application/json", resp.Header.Get("Content-Type"))
+
+		// Parse response body
+		var serverDetailResp model.ServerDetail
+		err = json.NewDecoder(resp.Body).Decode(&serverDetailResp)
+		assert.NoError(t, err)
+
+		// Check the response data
+		assert.Equal(t, *serverDetail, serverDetailResp)
+	})
 
 	// Verify mock expectations
 	mockRegistry.AssertExpectations(t)

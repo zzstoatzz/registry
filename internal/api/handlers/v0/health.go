@@ -1,27 +1,34 @@
-// Package v0 contains API handlers for version 0 of the API
 package v0
 
 import (
-	"encoding/json"
+	"context"
 	"net/http"
 
+	"github.com/danielgtaylor/huma/v2"
 	"github.com/modelcontextprotocol/registry/internal/config"
 )
 
-type HealthResponse struct {
-	Status         string `json:"status"`
-	GitHubClientID string `json:"github_client_id"`
+// HealthBody represents the health check response body
+type HealthBody struct {
+	Status         string `json:"status" example:"ok" doc:"Health status"`
+	GitHubClientID string `json:"github_client_id,omitempty" doc:"GitHub OAuth App Client ID"`
 }
 
-// HealthHandler returns a handler for health check endpoint
-func HealthHandler(cfg *config.Config) http.HandlerFunc {
-	return func(w http.ResponseWriter, _ *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		if err := json.NewEncoder(w).Encode(HealthResponse{
-			Status:         "ok",
-			GitHubClientID: cfg.GithubClientID,
-		}); err != nil {
-			http.Error(w, "Failed to encode response", http.StatusInternalServerError)
-		}
-	}
+// RegisterHealthEndpoint registers the health check endpoint
+func RegisterHealthEndpoint(api huma.API, cfg *config.Config) {
+	huma.Register(api, huma.Operation{
+		OperationID: "get-health",
+		Method:      http.MethodGet,
+		Path:        "/v0/health",
+		Summary:     "Health check",
+		Description: "Check the health status of the API",
+		Tags:        []string{"health"},
+	}, func(_ context.Context, _ *struct{}) (*Response[HealthBody], error) {
+		return &Response[HealthBody]{
+			Body: HealthBody{
+				Status:         "ok",
+				GitHubClientID: cfg.GithubClientID,
+			},
+		}, nil
+	})
 }
