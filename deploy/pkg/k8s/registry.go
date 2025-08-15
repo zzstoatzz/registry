@@ -15,7 +15,6 @@ import (
 func DeployMCPRegistry(ctx *pulumi.Context, cluster *providers.ProviderInfo, environment string) (*corev1.Service, error) {
 	conf := config.New(ctx, "mcp-registry")
 	githubClientId := conf.Require("githubClientId")
-	githubClientSecret := conf.RequireSecret("githubClientSecret")
 
 	// Create Secret with sensitive configuration
 	secret, err := corev1.NewSecret(ctx, "mcp-registry-secrets", &corev1.SecretArgs{
@@ -28,7 +27,8 @@ func DeployMCPRegistry(ctx *pulumi.Context, cluster *providers.ProviderInfo, env
 			},
 		},
 		StringData: pulumi.StringMap{
-			"GITHUB_CLIENT_SECRET": githubClientSecret,
+			"GITHUB_CLIENT_SECRET": conf.RequireSecret("githubClientSecret"),
+			"JWT_PRIVATE_KEY":      conf.RequireSecret("jwtPrivateKey"),
 		},
 		Type: pulumi.String("Opaque"),
 	}, pulumi.Provider(cluster.Provider))
@@ -86,6 +86,15 @@ func DeployMCPRegistry(ctx *pulumi.Context, cluster *providers.ProviderInfo, env
 										SecretKeyRef: &corev1.SecretKeySelectorArgs{
 											Name: secret.Metadata.Name(),
 											Key:  pulumi.String("GITHUB_CLIENT_SECRET"),
+										},
+									},
+								},
+								&corev1.EnvVarArgs{
+									Name: pulumi.String("MCP_REGISTRY_JWT_PRIVATE_KEY"),
+									ValueFrom: &corev1.EnvVarSourceArgs{
+										SecretKeyRef: &corev1.SecretKeySelectorArgs{
+											Name: secret.Metadata.Name(),
+											Key:  pulumi.String("JWT_PRIVATE_KEY"),
 										},
 									},
 								},
