@@ -87,13 +87,14 @@ type Argument struct {
 }
 
 type Package struct {
-	RegistryName         string          `json:"registry_name" bson:"registry_name"`
-	Name                 string          `json:"name" bson:"name"`
-	Version              string          `json:"version" bson:"version"`
-	RunTimeHint          string          `json:"runtime_hint,omitempty" bson:"runtime_hint,omitempty"`
-	RuntimeArguments     []Argument      `json:"runtime_arguments,omitempty" bson:"runtime_arguments,omitempty"`
-	PackageArguments     []Argument      `json:"package_arguments,omitempty" bson:"package_arguments,omitempty"`
-	EnvironmentVariables []KeyValueInput `json:"environment_variables,omitempty" bson:"environment_variables,omitempty"`
+	RegistryName         string            `json:"registry_name" bson:"registry_name"`
+	Name                 string            `json:"name" bson:"name"`
+	Version              string            `json:"version" bson:"version"`
+	FileHashes           map[string]string `json:"file_hashes,omitempty" bson:"file_hashes,omitempty"`
+	RunTimeHint          string            `json:"runtime_hint,omitempty" bson:"runtime_hint,omitempty"`
+	RuntimeArguments     []Argument        `json:"runtime_arguments,omitempty" bson:"runtime_arguments,omitempty"`
+	PackageArguments     []Argument        `json:"package_arguments,omitempty" bson:"package_arguments,omitempty"`
+	EnvironmentVariables []KeyValueInput   `json:"environment_variables,omitempty" bson:"environment_variables,omitempty"`
 }
 
 // Remote represents a remote connection endpoint

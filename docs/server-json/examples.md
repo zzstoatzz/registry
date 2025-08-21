@@ -389,6 +389,38 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
 }
 ```
 
+## MCP Bundle (MCPB) Package Example
+
+```json
+{
+  "name": "io.modelcontextprotocol/text-editor",
+  "description": "MCP Bundle server for advanced text editing capabilities",
+  "repository": {
+    "url": "https://github.com/modelcontextprotocol/text-editor-mcpb",
+    "source": "github",
+    "id": "mcpb-123ab-cdef4-56789-012ghi-jklmnopqrstu"
+  },
+  "version_detail": {
+    "version": "1.0.2"
+  },
+  "packages": [
+    {
+      "registry_name": "mcpb",
+      "name": "https://github.com/modelcontextprotocol/text-editor-mcpb/releases/download/v1.0.2/text-editor.mcpb",
+      "version": "1.0.2",
+      "file_hashes": {
+        "sha-256": "fe333e598595000ae021bd27117db32ec69af6987f507ba7a63c90638ff633ce"
+      }
+    }
+  ]
+}
+```
+
+This example shows an MCPB (MCP Bundle) package that:
+- Is hosted on GitHub Releases (an allowlisted provider)
+- Includes a SHA-256 hash for integrity verification
+- Can be downloaded and executed directly by MCP clients that support MCPB
+
 ## Deprecated Server Example
 
 ```json

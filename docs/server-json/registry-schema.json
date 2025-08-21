@@ -22,7 +22,8 @@
               "npm",
               "pypi",
               "docker",
-              "nuget"
+              "nuget",
+              "mcpb"
             ]
           },
           "runtime_hint": {
