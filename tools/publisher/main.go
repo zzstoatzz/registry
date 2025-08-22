@@ -3,6 +3,8 @@ package main
 import (
 	"bytes"
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"flag"
@@ -61,12 +63,13 @@ type Package struct {
 }
 
 type ServerJSON struct {
-	Name          string        `json:"name"`
-	Description   string        `json:"description"`
-	Status        string        `json:"status,omitempty"`
-	Repository    Repository    `json:"repository"`
-	VersionDetail VersionDetail `json:"version_detail"`
-	Packages      []Package     `json:"packages"`
+	Name          string            `json:"name"`
+	Description   string            `json:"description"`
+	Status        string            `json:"status,omitempty"`
+	Repository    Repository        `json:"repository"`
+	VersionDetail VersionDetail     `json:"version_detail"`
+	Packages      []Package         `json:"packages"`
+	FileHashes    map[string]string `json:"file_hashes,omitempty"`
 }
 
 func main() {
@@ -81,6 +84,10 @@ func main() {
 		err = publishCommand()
 	case "create":
 		err = createCommand()
+	case "verify":
+		err = verifyCommand()
+	case "hash-gen":
+		err = hashGenCommand()
 	default:
 		printUsage()
 	}
@@ -95,6 +102,8 @@ func printUsage() {
 	fmt.Fprint(os.Stdout, "Usage:\n")
 	fmt.Fprint(os.Stdout, "  mcp-publisher publish [flags]    Publish a server.json file to the registry\n")
 	fmt.Fprint(os.Stdout, "  mcp-publisher create [flags]     Create a new server.json file\n")
+	fmt.Fprint(os.Stdout, "  mcp-publisher verify [flags]     Verify file hashes in a server.json file\n")
+	fmt.Fprint(os.Stdout, "  mcp-publisher hash-gen [flags]   Generate file hashes for a server.json file\n")
 	fmt.Fprint(os.Stdout, "\n")
 	fmt.Fprint(os.Stdout, "Use 'mcp-publisher <command> --help' for more information about a command.\n")
 }
@@ -106,12 +115,14 @@ func publishCommand() error {
 	var mcpFilePath string
 	var forceLogin bool
 	var authMethod string
+	var noHash bool
 
 	// Command-line flags for configuration
 	publishFlags.StringVar(&registryURL, "registry-url", "", "URL of the registry (required)")
 	publishFlags.StringVar(&mcpFilePath, "mcp-file", "", "path to the MCP file (required)")
 	publishFlags.BoolVar(&forceLogin, "login", false, "force a new login even if a token exists")
 	publishFlags.StringVar(&authMethod, "auth-method", "github-at", "authentication method (default: github-at)")
+	publishFlags.BoolVar(&noHash, "no-hash", false, "skip file hash generation")
 
 	// Set custom usage function
 	publishFlags.Usage = func() {
@@ -124,6 +135,7 @@ func publishCommand() error {
 		fmt.Fprint(os.Stdout, "  --mcp-file string        path to the MCP file (required)\n")
 		fmt.Fprint(os.Stdout, "  --login                  force a new login even if a token exists\n")
 		fmt.Fprint(os.Stdout, "  --auth-method string     authentication method (default: github-at)\n")
+		fmt.Fprint(os.Stdout, "  --no-hash                skip file hash generation\n")
 	}
 
 	if err := publishFlags.Parse(os.Args[2:]); err != nil {
@@ -139,6 +151,28 @@ func publishCommand() error {
 	mcpData, err := os.ReadFile(mcpFilePath)
 	if err != nil {
 		return fmt.Errorf("error reading MCP file: %w", err)
+	}
+
+	// Generate file hashes if not disabled
+	if !noHash {
+		log.Println("Generating file hashes...")
+		var serverJSON ServerJSON
+		if err := json.Unmarshal(mcpData, &serverJSON); err != nil {
+			return fmt.Errorf("error parsing server.json: %w", err)
+		}
+
+		hashes, err := generateFileHashes(&serverJSON)
+		if err != nil {
+			log.Printf("Warning: Could not generate file hashes: %v", err)
+			log.Println("Continuing without hashes...")
+		} else if len(hashes) > 0 {
+			serverJSON.FileHashes = hashes
+			mcpData, err = json.MarshalIndent(serverJSON, "", "  ")
+			if err != nil {
+				return fmt.Errorf("error marshaling server.json with hashes: %w", err)
+			}
+			log.Printf("Generated %d file hash(es)", len(hashes))
+		}
 	}
 
 	var authProvider auth.Provider // Determine the authentication method
@@ -522,4 +556,348 @@ func smartSplit(command string) []string {
 	}
 
 	return parts
+}
+
+// generateFileHashes generates SHA-256 hashes for package files
+func generateFileHashes(serverJSON *ServerJSON) (map[string]string, error) {
+	hashes := make(map[string]string)
+	
+	for _, pkg := range serverJSON.Packages {
+		// Handle different package location types
+		switch {
+		case pkg.Location.Type == "mcpb":
+			// Direct URL package (MCPB)
+			if pkg.Location.URL != "" {
+				identifier := pkg.Location.URL
+				hash, err := downloadAndHash(pkg.Location.URL)
+				if err != nil {
+					return nil, fmt.Errorf("failed to hash %s: %w", identifier, err)
+				}
+				hashes[identifier] = fmt.Sprintf("sha256:%s", hash)
+			}
+			
+		case pkg.Location.RegistryName == "npm" && pkg.Location.Name != "":
+			// NPM package
+			packageFullName := pkg.Location.Name
+			if pkg.Version != "" {
+				packageFullName = fmt.Sprintf("%s@%s", pkg.Location.Name, pkg.Version)
+			}
+			
+			// For NPM packages, we need to fetch the package metadata to get the tarball URL
+			tarballURL, err := getNPMTarballURL(pkg.Location.Name, pkg.Version)
+			if err != nil {
+				log.Printf("Warning: Could not get NPM tarball URL for %s: %v", packageFullName, err)
+				continue
+			}
+			
+			hash, err := downloadAndHash(tarballURL)
+			if err != nil {
+				return nil, fmt.Errorf("failed to hash NPM package %s: %w", packageFullName, err)
+			}
+			
+			identifier := fmt.Sprintf("npm:%s", packageFullName)
+			hashes[identifier] = fmt.Sprintf("sha256:%s", hash)
+			
+		case pkg.Location.RegistryName == "pypi" && pkg.Location.Name != "":
+			// Python package
+			packageFullName := pkg.Location.Name
+			if pkg.Version != "" {
+				packageFullName = fmt.Sprintf("%s==%s", pkg.Location.Name, pkg.Version)
+			}
+			
+			// For PyPI packages, we would need to fetch from PyPI API
+			// This is a simplified version - real implementation would need PyPI API calls
+			log.Printf("Warning: PyPI hash generation not yet implemented for %s", packageFullName)
+			
+		case pkg.Location.RegistryName == "docker" && pkg.Location.Name != "":
+			// Docker images - skip hash generation as they have their own digest system
+			log.Printf("Info: Skipping hash generation for Docker image %s (uses digests)", pkg.Location.Name)
+			
+		default:
+			log.Printf("Warning: Unsupported package type for hash generation: %+v", pkg.Location)
+		}
+	}
+	
+	return hashes, nil
+}
+
+// downloadAndHash downloads a file and computes its SHA-256 hash
+func downloadAndHash(url string) (string, error) {
+	// Create temporary file for download
+	tmpFile, err := os.CreateTemp("", "mcp-hash-*")
+	if err != nil {
+		return "", fmt.Errorf("failed to create temp file: %w", err)
+	}
+	defer os.Remove(tmpFile.Name())
+	defer tmpFile.Close()
+	
+	// Download the file
+	resp, err := http.Get(url)
+	if err != nil {
+		return "", fmt.Errorf("failed to download from %s: %w", url, err)
+	}
+	defer resp.Body.Close()
+	
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("download failed with status %d", resp.StatusCode)
+	}
+	
+	// Stream to temp file and compute hash simultaneously
+	hasher := sha256.New()
+	writer := io.MultiWriter(tmpFile, hasher)
+	
+	_, err = io.Copy(writer, resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("failed to download/hash file: %w", err)
+	}
+	
+	return hex.EncodeToString(hasher.Sum(nil)), nil
+}
+
+// getNPMTarballURL fetches the tarball URL for an NPM package
+func getNPMTarballURL(packageName, version string) (string, error) {
+	// Construct NPM registry API URL
+	registryURL := fmt.Sprintf("https://registry.npmjs.org/%s", packageName)
+	if version != "" {
+		registryURL = fmt.Sprintf("%s/%s", registryURL, version)
+	}
+	
+	resp, err := http.Get(registryURL)
+	if err != nil {
+		return "", fmt.Errorf("failed to fetch NPM metadata: %w", err)
+	}
+	defer resp.Body.Close()
+	
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("NPM registry returned status %d", resp.StatusCode)
+	}
+	
+	var metadata map[string]interface{}
+	if err := json.NewDecoder(resp.Body).Decode(&metadata); err != nil {
+		return "", fmt.Errorf("failed to parse NPM metadata: %w", err)
+	}
+	
+	// Extract tarball URL from metadata
+	// The structure depends on whether we fetched a specific version or the latest
+	if dist, ok := metadata["dist"].(map[string]interface{}); ok {
+		if tarball, ok := dist["tarball"].(string); ok {
+			return tarball, nil
+		}
+	}
+	
+	// If no specific version, try to get the latest version's tarball
+	if versions, ok := metadata["versions"].(map[string]interface{}); ok {
+		// Get the latest version
+		var latestVersion string
+		if distTags, ok := metadata["dist-tags"].(map[string]interface{}); ok {
+			if latest, ok := distTags["latest"].(string); ok {
+				latestVersion = latest
+			}
+		}
+		
+		if latestVersion != "" {
+			if versionData, ok := versions[latestVersion].(map[string]interface{}); ok {
+				if dist, ok := versionData["dist"].(map[string]interface{}); ok {
+					if tarball, ok := dist["tarball"].(string); ok {
+						return tarball, nil
+					}
+				}
+			}
+		}
+	}
+	
+	return "", fmt.Errorf("could not find tarball URL in NPM metadata")
+}
+
+// verifyCommand verifies file hashes in a server.json file
+func verifyCommand() error {
+	verifyFlags := flag.NewFlagSet("verify", flag.ExitOnError)
+	
+	var mcpFilePath string
+	verifyFlags.StringVar(&mcpFilePath, "mcp-file", "server.json", "path to the MCP file")
+	
+	verifyFlags.Usage = func() {
+		fmt.Fprint(os.Stdout, "Usage: mcp-publisher verify [flags]\n")
+		fmt.Fprint(os.Stdout, "\n")
+		fmt.Fprint(os.Stdout, "Verify file hashes in a server.json file\n")
+		fmt.Fprint(os.Stdout, "\n")
+		fmt.Fprint(os.Stdout, "Flags:\n")
+		fmt.Fprint(os.Stdout, "  --mcp-file string        path to the MCP file (default: server.json)\n")
+	}
+	
+	if err := verifyFlags.Parse(os.Args[2:]); err != nil {
+		return err
+	}
+	
+	// Read the server.json file
+	data, err := os.ReadFile(mcpFilePath)
+	if err != nil {
+		return fmt.Errorf("error reading file: %w", err)
+	}
+	
+	var serverJSON ServerJSON
+	if err := json.Unmarshal(data, &serverJSON); err != nil {
+		return fmt.Errorf("error parsing JSON: %w", err)
+	}
+	
+	if len(serverJSON.FileHashes) == 0 {
+		log.Println("No file hashes found in server.json")
+		return nil
+	}
+	
+	log.Printf("Verifying %d file hash(es)...\n", len(serverJSON.FileHashes))
+	
+	allValid := true
+	for identifier, expectedHash := range serverJSON.FileHashes {
+		// Extract the hash algorithm and value
+		parts := strings.SplitN(expectedHash, ":", 2)
+		if len(parts) != 2 || parts[0] != "sha256" {
+			log.Printf("❌ %s: Invalid hash format\n", identifier)
+			allValid = false
+			continue
+		}
+		
+		// Determine the URL to download based on identifier
+		var downloadURL string
+		if strings.HasPrefix(identifier, "http://") || strings.HasPrefix(identifier, "https://") {
+			downloadURL = identifier
+		} else if strings.HasPrefix(identifier, "npm:") {
+			packageName := strings.TrimPrefix(identifier, "npm:")
+			// Parse package name and version
+			atIndex := strings.LastIndex(packageName, "@")
+			var name, version string
+			if atIndex > 0 {
+				name = packageName[:atIndex]
+				version = packageName[atIndex+1:]
+			} else {
+				name = packageName
+			}
+			
+			url, err := getNPMTarballURL(name, version)
+			if err != nil {
+				log.Printf("❌ %s: Failed to get download URL: %v\n", identifier, err)
+				allValid = false
+				continue
+			}
+			downloadURL = url
+		} else {
+			log.Printf("⚠️  %s: Unsupported identifier type, skipping\n", identifier)
+			continue
+		}
+		
+		// Download and compute hash
+		actualHash, err := downloadAndHash(downloadURL)
+		if err != nil {
+			log.Printf("❌ %s: Failed to download/hash: %v\n", identifier, err)
+			allValid = false
+			continue
+		}
+		
+		if parts[1] == actualHash {
+			log.Printf("✅ %s: Valid\n", identifier)
+		} else {
+			log.Printf("❌ %s: Hash mismatch\n", identifier)
+			log.Printf("   Expected: %s\n", parts[1])
+			log.Printf("   Actual:   %s\n", actualHash)
+			allValid = false
+		}
+	}
+	
+	if allValid {
+		log.Println("\n✅ All hashes verified successfully!")
+		return nil
+	} else {
+		return fmt.Errorf("\n❌ Hash verification failed")
+	}
+}
+
+// hashGenCommand generates file hashes for a server.json file
+func hashGenCommand() error {
+	hashGenFlags := flag.NewFlagSet("hash-gen", flag.ExitOnError)
+	
+	var mcpFilePath string
+	var outputPath string
+	var dryRun bool
+	
+	hashGenFlags.StringVar(&mcpFilePath, "mcp-file", "server.json", "path to the MCP file")
+	hashGenFlags.StringVar(&outputPath, "output", "", "output file path (default: update input file)")
+	hashGenFlags.BoolVar(&dryRun, "dry-run", false, "print hashes to stdout without modifying files")
+	
+	hashGenFlags.Usage = func() {
+		fmt.Fprint(os.Stdout, "Usage: mcp-publisher hash-gen [flags]\n")
+		fmt.Fprint(os.Stdout, "\n")
+		fmt.Fprint(os.Stdout, "Generate file hashes for a server.json file\n")
+		fmt.Fprint(os.Stdout, "\n")
+		fmt.Fprint(os.Stdout, "Flags:\n")
+		fmt.Fprint(os.Stdout, "  --mcp-file string        path to the MCP file (default: server.json)\n")
+		fmt.Fprint(os.Stdout, "  --output string          output file path (default: update input file)\n")
+		fmt.Fprint(os.Stdout, "  --dry-run                print hashes to stdout without modifying files\n")
+	}
+	
+	if err := hashGenFlags.Parse(os.Args[2:]); err != nil {
+		return err
+	}
+	
+	// Read the server.json file
+	data, err := os.ReadFile(mcpFilePath)
+	if err != nil {
+		return fmt.Errorf("error reading file: %w", err)
+	}
+	
+	var serverJSON ServerJSON
+	if err := json.Unmarshal(data, &serverJSON); err != nil {
+		return fmt.Errorf("error parsing JSON: %w", err)
+	}
+	
+	// Generate hashes
+	log.Println("Generating file hashes...")
+	hashes, err := generateFileHashes(&serverJSON)
+	if err != nil {
+		return fmt.Errorf("failed to generate hashes: %w", err)
+	}
+	
+	if len(hashes) == 0 {
+		log.Println("No hashes generated (no supported package types found)")
+		return nil
+	}
+	
+	log.Printf("Generated %d file hash(es)\n", len(hashes))
+	
+	// Update the server JSON with new hashes
+	serverJSON.FileHashes = hashes
+	
+	// Marshal to JSON
+	output, err := json.MarshalIndent(serverJSON, "", "  ")
+	if err != nil {
+		return fmt.Errorf("error marshaling JSON: %w", err)
+	}
+	
+	if dryRun {
+		// Print hashes to stdout
+		fmt.Println("\nGenerated hashes:")
+		for id, hash := range hashes {
+			fmt.Printf("  %s: %s\n", id, hash)
+		}
+		fmt.Println("\nFull server.json with hashes:")
+		fmt.Println(string(output))
+	} else {
+		// Determine output path
+		if outputPath == "" {
+			outputPath = mcpFilePath
+		}
+		
+		// Write to file
+		if err := os.WriteFile(outputPath, output, 0644); err != nil {
+			return fmt.Errorf("error writing file: %w", err)
+		}
+		
+		log.Printf("✅ Updated %s with file hashes\n", outputPath)
+		
+		// Display the hashes
+		for id, hash := range hashes {
+			log.Printf("  %s: %s\n", id, hash)
+		}
+	}
+	
+	return nil
 }
