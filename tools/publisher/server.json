@@ -4,8 +4,10 @@
     "status": "active",
     "packages": [
         {
-            "registry_name": "npm",
-            "name": "io.github.<owner>/<server-name>",
+            "location": {
+                "registry_name": "npm",
+                "name": "io.github.<owner>/<server-name>"
+            },
             "version": "0.2.23",
             "package_arguments": [
                 {
@@ -25,8 +27,10 @@
                 }
             ]
         },{
-            "registry_name": "docker",
-            "name": "io.github.<owner>/<server-name>-cli",
+            "location": {
+                "registry_name": "docker",
+                "name": "io.github.<owner>/<server-name>-cli"
+            },
             "version": "0.123.223",
             "runtime_hint": "docker",
             "runtime_arguments": [

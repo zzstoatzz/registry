@@ -90,7 +90,7 @@ func (s *registryServiceImpl) GetByID(id string) (*model.ServerDetail, error) {
 // validateMCPBPackage validates MCPB packages to ensure they meet requirements
 func validateMCPBPackage(pkg *model.Package) error {
 	// Validate that the URL is from an allowlisted host
-	parsedURL, err := url.Parse(pkg.Name)
+	parsedURL, err := url.Parse(pkg.Location.URL)
 	if err != nil {
 		return fmt.Errorf("invalid MCPB package URL: %w", err)
 	}
@@ -144,7 +144,7 @@ func (s *registryServiceImpl) Publish(serverDetail *model.ServerDetail) error {
 
 	// Validate MCPB packages
 	for _, pkg := range serverDetail.Packages {
-		if strings.ToLower(pkg.RegistryName) == "mcpb" {
+		if strings.ToLower(pkg.Location.Type) == "mcpb" {
 			if err := validateMCPBPackage(&pkg); err != nil {
 				return fmt.Errorf("validation failed: %w", err)
 			}

@@ -74,23 +74,52 @@
         }
       }
     },
+    "PackageLocation": {
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["registry_name", "name"],
+          "properties": {
+            "registry_name": {
+              "type": "string",
+              "description": "Package registry type",
+              "example": "npm"
+            },
+            "name": {
+              "type": "string",
+              "description": "Package name in the registry",
+              "example": "@modelcontextprotocol/server-filesystem"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "url"],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["mcpb"],
+              "description": "Package location type for direct URL references"
+            },
+            "url": {
+              "type": "string",
+              "format": "uri",
+              "description": "Direct URL to the package file",
+              "example": "https://github.com/modelcontextprotocol/text-editor-mcpb/releases/download/v1.0.2/text-editor.mcpb"
+            }
+          }
+        }
+      ]
+    },
     "Package": {
       "type": "object",
       "required": [
-        "registry_name",
-        "name",
-        "version"
+        "location"
       ],
       "properties": {
-        "registry_name": {
-          "type": "string",
-          "description": "Package registry type",
-          "example": "npm"
-        },
-        "name": {
-          "type": "string",
-          "description": "Package name in the registry",
-          "example": "io.modelcontextprotocol/filesystem"
+        "location": {
+          "$ref": "#/$defs/PackageLocation"
         },
         "version": {
           "type": "string",

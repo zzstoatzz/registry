@@ -41,10 +41,19 @@ type RuntimeArgument struct {
 	ValueHint   string `json:"value_hint"`
 }
 
+type PackageLocation struct {
+	// For registry-based packages
+	RegistryName string `json:"registry_name,omitempty"`
+	Name         string `json:"name,omitempty"`
+	
+	// For direct URL packages (e.g., MCPB)
+	Type string `json:"type,omitempty"`
+	URL  string `json:"url,omitempty"`
+}
+
 type Package struct {
-	RegistryName         string                `json:"registry_name"`
-	Name                 string                `json:"name"`
-	Version              string                `json:"version"`
+	Location             PackageLocation       `json:"location"`
+	Version              string                `json:"version,omitempty"`
 	RuntimeHint          string                `json:"runtime_hint,omitempty"`
 	RuntimeArguments     []RuntimeArgument     `json:"runtime_arguments,omitempty"`
 	PackageArguments     []RuntimeArgument     `json:"package_arguments,omitempty"`
@@ -451,8 +460,10 @@ func createServerStructure(
 
 	// Create package
 	pkg := Package{
-		RegistryName:         registryName,
-		Name:                 packageName,
+		Location: PackageLocation{
+			RegistryName: registryName,
+			Name:         packageName,
+		},
 		Version:              packageVersion,
 		RuntimeHint:          runtimeHint,
 		RuntimeArguments:     runtimeArguments,

@@ -228,8 +228,10 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
   },
   "packages": [
     {
-      "registry_name": "nuget",
-      "name": "Knapcode.SampleMcpServer",
+      "location": {
+        "registry_name": "nuget",
+        "name": "Knapcode.SampleMcpServer"
+      },
       "version": "0.5.0",
       "runtime_hint": "dnx",
       "environment_variables": [
@@ -261,8 +263,10 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
   },
   "packages": [
     {
-      "registry_name": "docker",
-      "name": "mcp/database-manager",
+      "location": {
+        "registry_name": "docker",
+        "name": "mcp/database-manager"
+      },
       "version": "3.1.0",
       "runtime_arguments": [
         {
@@ -347,8 +351,10 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
   },
   "packages": [
     {
-      "registry_name": "npm",
-      "name": "@example/hybrid-mcp-server",
+      "location": {
+        "registry_name": "npm",
+        "name": "@example/hybrid-mcp-server"
+      },
       "version": "1.5.0",
       "runtime_hint": "npx",
       "package_arguments": [
@@ -405,8 +411,10 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
   },
   "packages": [
     {
-      "registry_name": "mcpb",
-      "name": "https://github.com/modelcontextprotocol/text-editor-mcpb/releases/download/v1.0.2/text-editor.mcpb",
+      "location": {
+        "type": "mcpb",
+        "url": "https://github.com/modelcontextprotocol/text-editor-mcpb/releases/download/v1.0.2/text-editor.mcpb"
+      },
       "version": "1.0.2",
       "file_hashes": {
         "sha-256": "fe333e598595000ae021bd27117db32ec69af6987f507ba7a63c90638ff633ce"
@@ -438,8 +446,10 @@ This example shows an MCPB (MCP Bundle) package that:
   },
   "packages": [
     {
-      "registry_name": "npm",
-      "name": "@legacy/old-weather-server",
+      "location": {
+        "registry_name": "npm",
+        "name": "@legacy/old-weather-server"
+      },
       "version": "0.9.5",
       "environment_variables": [
         {

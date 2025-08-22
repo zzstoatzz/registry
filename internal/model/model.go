@@ -86,10 +86,20 @@ type Argument struct {
 	ValueHint          string       `json:"value_hint,omitempty" bson:"value_hint,omitempty"`
 }
 
+// PackageLocation represents the location of a package
+type PackageLocation struct {
+	// For registry-based packages
+	RegistryName string `json:"registry_name,omitempty" bson:"registry_name,omitempty"`
+	Name         string `json:"name,omitempty" bson:"name,omitempty"`
+	
+	// For direct URL packages (e.g., MCPB)
+	Type string `json:"type,omitempty" bson:"type,omitempty"`
+	URL  string `json:"url,omitempty" bson:"url,omitempty"`
+}
+
 type Package struct {
-	RegistryName         string            `json:"registry_name" bson:"registry_name"`
-	Name                 string            `json:"name" bson:"name"`
-	Version              string            `json:"version" bson:"version"`
+	Location             PackageLocation   `json:"location" bson:"location"`
+	Version              string            `json:"version,omitempty" bson:"version,omitempty"`
 	FileHashes           map[string]string `json:"file_hashes,omitempty" bson:"file_hashes,omitempty"`
 	RunTimeHint          string            `json:"runtime_hint,omitempty" bson:"runtime_hint,omitempty"`
 	RuntimeArguments     []Argument        `json:"runtime_arguments,omitempty" bson:"runtime_arguments,omitempty"`
