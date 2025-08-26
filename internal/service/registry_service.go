@@ -110,7 +110,6 @@ func validateMCPBPackage(host string, pkg *model.Package) error {
 	allowedHosts := []string{
 		"github.com",
 		"www.github.com",
-		"raw.githubusercontent.com",
 		"gitlab.com",
 		"www.gitlab.com",
 	}
