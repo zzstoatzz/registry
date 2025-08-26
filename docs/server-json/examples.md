@@ -109,67 +109,67 @@ This will essentially instruct the MCP client to execute `dnx Knapcode.SampleMcp
         "package_type": "javascript",
         "registry_name": "npm",
         "identifier": "@modelcontextprotocol/server-filesystem",
-      "version": "1.0.2",
-      "package_arguments": [
-        {
-          "type": "positional",
-          "value_hint": "target_dir",
-          "description": "Path to access",
-          "default": "/Users/username/Desktop",
-          "is_required": true,
-          "is_repeated": true
-        }
-      ],
-      "environment_variables": [
-        {
-          "name": "LOG_LEVEL",
-          "description": "Logging level (debug, info, warn, error)",
-          "default": "info"
-        }
-      ]
+        "version": "1.0.2",
+        "package_arguments": [
+          {
+            "type": "positional",
+            "value_hint": "target_dir",
+            "description": "Path to access",
+            "default": "/Users/username/Desktop",
+            "is_required": true,
+            "is_repeated": true
+          }
+        ],
+        "environment_variables": [
+          {
+            "name": "LOG_LEVEL",
+            "description": "Logging level (debug, info, warn, error)",
+            "default": "info"
+          }
+        ]
       },
       {
         "package_type": "docker",
         "registry_name": "docker-hub",
         "identifier": "mcp/filesystem:1.0.2",
-      "version": "1.0.2",
-      "runtime_arguments": [
-        {
-          "type": "named",
-          "description": "Mount a volume into the container",
-          "name": "--mount",
-          "value": "type=bind,src={source_path},dst={target_path}",
-          "is_required": true,
-          "is_repeated": true,
-          "variables": {
-            "source_path": {
-              "description": "Source path on host",
-              "format": "filepath",
-              "is_required": true
-            },
-            "target_path": {
-              "description": "Path to mount in the container. It should be rooted in `/project` directory.",
-              "is_required": true,
-              "default": "/project"
+        "version": "1.0.2",
+        "runtime_arguments": [
+          {
+            "type": "named",
+            "description": "Mount a volume into the container",
+            "name": "--mount",
+            "value": "type=bind,src={source_path},dst={target_path}",
+            "is_required": true,
+            "is_repeated": true,
+            "variables": {
+              "source_path": {
+                "description": "Source path on host",
+                "format": "filepath",
+                "is_required": true
+              },
+              "target_path": {
+                "description": "Path to mount in the container. It should be rooted in `/project` directory.",
+                "is_required": true,
+                "default": "/project"
+              }
             }
           }
-        }
-      ],
-      "package_arguments": [
-        {
-          "type": "positional",
-          "value_hint": "target_dir",
-          "value": "/project"
-        }
-      ],
-      "environment_variables": [
-        {
-          "name": "LOG_LEVEL",
-          "description": "Logging level (debug, info, warn, error)",
-          "default": "info"
-        }
-      ]
-    }
+        ],
+        "package_arguments": [
+          {
+            "type": "positional",
+            "value_hint": "target_dir",
+            "value": "/project"
+          }
+        ],
+        "environment_variables": [
+          {
+            "name": "LOG_LEVEL",
+            "description": "Logging level (debug, info, warn, error)",
+            "default": "info"
+          }
+        ]
+      }
   ]
   },
   "x-publisher": {
