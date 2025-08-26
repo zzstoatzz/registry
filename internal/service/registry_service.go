@@ -125,18 +125,6 @@ func validateMCPBPackage(host string, pkg *model.Package) error {
 	if !isAllowed {
 		return fmt.Errorf("MCPB packages must be hosted on allowlisted providers (GitHub or GitLab). Host '%s' is not allowed", host)
 	}
-
-	// Validate that file_hashes is provided for MCPB packages
-	if len(pkg.FileHashes) == 0 {
-		return fmt.Errorf("MCPB packages must include file_hashes for integrity verification")
-	}
-
-	// Validate that at least SHA-256 is provided
-	if _, hasSHA256 := pkg.FileHashes["sha-256"]; !hasSHA256 {
-		if _, hasSHA256Alt := pkg.FileHashes["sha256"]; !hasSHA256Alt {
-			return fmt.Errorf("MCPB packages must include a SHA-256 hash")
-		}
-	}
 	
 	return nil
 }
