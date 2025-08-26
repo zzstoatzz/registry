@@ -18,6 +18,11 @@ import (
 	"github.com/modelcontextprotocol/registry/tools/publisher/auth"
 )
 
+// Package type constants
+const (
+	packageTypeDocker = "docker"
+)
+
 // Server structure types for JSON generation
 type Repository struct {
 	URL    string `json:"url"`
@@ -343,8 +348,8 @@ func createCommand() error {
 	// Set runtime hint based on registry name if not explicitly provided
 	if runtimeHint == "" {
 		switch registryName {
-		case "docker":
-			runtimeHint = "docker"
+		case packageTypeDocker:
+			runtimeHint = packageTypeDocker
 		case "npm":
 			runtimeHint = "npx"
 		}
@@ -535,10 +540,11 @@ func createServerStructure(
 		} else {
 			packageURL = fmt.Sprintf("https://pypi.org/project/%s", packageName)
 		}
-	case "docker":
-		packageType = "docker"
+	case packageTypeDocker:
+		packageType = packageTypeDocker
 		if packageVersion != "" {
-			packageURL = fmt.Sprintf("docker://%s:%s", packageName, packageVersion)
+			// Note: This is a Docker tag, not a port (docker://image:tag format)
+			packageURL = fmt.Sprintf("docker://%s:%s", packageName, packageVersion) //nolint:nosprintfhostport
 		} else {
 			packageURL = fmt.Sprintf("docker://%s", packageName)
 		}
@@ -710,7 +716,7 @@ func generateFileHashes(serverJSON *ServerJSON) (map[string]string, error) {
 				log.Printf("Warning: Could not parse PyPI package name from URL: %s", url)
 			}
 			
-		case pkg.Location.Type == "docker" || strings.HasPrefix(url, "docker://"):
+		case pkg.Location.Type == packageTypeDocker || strings.HasPrefix(url, "docker://"):
 			// Docker images - skip hash generation as they have their own digest system
 			log.Printf("Info: Skipping hash generation for Docker image %s (uses digests)", url)
 			
@@ -860,9 +866,10 @@ func verifyCommand() error {
 		
 		// Determine the URL to download based on identifier
 		var downloadURL string
-		if strings.HasPrefix(identifier, "http://") || strings.HasPrefix(identifier, "https://") {
+		switch {
+		case strings.HasPrefix(identifier, "http://"), strings.HasPrefix(identifier, "https://"):
 			downloadURL = identifier
-		} else if strings.HasPrefix(identifier, "npm:") {
+		case strings.HasPrefix(identifier, "npm:"):
 			packageName := strings.TrimPrefix(identifier, "npm:")
 			// Parse package name and version
 			atIndex := strings.LastIndex(packageName, "@")
@@ -881,7 +888,7 @@ func verifyCommand() error {
 				continue
 			}
 			downloadURL = url
-		} else {
+		default:
 			log.Printf("⚠️  %s: Unsupported identifier type, skipping\n", identifier)
 			continue
 		}
@@ -907,9 +914,8 @@ func verifyCommand() error {
 	if allValid {
 		log.Println("\n✅ All hashes verified successfully!")
 		return nil
-	} else {
-		return fmt.Errorf("\n❌ Hash verification failed")
 	}
+	return fmt.Errorf("\n❌ Hash verification failed")
 }
 
 // hashGenCommand generates file hashes for a server.json file
@@ -975,12 +981,12 @@ func hashGenCommand() error {
 	
 	if dryRun {
 		// Print hashes to stdout
-		fmt.Println("\nGenerated hashes:")
+		log.Println("\nGenerated hashes:")
 		for id, hash := range hashes {
-			fmt.Printf("  %s: %s\n", id, hash)
+			log.Printf("  %s: %s\n", id, hash)
 		}
-		fmt.Println("\nFull server.json with hashes:")
-		fmt.Println(string(output))
+		log.Println("\nFull server.json with hashes:")
+		log.Println(string(output))
 	} else {
 		// Determine output path
 		if outputPath == "" {
@@ -988,7 +994,7 @@ func hashGenCommand() error {
 		}
 		
 		// Write to file
-		if err := os.WriteFile(outputPath, output, 0644); err != nil {
+		if err := os.WriteFile(outputPath, output, 0600); err != nil {
 			return fmt.Errorf("error writing file: %w", err)
 		}
 		
