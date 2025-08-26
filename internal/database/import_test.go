@@ -98,6 +98,14 @@ func TestReadSeedFile_RegistryURL(t *testing.T) {
 		Server: model.ServerDetail{
 			Name:        "Test Server 1",
 			Description: "First test server",
+			Packages: []model.Package{
+				{
+					PackageType:  "javascript",
+					RegistryName: "npm",
+					Identifier:   "test-package-1",
+					Version:      "1.0.0",
+				},
+			},
 		},
 		XIOModelContextProtocolRegistry: map[string]interface{}{
 			"id":           "server-1",
@@ -109,6 +117,14 @@ func TestReadSeedFile_RegistryURL(t *testing.T) {
 		Server: model.ServerDetail{
 			Name:        "Test Server 2",
 			Description: "Second test server",
+			Packages: []model.Package{
+				{
+					PackageType:  "javascript",
+					RegistryName: "npm",
+					Identifier:   "test-package-2",
+					Version:      "2.0.0",
+				},
+			},
 		},
 		XIOModelContextProtocolRegistry: map[string]interface{}{
 			"id":           "server-2",
