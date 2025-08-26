@@ -12,8 +12,7 @@ _These examples show the PublishRequest format used by the `/v0/publish` API end
     "status": "active",
     "repository": {
       "url": "https://github.com/modelcontextprotocol/servers",
-      "source": "github",
-      "id": "abc123de-f456-7890-ghij-klmnopqrstuv"
+      "source": "github"
     },
     "version_detail": {
       "version": "1.0.2"
@@ -506,8 +505,7 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
     "description": "MCP Bundle server for advanced text editing capabilities",
     "repository": {
       "url": "https://github.com/modelcontextprotocol/text-editor-mcpb",
-      "source": "github",
-      "id": "mcpb-123ab-cdef4-56789-012ghi-jklmnopqrstu"
+      "source": "github"
     },
     "version_detail": {
       "version": "1.0.2"
