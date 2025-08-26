@@ -15,6 +15,17 @@ import (
 	"github.com/modelcontextprotocol/registry/internal/model"
 )
 
+// OldPackage represents the legacy package format
+type OldPackage struct {
+	RegistryName         string                     `json:"registry_name"`
+	Name                 string                     `json:"name"`
+	Version              string                     `json:"version,omitempty"`
+	RunTimeHint          string                     `json:"runtime_hint,omitempty"`
+	RuntimeArguments     []model.Argument           `json:"runtime_arguments,omitempty"`
+	PackageArguments     []model.Argument           `json:"package_arguments,omitempty"`
+	EnvironmentVariables []model.KeyValueInput      `json:"environment_variables,omitempty"`
+}
+
 // OldServerFormat represents the legacy seed format
 type OldServerFormat struct {
 	ID            string                     `json:"id"`
@@ -23,7 +34,7 @@ type OldServerFormat struct {
 	Status        string                     `json:"status,omitempty"`
 	Repository    model.Repository           `json:"repository"`
 	VersionDetail OldVersionDetail           `json:"version_detail"`
-	Packages      []model.Package            `json:"packages,omitempty"`
+	Packages      []OldPackage               `json:"packages,omitempty"`
 	Remotes       []model.Remote             `json:"remotes,omitempty"`
 	Extensions    map[string]interface{}     `json:"extensions,omitempty"`
 }
@@ -124,7 +135,41 @@ func readHTTP(url string) ([]byte, error) {
 	return io.ReadAll(resp.Body)
 }
 
+// determinePackageType infers package type from registry name
+func determinePackageType(registryName string) string {
+	switch strings.ToLower(registryName) {
+	case "npm":
+		return "javascript"
+	case "pypi":
+		return "python"
+	case "docker-hub":
+		return "docker"
+	case "nuget":
+		return "dotnet"
+	case "github-releases", "gitlab-releases":
+		return "binary"
+	default:
+		return ""
+	}
+}
+
 func convertServer(old OldServerFormat) model.ServerResponse {
+	// Convert old packages to new format
+	var packages []model.Package
+	for _, oldPkg := range old.Packages {
+		newPkg := model.Package{
+			PackageType:          determinePackageType(oldPkg.RegistryName),
+			RegistryName:         oldPkg.RegistryName,
+			Identifier:           oldPkg.Name,
+			Version:              oldPkg.Version,
+			RunTimeHint:          oldPkg.RunTimeHint,
+			RuntimeArguments:     oldPkg.RuntimeArguments,
+			PackageArguments:     oldPkg.PackageArguments,
+			EnvironmentVariables: oldPkg.EnvironmentVariables,
+		}
+		packages = append(packages, newPkg)
+	}
+
 	// Create pure MCP server specification
 	server := model.ServerDetail{
 		Name:        old.Name,
@@ -133,7 +178,7 @@ func convertServer(old OldServerFormat) model.ServerResponse {
 		VersionDetail: model.VersionDetail{
 			Version: old.VersionDetail.Version,
 		},
-		Packages: old.Packages,
+		Packages: packages,
 		Remotes:  old.Remotes,
 	}
 
@@ -145,18 +190,19 @@ func convertServer(old OldServerFormat) model.ServerResponse {
 	}
 
 	// Create registry metadata from old version detail
-	registryMetadata := map[string]interface{}{
-		"id":           old.ID,
-		"published_at": time.Now().Format(time.RFC3339),
-		"updated_at":   time.Now().Format(time.RFC3339),
-		"is_latest":    old.VersionDetail.IsLatest,
-		"release_date": old.VersionDetail.ReleaseDate,
+	// Use zero time for seed data to indicate it's not from actual publish
+	registryMetadata := model.RegistryMetadata{
+		ID:          old.ID,
+		PublishedAt: time.Time{}, // Zero time for seed data
+		UpdatedAt:   time.Time{}, // Zero time for seed data
+		IsLatest:    old.VersionDetail.IsLatest,
+		ReleaseDate: old.VersionDetail.ReleaseDate,
 	}
 
 	// Create response with extension wrapper format
 	response := model.ServerResponse{
 		Server:                          server,
-		XIOModelContextProtocolRegistry: registryMetadata,
+		XIOModelContextProtocolRegistry: registryMetadata.CreateRegistryExtensions()["x-io.modelcontextprotocol.registry"],
 	}
 
 	// Add any x-publisher extensions if present

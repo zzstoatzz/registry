@@ -18,5 +18,5 @@ func NewDNSProvider(registryURL, domain, hexSeed string) Provider {
 
 // Name returns the name of this auth provider
 func (d *DNSProvider) Name() string {
-	return "DNS"
+	return "dns"
 }

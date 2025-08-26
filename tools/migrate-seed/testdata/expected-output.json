@@ -14,8 +14,9 @@
       },
       "packages": [
         {
+          "package_type": "javascript",
           "registry_name": "npm",
-          "name": "@21st-dev/magic",
+          "identifier": "@21st-dev/magic",
           "version": "0.0.46",
           "environment_variables": [
             {
@@ -49,8 +50,9 @@
       },
       "packages": [
         {
+          "package_type": "python",
           "registry_name": "pypi",
-          "name": "adfinmcp",
+          "identifier": "adfinmcp",
           "version": "0.1.0",
           "package_arguments": [
             {

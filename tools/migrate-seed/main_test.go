@@ -11,11 +11,11 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// createTestLegacySeed creates a test seed file in the old format
+
+// createTestLegacySeed creates a small test file with legacy format data
 func createTestLegacySeed(t *testing.T) string {
 	t.Helper()
-
-	legacyServers := []OldServerFormat{
+	testData := []OldServerFormat{
 		{
 			ID:          "4e9cf4cf-71f6-4aca-bae8-2d10a29ca2e0",
 			Name:        "io.github.21st-dev/magic-mcp",
@@ -23,18 +23,28 @@ func createTestLegacySeed(t *testing.T) string {
 			Repository: model.Repository{
 				URL:    "https://github.com/21st-dev/magic-mcp",
 				Source: "github",
+				ID:     "935450522",
 			},
 			VersionDetail: OldVersionDetail{
 				Version:     "0.0.1-seed",
 				ReleaseDate: "2025-05-16T18:56:49Z",
 				IsLatest:    true,
 			},
-			Packages: []model.Package{
+			Packages: []OldPackage{
 				{
-					PackageType:  "javascript",
 					RegistryName: "npm",
-					Identifier:   "@21st-dev/magic",
+					Name:         "@21st-dev/magic",
 					Version:      "0.0.46",
+					EnvironmentVariables: []model.KeyValueInput{
+						{
+							Name: "API_KEY",
+							InputWithVariables: model.InputWithVariables{
+								Input: model.Input{
+									Description: "${input:apiKey}",
+								},
+							},
+						},
+					},
 				},
 			},
 		},
@@ -43,42 +53,39 @@ func createTestLegacySeed(t *testing.T) string {
 			Name:        "io.github.adfin-engineering/mcp-server-adfin",
 			Description: "A Model Context Protocol Server for connecting with Adfin APIs",
 			Repository: model.Repository{
-				URL:    "https://github.com/adfin-engineering/mcp-server-adfin",
+				URL:    "https://github.com/Adfin-Engineering/mcp-server-adfin",
 				Source: "github",
+				ID:     "951338147",
 			},
 			VersionDetail: OldVersionDetail{
 				Version:     "0.0.1-seed",
 				ReleaseDate: "2025-05-16T18:56:52Z",
 				IsLatest:    true,
 			},
-			Packages: []model.Package{
+			Packages: []OldPackage{
 				{
-					PackageType:  "python",
 					RegistryName: "pypi",
-					Identifier:   "adfinmcp",
+					Name:         "adfinmcp",
 					Version:      "0.1.0",
 				},
 			},
 		},
 	}
 
-	// Write to temporary file
-	tempFile, err := os.CreateTemp("", "legacy-seed-*.json")
+	tempFile, err := os.CreateTemp("", "test-legacy-seed-*.json")
+	require.NoError(t, err)
+	defer tempFile.Close()
+
+	jsonData, err := json.MarshalIndent(testData, "", "  ")
 	require.NoError(t, err)
 
-	data, err := json.MarshalIndent(legacyServers, "", "  ")
-	require.NoError(t, err)
-
-	_, err = tempFile.Write(data)
-	require.NoError(t, err)
-
-	err = tempFile.Close()
+	_, err = tempFile.Write(jsonData)
 	require.NoError(t, err)
 
 	return tempFile.Name()
 }
 
-func TestMigrateSeed_ConvertsLegacyFormat(t *testing.T) {
+func TestMigrationCLI(t *testing.T) {
 	// Create test legacy seed file
 	legacyFile := createTestLegacySeed(t)
 	defer os.Remove(legacyFile)
@@ -86,7 +93,7 @@ func TestMigrateSeed_ConvertsLegacyFormat(t *testing.T) {
 	// Create output file path
 	outputFile := filepath.Join(t.TempDir(), "migrated-output.json")
 
-	// Run migration
+	// Run migration (simulate command line execution)
 	err := migrateSeed(legacyFile, outputFile)
 	require.NoError(t, err, "Migration should succeed")
 
@@ -112,7 +119,6 @@ func TestMigrateSeed_ConvertsLegacyFormat(t *testing.T) {
 	assert.Equal(t, "javascript", server1.Server.Packages[0].PackageType)
 	assert.Equal(t, "npm", server1.Server.Packages[0].RegistryName)
 	assert.Equal(t, "@21st-dev/magic", server1.Server.Packages[0].Identifier)
-	assert.Equal(t, "0.0.46", server1.Server.Packages[0].Version)
 
 	// Verify registry metadata extension
 	assert.NotNil(t, server1.XIOModelContextProtocolRegistry, "Should have registry metadata extension")
@@ -129,7 +135,6 @@ func TestMigrateSeed_ConvertsLegacyFormat(t *testing.T) {
 	assert.Equal(t, "python", server2.Server.Packages[0].PackageType)
 	assert.Equal(t, "pypi", server2.Server.Packages[0].RegistryName)
 	assert.Equal(t, "adfinmcp", server2.Server.Packages[0].Identifier)
-	assert.Equal(t, "0.1.0", server2.Server.Packages[0].Version)
 
 	// Verify registry metadata for second server
 	registryMeta2, ok := server2.XIOModelContextProtocolRegistry.(map[string]interface{})
@@ -245,21 +250,108 @@ func TestMigrationCLI_ErrorHandling(t *testing.T) {
 		require.NoError(t, err)
 		defer os.Remove(emptyFile.Name())
 		
-		_, err = emptyFile.WriteString(`[]`)
+		_, err = emptyFile.WriteString("[]")
 		require.NoError(t, err)
 		emptyFile.Close()
 
 		outputFile := filepath.Join(t.TempDir(), "output.json")
 		err = migrateSeed(emptyFile.Name(), outputFile)
-		assert.NoError(t, err, "Should handle empty array")
+		assert.NoError(t, err, "Empty array should be valid")
 
-		// Verify output
+		// Verify empty output
 		outputData, err := os.ReadFile(outputFile)
 		require.NoError(t, err)
+		
+		var result []model.ServerResponse
+		err = json.Unmarshal(outputData, &result)
+		require.NoError(t, err, "Should be valid JSON")
+		assert.Len(t, result, 0, "Should have no servers")
+	})
+}
 
-		var migratedServers []model.ServerResponse
-		err = json.Unmarshal(outputData, &migratedServers)
-		require.NoError(t, err)
-		assert.Len(t, migratedServers, 0, "Should have 0 servers")
+func TestMigrationCLI_GoldenFile(t *testing.T) {
+	// Test migration with predefined input and expected output files
+	inputFile := "testdata/legacy-input.json"
+	expectedFile := "testdata/expected-output.json"
+	
+	// Ensure test files exist
+	require.FileExists(t, inputFile, "Input test file should exist")
+	require.FileExists(t, expectedFile, "Expected output test file should exist")
+	
+	// Run migration on test input
+	outputFile := filepath.Join(t.TempDir(), "golden-output.json")
+	err := migrateSeed(inputFile, outputFile)
+	require.NoError(t, err, "Migration should succeed")
+	
+	// Read expected and actual output
+	expectedData, err := os.ReadFile(expectedFile)
+	require.NoError(t, err, "Should be able to read expected output")
+	
+	actualData, err := os.ReadFile(outputFile)
+	require.NoError(t, err, "Should be able to read actual output")
+	
+	// Parse both as JSON to normalize formatting and compare semantically
+	var expectedJSON, actualJSON []model.ServerResponse
+	
+	err = json.Unmarshal(expectedData, &expectedJSON)
+	require.NoError(t, err, "Expected output should be valid JSON")
+	
+	err = json.Unmarshal(actualData, &actualJSON)
+	require.NoError(t, err, "Actual output should be valid JSON")
+	
+	// Compare the parsed structures
+	assert.Equal(t, expectedJSON, actualJSON, "Migration output should match expected golden file")
+	
+	// Also compare server count
+	assert.Len(t, actualJSON, len(expectedJSON), "Should have same number of servers")
+	
+	// Verify specific server names to ensure ordering is preserved
+	if len(expectedJSON) >= 2 && len(actualJSON) >= 2 {
+		assert.Equal(t, expectedJSON[0].Server.Name, actualJSON[0].Server.Name, "First server name should match")
+		assert.Equal(t, expectedJSON[1].Server.Name, actualJSON[1].Server.Name, "Second server name should match")
+	}
+}
+
+func TestGoldenFiles_Validation(t *testing.T) {
+	// Validate that the golden files themselves are valid
+	t.Run("Input file is valid legacy format", func(t *testing.T) {
+		inputData, err := os.ReadFile("testdata/legacy-input.json")
+		require.NoError(t, err, "Should be able to read input file")
+		
+		var legacyServers []OldServerFormat
+		err = json.Unmarshal(inputData, &legacyServers)
+		require.NoError(t, err, "Input file should be valid legacy format JSON")
+		
+		assert.Len(t, legacyServers, 2, "Input should contain exactly 2 servers")
+		
+		// Verify it contains expected server names
+		names := []string{legacyServers[0].Name, legacyServers[1].Name}
+		assert.Contains(t, names, "io.github.21st-dev/magic-mcp")
+		assert.Contains(t, names, "io.github.adfin-engineering/mcp-server-adfin")
+	})
+	
+	t.Run("Expected output is valid extension wrapper format", func(t *testing.T) {
+		expectedData, err := os.ReadFile("testdata/expected-output.json")
+		require.NoError(t, err, "Should be able to read expected output file")
+		
+		var expectedServers []model.ServerResponse
+		err = json.Unmarshal(expectedData, &expectedServers)
+		require.NoError(t, err, "Expected output should be valid ServerResponse format JSON")
+		
+		assert.Len(t, expectedServers, 2, "Expected output should contain exactly 2 servers")
+		
+		// Verify structure of first server
+		server1 := expectedServers[0]
+		assert.NotEmpty(t, server1.Server.Name, "Server should have a name")
+		assert.NotEmpty(t, server1.Server.Description, "Server should have a description")
+		assert.NotNil(t, server1.XIOModelContextProtocolRegistry, "Should have registry metadata")
+		assert.Nil(t, server1.XPublisher, "Seed data should not have publisher extensions")
+		
+		// Verify registry metadata contains required fields
+		registryMeta, ok := server1.XIOModelContextProtocolRegistry.(map[string]interface{})
+		require.True(t, ok, "Registry metadata should be a map")
+		assert.Contains(t, registryMeta, "id", "Registry metadata should have id")
+		assert.Contains(t, registryMeta, "is_latest", "Registry metadata should have is_latest")
+		assert.Contains(t, registryMeta, "release_date", "Registry metadata should have release_date")
 	})
 }
