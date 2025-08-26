@@ -242,19 +242,19 @@ This will essentially instruct the MCP client to execute `dnx Knapcode.SampleMcp
         "identifier": "weather-mcp-server",
         "version": "0.5.0",
         "runtime_hint": "uvx",
-      "environment_variables": [
-        {
-          "name": "WEATHER_API_KEY",
-          "description": "API key for weather service",
-          "is_required": true,
-          "is_secret": true
-        },
-        {
-          "name": "WEATHER_UNITS",
-          "description": "Temperature units (celsius, fahrenheit)",
-          "default": "celsius"
-        }
-      ]
+        "environment_variables": [
+          {
+            "name": "WEATHER_API_KEY",
+            "description": "API key for weather service",
+            "is_required": true,
+            "is_secret": true
+          },
+          {
+            "name": "WEATHER_UNITS",
+            "description": "Temperature units (celsius, fahrenheit)",
+            "default": "celsius"
+          }
+        ]
     }
     ]
   },
@@ -295,14 +295,14 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
         "identifier": "Knapcode.SampleMcpServer",
         "version": "0.5.0",
         "runtime_hint": "dnx",
-      "environment_variables": [
-        {
-          "name": "WEATHER_CHOICES",
-          "description": "Comma separated list of weather descriptions to randomly select.",
-          "is_required": true,
-          "is_secret": false
-        }
-      ]
+        "environment_variables": [
+          {
+            "name": "WEATHER_CHOICES",
+            "description": "Comma separated list of weather descriptions to randomly select.",
+            "is_required": true,
+            "is_secret": false
+          }
+        ]
     }
     ]
   },
@@ -363,47 +363,47 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
             }
           }
         ],
-      "package_arguments": [
-        {
-          "type": "named",
-          "name": "--host",
-          "description": "Database host",
-          "default": "localhost",
-          "is_required": true
-        },
-        {
-          "type": "named",
-          "name": "--port",
-          "description": "Database port",
-          "format": "number"
-        },
-        {
-          "type": "positional",
-          "value_hint": "database_name",
-          "description": "Name of the database to connect to",
-          "is_required": true
-        }
-      ],
-      "environment_variables": [
-        {
-          "name": "DB_USERNAME",
-          "description": "Database username",
-          "is_required": true
-        },
-        {
-          "name": "DB_PASSWORD",
-          "description": "Database password",
-          "is_required": true,
-          "is_secret": true
-        },
-        {
-          "name": "SSL_MODE",
-          "description": "SSL connection mode",
-          "default": "prefer",
-          "choices": ["disable", "prefer", "require"]
-        }
-      ]
-    }
+        "package_arguments": [
+          {
+            "type": "named",
+            "name": "--host",
+            "description": "Database host",
+            "default": "localhost",
+            "is_required": true
+          },
+          {
+            "type": "named",
+            "name": "--port",
+            "description": "Database port",
+            "format": "number"
+          },
+          {
+            "type": "positional",
+            "value_hint": "database_name",
+            "description": "Name of the database to connect to",
+            "is_required": true
+          }
+        ],
+        "environment_variables": [
+          {
+            "name": "DB_USERNAME",
+            "description": "Database username",
+            "is_required": true
+          },
+          {
+            "name": "DB_PASSWORD",
+            "description": "Database password",
+            "is_required": true,
+            "is_secret": true
+          },
+          {
+            "name": "SSL_MODE",
+            "description": "SSL connection mode",
+            "default": "prefer",
+            "choices": ["disable", "prefer", "require"]
+          }
+        ]
+      }
     ]
   },
   "x-publisher": {
