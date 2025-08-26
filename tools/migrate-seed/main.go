@@ -15,6 +15,20 @@ import (
 	"github.com/modelcontextprotocol/registry/internal/model"
 )
 
+// LegacyPackage represents the legacy package format with registry_name and name fields
+type LegacyPackage struct {
+	RegistryName         string                 `json:"registry_name,omitempty"`
+	Name                 string                 `json:"name,omitempty"`
+	Version              string                 `json:"version,omitempty"`
+	RunTimeHint          string                 `json:"runtime_hint,omitempty"`
+	RuntimeArguments     []model.Argument       `json:"runtime_arguments,omitempty"`
+	PackageArguments     []model.Argument       `json:"package_arguments,omitempty"`
+	EnvironmentVariables []model.KeyValueInput  `json:"environment_variables,omitempty"`
+	FileHashes           map[string]string      `json:"file_hashes,omitempty"`
+	// Also support new format in case it's already migrated
+	Location             *model.PackageLocation `json:"location,omitempty"`
+}
+
 // OldServerFormat represents the legacy seed format
 type OldServerFormat struct {
 	ID            string                     `json:"id"`
@@ -23,7 +37,7 @@ type OldServerFormat struct {
 	Status        string                     `json:"status,omitempty"`
 	Repository    model.Repository           `json:"repository"`
 	VersionDetail OldVersionDetail           `json:"version_detail"`
-	Packages      []model.Package            `json:"packages,omitempty"`
+	Packages      []LegacyPackage            `json:"packages,omitempty"`
 	Remotes       []model.Remote             `json:"remotes,omitempty"`
 	Extensions    map[string]interface{}     `json:"extensions,omitempty"`
 }
@@ -118,7 +132,57 @@ func fetchFromHTTP(url string) ([]byte, error) {
 	return io.ReadAll(resp.Body)
 }
 
+// convertLegacyPackage converts a legacy package to the new format with PackageLocation
+func convertLegacyPackage(legacy LegacyPackage) model.Package {
+	pkg := model.Package{
+		Version:              legacy.Version,
+		RunTimeHint:          legacy.RunTimeHint,
+		RuntimeArguments:     legacy.RuntimeArguments,
+		PackageArguments:     legacy.PackageArguments,
+		EnvironmentVariables: legacy.EnvironmentVariables,
+		FileHashes:           legacy.FileHashes,
+	}
+
+	// If already has location, use it
+	if legacy.Location != nil {
+		pkg.Location = *legacy.Location
+	} else if legacy.RegistryName != "" && legacy.Name != "" {
+		// Convert from registry_name/name to location
+		var url, packageType string
+		switch legacy.RegistryName {
+		case "npm":
+			url = fmt.Sprintf("https://www.npmjs.com/package/%s/v/%s", legacy.Name, legacy.Version)
+			packageType = "javascript"
+		case "pypi":
+			url = fmt.Sprintf("https://pypi.org/project/%s/%s", legacy.Name, legacy.Version)
+			packageType = "python"
+		case "nuget":
+			url = fmt.Sprintf("https://www.nuget.org/packages/%s/%s", legacy.Name, legacy.Version)
+			packageType = "dotnet"
+		case "docker":
+			url = fmt.Sprintf("https://hub.docker.com/r/%s", legacy.Name)
+			packageType = "docker"
+		default:
+			// For unknown registries, create a generic URL
+			url = fmt.Sprintf("https://%s/%s/%s", legacy.RegistryName, legacy.Name, legacy.Version)
+			packageType = legacy.RegistryName
+		}
+		pkg.Location = model.PackageLocation{
+			URL:  url,
+			Type: packageType,
+		}
+	}
+
+	return pkg
+}
+
 func convertServer(old OldServerFormat) model.ServerResponse {
+	// Convert packages from legacy to new format
+	var packages []model.Package
+	for _, legacyPkg := range old.Packages {
+		packages = append(packages, convertLegacyPackage(legacyPkg))
+	}
+
 	// Create pure MCP server specification
 	server := model.ServerDetail{
 		Name:        old.Name,
@@ -127,7 +191,7 @@ func convertServer(old OldServerFormat) model.ServerResponse {
 		VersionDetail: model.VersionDetail{
 			Version: old.VersionDetail.Version,
 		},
-		Packages: old.Packages,
+		Packages: packages,
 		Remotes:  old.Remotes,
 	}
 

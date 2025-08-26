@@ -98,6 +98,15 @@ func TestReadSeedFile_RegistryURL(t *testing.T) {
 		Server: model.ServerDetail{
 			Name:        "Test Server 1",
 			Description: "First test server",
+			Packages: []model.Package{
+				{
+					Location: model.PackageLocation{
+						URL:  "https://www.npmjs.com/package/test-package-1/v/1.0.0",
+						Type: "javascript",
+					},
+					Version: "1.0.0",
+				},
+			},
 		},
 		XIOModelContextProtocolRegistry: map[string]interface{}{
 			"id":           "server-1",
@@ -109,38 +118,20 @@ func TestReadSeedFile_RegistryURL(t *testing.T) {
 		Server: model.ServerDetail{
 			Name:        "Test Server 2",
 			Description: "Second test server",
+			Packages: []model.Package{
+				{
+					Location: model.PackageLocation{
+						URL:  "https://www.npmjs.com/package/test-package-2/v/2.0.0",
+						Type: "javascript",
+					},
+					Version: "2.0.0",
+				},
+			},
 		},
 		XIOModelContextProtocolRegistry: map[string]interface{}{
 			"id":           "server-2",
 			"published_at": "2023-01-01T00:00:00Z",
 			"is_latest":    true,
-		},
-	}
-
-	serverDetail1 := model.ServerDetail{
-		Name: "Test Server 1",
-		Description: "First test server",
-		Packages: []model.Package{
-			{
-				Location: model.PackageLocation{
-					URL:  "https://www.npmjs.com/package/test-package-1/v/1.0.0",
-					Type: "javascript",
-				},
-				Version: "1.0.0",
-			},
-		},
-	}
-	serverDetail2 := model.ServerDetail{
-		Name: "Test Server 2",
-		Description: "Second test server",
-		Packages: []model.Package{
-			{
-				Location: model.PackageLocation{
-					URL:  "https://www.npmjs.com/package/test-package-2/v/2.0.0",
-					Type: "javascript",
-				},
-				Version: "2.0.0",
-			},
 		},
 	}
 
@@ -181,26 +172,17 @@ func TestReadSeedFile_RegistryURL(t *testing.T) {
 					// No NextCursor means end of pagination
 				},
 			}
+		default:
+			// No more pages
+			response = PaginatedResponse{
+				Servers:  []model.ServerResponse{},
+				Metadata: &Metadata{},
+			}
 		}
 
 		w.Header().Set("Content-Type", "application/json")
 		if err := json.NewEncoder(w).Encode(response); err != nil {
 			http.Error(w, "Failed to encode JSON", http.StatusInternalServerError)
-		}
-	})
-
-	// Handle individual server detail endpoints
-	mux.HandleFunc("/v0/servers/server-1", func(w http.ResponseWriter, _ *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		if err := json.NewEncoder(w).Encode(serverDetail1); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-	})
-
-	mux.HandleFunc("/v0/servers/server-2", func(w http.ResponseWriter, _ *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		if err := json.NewEncoder(w).Encode(serverDetail2); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 	})
 

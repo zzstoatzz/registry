@@ -30,7 +30,7 @@ func createTestLegacySeed(t *testing.T) string {
 				ReleaseDate: "2025-05-16T18:56:49Z",
 				IsLatest:    true,
 			},
-			Packages: []model.Package{
+			Packages: []LegacyPackage{
 				{
 					RegistryName: "npm",
 					Name:         "@21st-dev/magic",
@@ -62,7 +62,7 @@ func createTestLegacySeed(t *testing.T) string {
 				ReleaseDate: "2025-05-16T18:56:52Z",
 				IsLatest:    true,
 			},
-			Packages: []model.Package{
+			Packages: []LegacyPackage{
 				{
 					RegistryName: "pypi",
 					Name:         "adfinmcp",
@@ -116,8 +116,8 @@ func TestMigrationCLI(t *testing.T) {
 	assert.Equal(t, "https://github.com/21st-dev/magic-mcp", server1.Server.Repository.URL)
 	assert.Equal(t, "0.0.1-seed", server1.Server.VersionDetail.Version)
 	assert.Len(t, server1.Server.Packages, 1)
-	assert.Equal(t, "npm", server1.Server.Packages[0].RegistryName)
-	assert.Equal(t, "@21st-dev/magic", server1.Server.Packages[0].Name)
+	assert.Equal(t, "https://www.npmjs.com/package/@21st-dev/magic/v/0.0.46", server1.Server.Packages[0].Location.URL)
+	assert.Equal(t, "javascript", server1.Server.Packages[0].Location.Type)
 
 	// Verify registry metadata extension
 	assert.NotNil(t, server1.XIOModelContextProtocolRegistry, "Should have registry metadata extension")
@@ -131,8 +131,8 @@ func TestMigrationCLI(t *testing.T) {
 	server2 := migratedServers[1]
 	assert.Equal(t, "io.github.adfin-engineering/mcp-server-adfin", server2.Server.Name)
 	assert.Equal(t, "A Model Context Protocol Server for connecting with Adfin APIs", server2.Server.Description)
-	assert.Equal(t, "pypi", server2.Server.Packages[0].RegistryName)
-	assert.Equal(t, "adfinmcp", server2.Server.Packages[0].Name)
+	assert.Equal(t, "https://pypi.org/project/adfinmcp/0.1.0", server2.Server.Packages[0].Location.URL)
+	assert.Equal(t, "python", server2.Server.Packages[0].Location.Type)
 
 	// Verify registry metadata for second server
 	registryMeta2, ok := server2.XIOModelContextProtocolRegistry.(map[string]interface{})
