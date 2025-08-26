@@ -56,11 +56,11 @@
               "description": "Directory to run the project from",
               "is_required": true,
               "format": "string",
-              "value": "--directory <absolute_path_to_adfin_mcp_folder>",
-              "default": "--directory <absolute_path_to_adfin_mcp_folder>",
+              "value": "--directory \u003cabsolute_path_to_adfin_mcp_folder\u003e",
+              "default": "--directory \u003cabsolute_path_to_adfin_mcp_folder\u003e",
               "type": "named",
-              "name": "--directory <absolute_path_to_adfin_mcp_folder>",
-              "value_hint": "<absolute_path_to_adfin_mcp_folder>"
+              "name": "--directory \u003cabsolute_path_to_adfin_mcp_folder\u003e",
+              "value_hint": "\u003cabsolute_path_to_adfin_mcp_folder\u003e"
             },
             {
               "description": "Script to execute",
@@ -74,11 +74,11 @@
           ],
           "environment_variables": [
             {
-              "description": "<email>",
+              "description": "\u003cemail\u003e",
               "name": "ADFIN_EMAIL"
             },
             {
-              "description": "<password>",
+              "description": "\u003cpassword\u003e",
               "name": "ADFIN_PASSWORD"
             }
           ],
@@ -161,7 +161,7 @@
           ],
           "environment_variables": [
             {
-              "description": "<YOUR_API_SECRET>",
+              "description": "\u003cYOUR_API_SECRET\u003e",
               "name": "AGENTRPC_API_SECRET"
             }
           ],
@@ -546,7 +546,7 @@
           "version": "1.0.0",
           "environment_variables": [
             {
-              "description": "<Add your APIMatic token here>",
+              "description": "\u003cAdd your APIMatic token here\u003e",
               "name": "APIMATIC_API_KEY"
             }
           ],
@@ -810,7 +810,7 @@
           ],
           "environment_variables": [
             {
-              "description": "<YOUR_PAT>",
+              "description": "\u003cYOUR_PAT\u003e",
               "name": "BITRISE_TOKEN"
             }
           ],
@@ -987,19 +987,19 @@
           ],
           "environment_variables": [
             {
-              "description": "<clickhouse-host>",
+              "description": "\u003cclickhouse-host\u003e",
               "name": "CLICKHOUSE_HOST"
             },
             {
-              "description": "<clickhouse-user>",
+              "description": "\u003cclickhouse-user\u003e",
               "name": "CLICKHOUSE_USER"
             },
             {
-              "description": "<clickhouse-password>",
+              "description": "\u003cclickhouse-password\u003e",
               "name": "CLICKHOUSE_PASSWORD"
             },
             {
-              "description": "<optional-database>",
+              "description": "\u003coptional-database\u003e",
               "name": "CLICKHOUSE_DATABASE"
             }
           ],
@@ -1086,11 +1086,11 @@
           "version": "0.0.1",
           "environment_variables": [
             {
-              "description": "<YOUR_TOKEN>",
+              "description": "\u003cYOUR_TOKEN\u003e",
               "name": "CODACY_ACCOUNT_TOKEN"
             },
             {
-              "description": "<VERSION>",
+              "description": "\u003cVERSION\u003e",
               "name": "CODACY_CLI_VERSION"
             }
           ],
@@ -1476,7 +1476,7 @@
           "version": "0.1.3",
           "environment_variables": [
             {
-              "description": "<YOUR_TOKEN>",
+              "description": "\u003cYOUR_TOKEN\u003e",
               "name": "EDGEE_TOKEN"
             }
           ],
@@ -1951,11 +1951,11 @@
           "version": "0.6.1",
           "environment_variables": [
             {
-              "description": "<glean instance name>",
+              "description": "\u003cglean instance name\u003e",
               "name": "GLEAN_INSTANCE"
             },
             {
-              "description": "<glean api token>",
+              "description": "\u003cglean api token\u003e",
               "name": "GLEAN_API_TOKEN"
             }
           ],
@@ -2175,7 +2175,7 @@
               "name": "GRAFANA_URL"
             },
             {
-              "description": "<your service account token>",
+              "description": "\u003cyour service account token\u003e",
               "name": "GRAFANA_API_KEY"
             }
           ],
@@ -2454,11 +2454,11 @@
               "description": "Directory for the inkeep-mcp-server",
               "is_required": true,
               "format": "string",
-              "value": "--directory <YOUR_INKEEP_MCP_SERVER_ABSOLUTE_PATH>",
-              "default": "--directory <YOUR_INKEEP_MCP_SERVER_ABSOLUTE_PATH>",
+              "value": "--directory \u003cYOUR_INKEEP_MCP_SERVER_ABSOLUTE_PATH\u003e",
+              "default": "--directory \u003cYOUR_INKEEP_MCP_SERVER_ABSOLUTE_PATH\u003e",
               "type": "named",
-              "name": "--directory <YOUR_INKEEP_MCP_SERVER_ABSOLUTE_PATH>",
-              "value_hint": "<YOUR_INKEEP_MCP_SERVER_ABSOLUTE_PATH>"
+              "name": "--directory \u003cYOUR_INKEEP_MCP_SERVER_ABSOLUTE_PATH\u003e",
+              "value_hint": "\u003cYOUR_INKEEP_MCP_SERVER_ABSOLUTE_PATH\u003e"
             },
             {
               "description": "Run python module",
@@ -2477,7 +2477,7 @@
               "name": "INKEEP_API_BASE_URL"
             },
             {
-              "description": "<YOUR_INKEEP_API_KEY>",
+              "description": "\u003cYOUR_INKEEP_API_KEY\u003e",
               "name": "INKEEP_API_KEY"
             },
             {
@@ -2525,7 +2525,7 @@
           "version": "1.0.3",
           "environment_variables": [
             {
-              "description": "<your-integration-app-token>",
+              "description": "\u003cyour-integration-app-token\u003e",
               "name": "INTEGRATION_APP_TOKEN"
             },
             {
@@ -2773,11 +2773,11 @@
           ],
           "environment_variables": [
             {
-              "description": "<YOUR_ACCESS_KEY_ID>",
+              "description": "\u003cYOUR_ACCESS_KEY_ID\u003e",
               "name": "LARA_ACCESS_KEY_ID"
             },
             {
-              "description": "<YOUR_ACCESS_KEY_SECRET>",
+              "description": "\u003cYOUR_ACCESS_KEY_SECRET\u003e",
               "name": "LARA_ACCESS_KEY_SECRET"
             }
           ],
@@ -2813,14 +2813,14 @@
           "version": "",
           "package_arguments": [
             {
-              "description": "SELECT trace_id, message, created_at, attributes->>'service.name' as service FROM records WHERE severity_text = 'ERROR' ORDER BY created_at DESC LIMIT 10",
+              "description": "SELECT trace_id, message, created_at, attributes-\u003e\u003e'service.name' as service FROM records WHERE severity_text = 'ERROR' ORDER BY created_at DESC LIMIT 10",
               "is_required": true,
               "format": "string",
-              "value": "SELECT trace_id, message, created_at, attributes->>'service.name' as service FROM records WHERE severity_text = 'ERROR' ORDER BY created_at DESC LIMIT 10",
-              "default": "SELECT trace_id, message, created_at, attributes->>'service.name' as service FROM records WHERE severity_text = 'ERROR' ORDER BY created_at DESC LIMIT 10",
+              "value": "SELECT trace_id, message, created_at, attributes-\u003e\u003e'service.name' as service FROM records WHERE severity_text = 'ERROR' ORDER BY created_at DESC LIMIT 10",
+              "default": "SELECT trace_id, message, created_at, attributes-\u003e\u003e'service.name' as service FROM records WHERE severity_text = 'ERROR' ORDER BY created_at DESC LIMIT 10",
               "type": "named",
-              "name": "SELECT trace_id, message, created_at, attributes->>'service.name' as service FROM records WHERE severity_text = 'ERROR' ORDER BY created_at DESC LIMIT 10",
-              "value_hint": "SELECT trace_id, message, created_at, attributes->>'service.name' as service FROM records WHERE severity_text = 'ERROR' ORDER BY created_at DESC LIMIT 10"
+              "name": "SELECT trace_id, message, created_at, attributes-\u003e\u003e'service.name' as service FROM records WHERE severity_text = 'ERROR' ORDER BY created_at DESC LIMIT 10",
+              "value_hint": "SELECT trace_id, message, created_at, attributes-\u003e\u003e'service.name' as service FROM records WHERE severity_text = 'ERROR' ORDER BY created_at DESC LIMIT 10"
             },
             {
               "description": "1440",
@@ -2894,7 +2894,7 @@
   {
     "server": {
       "name": "io.github.lingodotdev/lingo.dev",
-      "description": "\u26a1\ufe0f Open-source AI-powered CLI for web & mobile localization. Bring your own LLM or use Lingo.dev-managed localization engine.",
+      "description": "⚡️ Open-source AI-powered CLI for web & mobile localization. Bring your own LLM or use Lingo.dev-managed localization engine.",
       "status": "active",
       "repository": {
         "url": "https://github.com/lingodotdev/lingo.dev",
@@ -2939,15 +2939,15 @@
           "version": "0.5.0",
           "environment_variables": [
             {
-              "description": "<your-api-key>",
+              "description": "\u003cyour-api-key\u003e",
               "name": "MAKE_API_KEY"
             },
             {
-              "description": "<your-zone>",
+              "description": "\u003cyour-zone\u003e",
               "name": "MAKE_ZONE"
             },
             {
-              "description": "<your-team-id>",
+              "description": "\u003cyour-team-id\u003e",
               "name": "MAKE_TEAM"
             }
           ],
@@ -3229,14 +3229,14 @@
               "value_hint": "md:"
             },
             {
-              "description": "--motherduck-token <YOUR_MOTHERDUCK_TOKEN_HERE>",
+              "description": "--motherduck-token \u003cYOUR_MOTHERDUCK_TOKEN_HERE\u003e",
               "is_required": true,
               "format": "string",
-              "value": "--motherduck-token <YOUR_MOTHERDUCK_TOKEN_HERE>",
-              "default": "--motherduck-token <YOUR_MOTHERDUCK_TOKEN_HERE>",
+              "value": "--motherduck-token \u003cYOUR_MOTHERDUCK_TOKEN_HERE\u003e",
+              "default": "--motherduck-token \u003cYOUR_MOTHERDUCK_TOKEN_HERE\u003e",
               "type": "named",
-              "name": "--motherduck-token <YOUR_MOTHERDUCK_TOKEN_HERE>",
-              "value_hint": "<YOUR_MOTHERDUCK_TOKEN_HERE>"
+              "name": "--motherduck-token \u003cYOUR_MOTHERDUCK_TOKEN_HERE\u003e",
+              "value_hint": "\u003cYOUR_MOTHERDUCK_TOKEN_HERE\u003e"
             }
           ],
           "package_type": "python",
@@ -3339,10 +3339,10 @@
               "description": "Your Neon API key",
               "is_required": true,
               "format": "string",
-              "value": "<YOUR_NEON_API_KEY>",
-              "default": "<YOUR_NEON_API_KEY>",
+              "value": "\u003cYOUR_NEON_API_KEY\u003e",
+              "default": "\u003cYOUR_NEON_API_KEY\u003e",
               "type": "positional",
-              "value_hint": "<YOUR_NEON_API_KEY>"
+              "value_hint": "\u003cYOUR_NEON_API_KEY\u003e"
             }
           ],
           "package_type": "javascript",
@@ -3446,11 +3446,11 @@
               "description": "Set the working directory",
               "is_required": true,
               "format": "string",
-              "value": "--directory /<Absolute-path-to-folder>/oxylabs-mcp",
-              "default": "--directory /<Absolute-path-to-folder>/oxylabs-mcp",
+              "value": "--directory /\u003cAbsolute-path-to-folder\u003e/oxylabs-mcp",
+              "default": "--directory /\u003cAbsolute-path-to-folder\u003e/oxylabs-mcp",
               "type": "named",
-              "name": "--directory /<Absolute-path-to-folder>/oxylabs-mcp",
-              "value_hint": "/<Absolute-path-to-folder>/oxylabs-mcp"
+              "name": "--directory /\u003cAbsolute-path-to-folder\u003e/oxylabs-mcp",
+              "value_hint": "/\u003cAbsolute-path-to-folder\u003e/oxylabs-mcp"
             },
             {
               "description": "Python application/module to run",
@@ -3670,11 +3670,11 @@
           ],
           "environment_variables": [
             {
-              "description": "<YOUR_PINECONE_API_KEY_HERE>",
+              "description": "\u003cYOUR_PINECONE_API_KEY_HERE\u003e",
               "name": "PINECONE_API_KEY"
             },
             {
-              "description": "<YOUR_PINECONE_ASSISTANT_HOST_HERE>",
+              "description": "\u003cYOUR_PINECONE_ASSISTANT_HOST_HERE\u003e",
               "name": "PINECONE_ASSISTANT_HOST"
             }
           ],
@@ -3814,24 +3814,24 @@
               "value_hint": "--rm"
             },
             {
-              "description": "-e API_KEY=<your_redis_cloud_api_key>",
+              "description": "-e API_KEY=\u003cyour_redis_cloud_api_key\u003e",
               "is_required": true,
               "format": "string",
-              "value": "-e API_KEY=<your_redis_cloud_api_key>",
-              "default": "-e API_KEY=<your_redis_cloud_api_key>",
+              "value": "-e API_KEY=\u003cyour_redis_cloud_api_key\u003e",
+              "default": "-e API_KEY=\u003cyour_redis_cloud_api_key\u003e",
               "type": "named",
-              "name": "-e API_KEY=<your_redis_cloud_api_key>",
-              "value_hint": "API_KEY=<your_redis_cloud_api_key>"
+              "name": "-e API_KEY=\u003cyour_redis_cloud_api_key\u003e",
+              "value_hint": "API_KEY=\u003cyour_redis_cloud_api_key\u003e"
             },
             {
-              "description": "-e SECRET_KEY=<your_redis_cloud_api_secret_key>",
+              "description": "-e SECRET_KEY=\u003cyour_redis_cloud_api_secret_key\u003e",
               "is_required": true,
               "format": "string",
-              "value": "-e SECRET_KEY=<your_redis_cloud_api_secret_key>",
-              "default": "-e SECRET_KEY=<your_redis_cloud_api_secret_key>",
+              "value": "-e SECRET_KEY=\u003cyour_redis_cloud_api_secret_key\u003e",
+              "default": "-e SECRET_KEY=\u003cyour_redis_cloud_api_secret_key\u003e",
               "type": "named",
-              "name": "-e SECRET_KEY=<your_redis_cloud_api_secret_key>",
-              "value_hint": "SECRET_KEY=<your_redis_cloud_api_secret_key>"
+              "name": "-e SECRET_KEY=\u003cyour_redis_cloud_api_secret_key\u003e",
+              "value_hint": "SECRET_KEY=\u003cyour_redis_cloud_api_secret_key\u003e"
             }
           ],
           "package_type": "docker",
@@ -3982,11 +3982,11 @@
               "description": "Specify the directory to use",
               "is_required": true,
               "format": "string",
-              "value": "--directory /<ABSOLUTE-PATH-TO>/ramp-mcp",
-              "default": "--directory /<ABSOLUTE-PATH-TO>/ramp-mcp",
+              "value": "--directory /\u003cABSOLUTE-PATH-TO\u003e/ramp-mcp",
+              "default": "--directory /\u003cABSOLUTE-PATH-TO\u003e/ramp-mcp",
               "type": "named",
-              "name": "--directory /<ABSOLUTE-PATH-TO>/ramp-mcp",
-              "value_hint": "/<ABSOLUTE-PATH-TO>/ramp-mcp"
+              "name": "--directory /\u003cABSOLUTE-PATH-TO\u003e/ramp-mcp",
+              "value_hint": "/\u003cABSOLUTE-PATH-TO\u003e/ramp-mcp"
             },
             {
               "description": "Application name",
@@ -4018,15 +4018,15 @@
           ],
           "environment_variables": [
             {
-              "description": "<CLIENT_ID>",
+              "description": "\u003cCLIENT_ID\u003e",
               "name": "RAMP_CLIENT_ID"
             },
             {
-              "description": "<CLIENT_SECRET>",
+              "description": "\u003cCLIENT_SECRET\u003e",
               "name": "RAMP_CLIENT_SECRET"
             },
             {
-              "description": "<demo|qa|prd>",
+              "description": "\u003cdemo|qa|prd\u003e",
               "name": "RAMP_ENV"
             }
           ],
@@ -4223,7 +4223,7 @@
           ],
           "environment_variables": [
             {
-              "description": "<your api key>",
+              "description": "\u003cyour api key\u003e",
               "name": "SCREENSHOTONE_API_KEY"
             }
           ],
@@ -4301,10 +4301,10 @@
               "description": "SingleStore API Key",
               "is_required": true,
               "format": "string",
-              "value": "<SINGLESTORE_API_KEY>",
-              "default": "<SINGLESTORE_API_KEY>",
+              "value": "\u003cSINGLESTORE_API_KEY\u003e",
+              "default": "\u003cSINGLESTORE_API_KEY\u003e",
               "type": "positional",
-              "value_hint": "<SINGLESTORE_API_KEY>"
+              "value_hint": "\u003cSINGLESTORE_API_KEY\u003e"
             }
           ],
           "package_type": "python",
@@ -4958,7 +4958,7 @@
   {
     "server": {
       "name": "io.github.domdomegg/airtable-mcp-server",
-      "description": "\ud83d\uddc2\ufe0f\ud83e\udd16 Airtable Model Context Protocol Server, for allowing AI systems to interact with your Airtable bases",
+      "description": "🗂️🤖 Airtable Model Context Protocol Server, for allowing AI systems to interact with your Airtable bases",
       "status": "active",
       "repository": {
         "url": "https://github.com/domdomegg/airtable-mcp-server",
@@ -5906,7 +5906,7 @@
   {
     "server": {
       "name": "io.github.baidubce/app-builder",
-      "description": "appbuilder-sdk, \u5343\u5e06AppBuilder-SDK\u5e2e\u52a9\u5f00\u53d1\u8005\u7075\u6d3b\u3001\u5feb\u901f\u7684\u642d\u5efaAI\u539f\u751f\u5e94\u7528",
+      "description": "appbuilder-sdk, 千帆AppBuilder-SDK帮助开发者灵活、快速的搭建AI原生应用",
       "status": "active",
       "repository": {
         "url": "https://github.com/baidubce/app-builder",
@@ -6561,11 +6561,11 @@
               "description": "The directory to use for the operation",
               "is_required": true,
               "format": "string",
-              "value": "--directory <full path to chess-mcp directory>",
-              "default": "--directory <full path to chess-mcp directory>",
+              "value": "--directory \u003cfull path to chess-mcp directory\u003e",
+              "default": "--directory \u003cfull path to chess-mcp directory\u003e",
               "type": "named",
-              "name": "--directory <full path to chess-mcp directory>",
-              "value_hint": "<full path to chess-mcp directory>"
+              "name": "--directory \u003cfull path to chess-mcp directory\u003e",
+              "value_hint": "\u003cfull path to chess-mcp directory\u003e"
             },
             {
               "description": "Script to run with python",
@@ -7077,11 +7077,11 @@
               "description": "Management token for Contentful",
               "is_required": true,
               "format": "string",
-              "value": "--management-token <your token>",
-              "default": "--management-token <your token>",
+              "value": "--management-token \u003cyour token\u003e",
+              "default": "--management-token \u003cyour token\u003e",
               "type": "named",
-              "name": "--management-token <your token>",
-              "value_hint": "<your token>"
+              "name": "--management-token \u003cyour token\u003e",
+              "value_hint": "\u003cyour token\u003e"
             },
             {
               "description": "Contentful API host address",
@@ -7254,7 +7254,7 @@
   {
     "server": {
       "name": "io.github.dappierai/dappier-mcp",
-      "description": "Enable fast, free real-time web search and access premium data from trusted media brands\u2014news, financial markets, sports, entertainment, weather, and more. Build powerful AI agents with Dappier.",
+      "description": "Enable fast, free real-time web search and access premium data from trusted media brands—news, financial markets, sports, entertainment, weather, and more. Build powerful AI agents with Dappier.",
       "status": "active",
       "repository": {
         "url": "https://github.com/DappierAI/dappier-mcp",
@@ -7305,54 +7305,54 @@
           "version": "1.0.8",
           "package_arguments": [
             {
-              "description": "<YOUR_API_KEY>",
+              "description": "\u003cYOUR_API_KEY\u003e",
               "is_required": true,
               "format": "string",
-              "value": "--apiKey <YOUR_API_KEY>",
-              "default": "--apiKey <YOUR_API_KEY>",
+              "value": "--apiKey \u003cYOUR_API_KEY\u003e",
+              "default": "--apiKey \u003cYOUR_API_KEY\u003e",
               "type": "named",
-              "name": "--apiKey <YOUR_API_KEY>",
-              "value_hint": "<YOUR_API_KEY>"
+              "name": "--apiKey \u003cYOUR_API_KEY\u003e",
+              "value_hint": "\u003cYOUR_API_KEY\u003e"
             },
             {
-              "description": "<YOUR_APP_KEY>",
+              "description": "\u003cYOUR_APP_KEY\u003e",
               "is_required": true,
               "format": "string",
-              "value": "--appKey <YOUR_APP_KEY>",
-              "default": "--appKey <YOUR_APP_KEY>",
+              "value": "--appKey \u003cYOUR_APP_KEY\u003e",
+              "default": "--appKey \u003cYOUR_APP_KEY\u003e",
               "type": "named",
-              "name": "--appKey <YOUR_APP_KEY>",
-              "value_hint": "<YOUR_APP_KEY>"
+              "name": "--appKey \u003cYOUR_APP_KEY\u003e",
+              "value_hint": "\u003cYOUR_APP_KEY\u003e"
             },
             {
-              "description": "<YOUR_DD_SITE>",
+              "description": "\u003cYOUR_DD_SITE\u003e",
               "is_required": true,
               "format": "string",
-              "value": "--site <YOUR_DD_SITE>",
-              "default": "--site <YOUR_DD_SITE>",
+              "value": "--site \u003cYOUR_DD_SITE\u003e",
+              "default": "--site \u003cYOUR_DD_SITE\u003e",
               "type": "named",
-              "name": "--site <YOUR_DD_SITE>",
-              "value_hint": "<YOUR_DD_SITE>"
+              "name": "--site \u003cYOUR_DD_SITE\u003e",
+              "value_hint": "\u003cYOUR_DD_SITE\u003e"
             },
             {
-              "description": "<YOUR_LOGS_SITE>",
+              "description": "\u003cYOUR_LOGS_SITE\u003e",
               "is_required": true,
               "format": "string",
-              "value": "--logsSite <YOUR_LOGS_SITE>",
-              "default": "--logsSite <YOUR_LOGS_SITE>",
+              "value": "--logsSite \u003cYOUR_LOGS_SITE\u003e",
+              "default": "--logsSite \u003cYOUR_LOGS_SITE\u003e",
               "type": "named",
-              "name": "--logsSite <YOUR_LOGS_SITE>",
-              "value_hint": "<YOUR_LOGS_SITE>"
+              "name": "--logsSite \u003cYOUR_LOGS_SITE\u003e",
+              "value_hint": "\u003cYOUR_LOGS_SITE\u003e"
             },
             {
-              "description": "<YOUR_METRICS_SITE>",
+              "description": "\u003cYOUR_METRICS_SITE\u003e",
               "is_required": true,
               "format": "string",
-              "value": "--metricsSite <YOUR_METRICS_SITE>",
-              "default": "--metricsSite <YOUR_METRICS_SITE>",
+              "value": "--metricsSite \u003cYOUR_METRICS_SITE\u003e",
+              "default": "--metricsSite \u003cYOUR_METRICS_SITE\u003e",
               "type": "named",
-              "name": "--metricsSite <YOUR_METRICS_SITE>",
-              "value_hint": "<YOUR_METRICS_SITE>"
+              "name": "--metricsSite \u003cYOUR_METRICS_SITE\u003e",
+              "value_hint": "\u003cYOUR_METRICS_SITE\u003e"
             }
           ],
           "package_type": "javascript",
@@ -7688,11 +7688,11 @@
           "version": "1.0.2",
           "environment_variables": [
             {
-              "description": "<Your API Key>",
+              "description": "\u003cYour API Key\u003e",
               "name": "API_KEY"
             },
             {
-              "description": "<Your Base URL>",
+              "description": "\u003cYour Base URL\u003e",
               "name": "BASE_URL"
             }
           ],
@@ -8566,7 +8566,7 @@
           "version": "0.2.3",
           "environment_variables": [
             {
-              "description": "<YOUR_API_KEY>",
+              "description": "\u003cYOUR_API_KEY\u003e",
               "name": "FRED_API_KEY"
             }
           ],
@@ -8668,7 +8668,7 @@
   {
     "server": {
       "name": "io.github.gannonh/firebase-mcp",
-      "description": "\ud83d\udd25 Model Context Protocol (MCP) server for Firebase.",
+      "description": "🔥 Model Context Protocol (MCP) server for Firebase.",
       "status": "active",
       "repository": {
         "url": "https://github.com/gannonh/firebase-mcp",
@@ -8857,18 +8857,18 @@
           "version": "0.1.0",
           "package_arguments": [
             {
-              "description": "<path-to-mcp-server>/dist/index.js",
+              "description": "\u003cpath-to-mcp-server\u003e/dist/index.js",
               "is_required": true,
               "format": "string",
-              "value": "<path-to-mcp-server>/dist/index.js",
-              "default": "<path-to-mcp-server>/dist/index.js",
+              "value": "\u003cpath-to-mcp-server\u003e/dist/index.js",
+              "default": "\u003cpath-to-mcp-server\u003e/dist/index.js",
               "type": "positional",
-              "value_hint": "<path-to-mcp-server>/dist/index.js"
+              "value_hint": "\u003cpath-to-mcp-server\u003e/dist/index.js"
             }
           ],
           "environment_variables": [
             {
-              "description": "<YOUR_TOKEN>",
+              "description": "\u003cYOUR_TOKEN\u003e",
               "name": "GITHUB_PERSONAL_ACCESS_TOKEN"
             }
           ],
@@ -9006,11 +9006,11 @@
             {
               "description": "HTML email body",
               "format": "string",
-              "value": "<p>This is a <strong>test email</strong> sent via MCP Gmail server</p>",
-              "default": "<p>This is a <strong>test email</strong> sent via MCP Gmail server</p>",
+              "value": "\u003cp\u003eThis is a \u003cstrong\u003etest email\u003c/strong\u003e sent via MCP Gmail server\u003c/p\u003e",
+              "default": "\u003cp\u003eThis is a \u003cstrong\u003etest email\u003c/strong\u003e sent via MCP Gmail server\u003c/p\u003e",
               "type": "named",
-              "name": "<p>This is a <strong>test email</strong> sent via MCP Gmail server</p>",
-              "value_hint": "<p>This is a <strong>test email</strong> sent via MCP Gmail server</p>"
+              "name": "\u003cp\u003eThis is a \u003cstrong\u003etest email\u003c/strong\u003e sent via MCP Gmail server\u003c/p\u003e",
+              "value_hint": "\u003cp\u003eThis is a \u003cstrong\u003etest email\u003c/strong\u003e sent via MCP Gmail server\u003c/p\u003e"
             }
           ],
           "environment_variables": [
@@ -9200,11 +9200,11 @@
               "description": "Path to the source directory",
               "is_required": true,
               "format": "string",
-              "value": "--directory <absolute-path-to-cloned-repo>/mcp-goodnews/src/mcp_goodnews",
-              "default": "--directory <absolute-path-to-cloned-repo>/mcp-goodnews/src/mcp_goodnews",
+              "value": "--directory \u003cabsolute-path-to-cloned-repo\u003e/mcp-goodnews/src/mcp_goodnews",
+              "default": "--directory \u003cabsolute-path-to-cloned-repo\u003e/mcp-goodnews/src/mcp_goodnews",
               "type": "named",
-              "name": "--directory <absolute-path-to-cloned-repo>/mcp-goodnews/src/mcp_goodnews",
-              "value_hint": "<absolute-path-to-cloned-repo>/mcp-goodnews/src/mcp_goodnews"
+              "name": "--directory \u003cabsolute-path-to-cloned-repo\u003e/mcp-goodnews/src/mcp_goodnews",
+              "value_hint": "\u003cabsolute-path-to-cloned-repo\u003e/mcp-goodnews/src/mcp_goodnews"
             },
             {
               "description": "Python script to start the server",
@@ -9218,11 +9218,11 @@
           ],
           "environment_variables": [
             {
-              "description": "<newsapi-api-key>",
+              "description": "\u003cnewsapi-api-key\u003e",
               "name": "NEWS_API_KEY"
             },
             {
-              "description": "<cohere-api-key>",
+              "description": "\u003ccohere-api-key\u003e",
               "name": "COHERE_API_KEY"
             }
           ],
@@ -9617,11 +9617,11 @@
           "version": "0.2.0",
           "environment_variables": [
             {
-              "description": "<your token>",
+              "description": "\u003cyour token\u003e",
               "name": "HOLASPIRIT_API_TOKEN"
             },
             {
-              "description": "<your org id>",
+              "description": "\u003cyour org id\u003e",
               "name": "HOLASPIRIT_ORGANIZATION_ID"
             }
           ],
@@ -9994,22 +9994,22 @@
               "value_hint": "mcp"
             },
             {
-              "description": "<global path of the repo>/hyprmcp/hyprmcp/server.py",
+              "description": "\u003cglobal path of the repo\u003e/hyprmcp/hyprmcp/server.py",
               "is_required": true,
               "format": "string",
-              "value": "<global path of the repo>/hyprmcp/hyprmcp/server.py",
-              "default": "<global path of the repo>/hyprmcp/hyprmcp/server.py",
+              "value": "\u003cglobal path of the repo\u003e/hyprmcp/hyprmcp/server.py",
+              "default": "\u003cglobal path of the repo\u003e/hyprmcp/hyprmcp/server.py",
               "type": "positional",
-              "value_hint": "<global path of the repo>/hyprmcp/hyprmcp/server.py"
+              "value_hint": "\u003cglobal path of the repo\u003e/hyprmcp/hyprmcp/server.py"
             }
           ],
           "environment_variables": [
             {
-              "description": "<global path of the repo>/hyprmcp",
+              "description": "\u003cglobal path of the repo\u003e/hyprmcp",
               "name": "PYTHONPATH"
             },
             {
-              "description": "<your-hyprland-instance-signature>",
+              "description": "\u003cyour-hyprland-instance-signature\u003e",
               "name": "HYPRLAND_INSTANCE_SIGNATURE"
             }
           ],
@@ -10327,7 +10327,7 @@
   {
     "server": {
       "name": "io.github.qainsights/jmeter-mcp-server",
-      "description": "\u2728 JMeter Meets AI Workflows: Introducing the JMeter MCP Server! \ud83e\udd2f ",
+      "description": "✨ JMeter Meets AI Workflows: Introducing the JMeter MCP Server! 🤯 ",
       "status": "active",
       "repository": {
         "url": "https://github.com/QAInsights/jmeter-mcp-server",
@@ -10772,11 +10772,11 @@
           "version": "0.0.11",
           "environment_variables": [
             {
-              "description": "<your PAT>",
+              "description": "\u003cyour PAT\u003e",
               "name": "LIGHTDASH_API_KEY"
             },
             {
-              "description": "https://<your base url>",
+              "description": "https://\u003cyour base url\u003e",
               "name": "LIGHTDASH_API_URL"
             }
           ],
@@ -10854,7 +10854,7 @@
           "version": "1.0.9",
           "environment_variables": [
             {
-              "description": "<YOUR_TOKEN>",
+              "description": "\u003cYOUR_TOKEN\u003e",
               "name": "LINEAR_API_TOKEN"
             }
           ],
@@ -10968,11 +10968,11 @@
           ],
           "environment_variables": [
             {
-              "description": "<YOUR_PROJECT_NAME>",
+              "description": "\u003cYOUR_PROJECT_NAME\u003e",
               "name": "LLAMA_CLOUD_PROJECT_NAME"
             },
             {
-              "description": "<YOUR_API_KEY>",
+              "description": "\u003cYOUR_API_KEY\u003e",
               "name": "LLAMA_CLOUD_API_KEY"
             }
           ],
@@ -11288,7 +11288,7 @@
   {
     "server": {
       "name": "io.github.nkapila6/mcp-local-rag",
-      "description": "\"primitive\" RAG-like web search model context protocol (MCP) server that runs locally. \u2728 no APIs \u2728",
+      "description": "\"primitive\" RAG-like web search model context protocol (MCP) server that runs locally. ✨ no APIs ✨",
       "status": "active",
       "repository": {
         "url": "https://github.com/nkapila6/mcp-local-rag",
@@ -11306,11 +11306,11 @@
               "description": "A named argument for directory.",
               "is_required": true,
               "format": "string",
-              "value": "--directory <path where this folder is located>/mcp-local-rag/",
-              "default": "--directory <path where this folder is located>/mcp-local-rag/",
+              "value": "--directory \u003cpath where this folder is located\u003e/mcp-local-rag/",
+              "default": "--directory \u003cpath where this folder is located\u003e/mcp-local-rag/",
               "type": "named",
-              "name": "--directory <path where this folder is located>/mcp-local-rag/",
-              "value_hint": "<path where this folder is located>/mcp-local-rag/"
+              "name": "--directory \u003cpath where this folder is located\u003e/mcp-local-rag/",
+              "value_hint": "\u003cpath where this folder is located\u003e/mcp-local-rag/"
             },
             {
               "description": "A positional argument for the Python script.",
@@ -11384,7 +11384,7 @@
           "version": "",
           "environment_variables": [
             {
-              "description": "<YOUR_TOKEN>",
+              "description": "\u003cYOUR_TOKEN\u003e",
               "name": "GITHUB_PERSONAL_ACCESS_TOKEN"
             }
           ],
@@ -11396,7 +11396,7 @@
       "remotes": [
         {
           "transport_type": "sse",
-          "url": "https://mcp.amap.com/sse?key=<YOUR_TOKEN>"
+          "url": "https://mcp.amap.com/sse?key=\u003cYOUR_TOKEN\u003e"
         }
       ]
     },
@@ -11551,34 +11551,34 @@
           "version": "0.2.8",
           "package_arguments": [
             {
-              "description": "<YOUR_MT5_LOGIN>",
+              "description": "\u003cYOUR_MT5_LOGIN\u003e",
               "is_required": true,
               "format": "string",
-              "value": "--login <YOUR_MT5_LOGIN>",
-              "default": "--login <YOUR_MT5_LOGIN>",
+              "value": "--login \u003cYOUR_MT5_LOGIN\u003e",
+              "default": "--login \u003cYOUR_MT5_LOGIN\u003e",
               "type": "named",
-              "name": "--login <YOUR_MT5_LOGIN>",
-              "value_hint": "<YOUR_MT5_LOGIN>"
+              "name": "--login \u003cYOUR_MT5_LOGIN\u003e",
+              "value_hint": "\u003cYOUR_MT5_LOGIN\u003e"
             },
             {
-              "description": "<YOUR_MT5_PASSWORD>",
+              "description": "\u003cYOUR_MT5_PASSWORD\u003e",
               "is_required": true,
               "format": "string",
-              "value": "--password <YOUR_MT5_PASSWORD>",
-              "default": "--password <YOUR_MT5_PASSWORD>",
+              "value": "--password \u003cYOUR_MT5_PASSWORD\u003e",
+              "default": "--password \u003cYOUR_MT5_PASSWORD\u003e",
               "type": "named",
-              "name": "--password <YOUR_MT5_PASSWORD>",
-              "value_hint": "<YOUR_MT5_PASSWORD>"
+              "name": "--password \u003cYOUR_MT5_PASSWORD\u003e",
+              "value_hint": "\u003cYOUR_MT5_PASSWORD\u003e"
             },
             {
-              "description": "<YOUR_MT5_SERVER>",
+              "description": "\u003cYOUR_MT5_SERVER\u003e",
               "is_required": true,
               "format": "string",
-              "value": "--server <YOUR_MT5_SERVER>",
-              "default": "--server <YOUR_MT5_SERVER>",
+              "value": "--server \u003cYOUR_MT5_SERVER\u003e",
+              "default": "--server \u003cYOUR_MT5_SERVER\u003e",
               "type": "named",
-              "name": "--server <YOUR_MT5_SERVER>",
-              "value_hint": "<YOUR_MT5_SERVER>"
+              "name": "--server \u003cYOUR_MT5_SERVER\u003e",
+              "value_hint": "\u003cYOUR_MT5_SERVER\u003e"
             }
           ],
           "package_type": "python",
@@ -11613,11 +11613,11 @@
           "version": "1.1.0",
           "environment_variables": [
             {
-              "description": "<METRICOOL_USER_TOKEN>",
+              "description": "\u003cMETRICOOL_USER_TOKEN\u003e",
               "name": "METRICOOL_USER_TOKEN"
             },
             {
-              "description": "<METRICOOL_USER_ID>",
+              "description": "\u003cMETRICOOL_USER_ID\u003e",
               "name": "METRICOOL_USER_ID"
             }
           ],
@@ -11795,31 +11795,31 @@
               "description": "Host to connect to",
               "is_required": true,
               "format": "string",
-              "value": "--host <HOST>",
-              "default": "--host <HOST>",
+              "value": "--host \u003cHOST\u003e",
+              "default": "--host \u003cHOST\u003e",
               "type": "named",
-              "name": "--host <HOST>",
-              "value_hint": "<HOST>"
+              "name": "--host \u003cHOST\u003e",
+              "value_hint": "\u003cHOST\u003e"
             },
             {
               "description": "Username for authentication",
               "is_required": true,
               "format": "string",
-              "value": "--username <USERNAME>",
-              "default": "--username <USERNAME>",
+              "value": "--username \u003cUSERNAME\u003e",
+              "default": "--username \u003cUSERNAME\u003e",
               "type": "named",
-              "name": "--username <USERNAME>",
-              "value_hint": "<USERNAME>"
+              "name": "--username \u003cUSERNAME\u003e",
+              "value_hint": "\u003cUSERNAME\u003e"
             },
             {
               "description": "Password for authentication",
               "is_required": true,
               "format": "string",
-              "value": "--password <PASSWORD>",
-              "default": "--password <PASSWORD>",
+              "value": "--password \u003cPASSWORD\u003e",
+              "default": "--password \u003cPASSWORD\u003e",
               "type": "named",
-              "name": "--password <PASSWORD>",
-              "value_hint": "<PASSWORD>"
+              "name": "--password \u003cPASSWORD\u003e",
+              "value_hint": "\u003cPASSWORD\u003e"
             },
             {
               "description": "Port to connect to",
@@ -11971,7 +11971,7 @@
   {
     "server": {
       "name": "io.github.furey/mongodb-lens",
-      "description": "\ud83c\udf43\ud83d\udd0e MongoDB Lens: Full Featured MCP Server for MongoDB Databases",
+      "description": "🍃🔎 MongoDB Lens: Full Featured MCP Server for MongoDB Databases",
       "status": "active",
       "repository": {
         "url": "https://github.com/furey/mongodb-lens",
@@ -12831,7 +12831,7 @@
           ],
           "environment_variables": [
             {
-              "description": "<your topic name>",
+              "description": "\u003cyour topic name\u003e",
               "name": "NTFY_TOPIC"
             }
           ],
@@ -12852,7 +12852,7 @@
   {
     "server": {
       "name": "io.github.gitmotion/ntfy-me-mcp",
-      "description": "An ntfy MCP server for sending/fetching ntfy notifications to any/self-hosted ntfy.sh server from AI Agents \ud83d\udce4 (supports secure token auth & more - use with npx or docker!)",
+      "description": "An ntfy MCP server for sending/fetching ntfy notifications to any/self-hosted ntfy.sh server from AI Agents 📤 (supports secure token auth & more - use with npx or docker!)",
       "status": "active",
       "repository": {
         "url": "https://github.com/gitmotion/ntfy-me-mcp",
@@ -13893,7 +13893,7 @@
   {
     "server": {
       "name": "io.github.executeautomation/mcp-playwright",
-      "description": "Playwright Model Context Protocol Server - Tool to automate Browsers and APIs in Claude Desktop, Cline, Cursor IDE and More \ud83d\udd0c",
+      "description": "Playwright Model Context Protocol Server - Tool to automate Browsers and APIs in Claude Desktop, Cline, Cursor IDE and More 🔌",
       "status": "active",
       "repository": {
         "url": "https://github.com/executeautomation/mcp-playwright",
@@ -13998,7 +13998,7 @@
           "version": "1.0.1",
           "environment_variables": [
             {
-              "description": "<YOUR_TOKEN>",
+              "description": "\u003cYOUR_TOKEN\u003e",
               "name": "PRODUCTBOARD_ACCESS_TOKEN"
             }
           ],
@@ -14477,51 +14477,51 @@
               "description": "RabbitMQ host name",
               "is_required": true,
               "format": "string",
-              "value": "--rabbitmq-host <hostname ex. test.rabbit.com, localhost>",
-              "default": "--rabbitmq-host <hostname ex. test.rabbit.com, localhost>",
+              "value": "--rabbitmq-host \u003chostname ex. test.rabbit.com, localhost\u003e",
+              "default": "--rabbitmq-host \u003chostname ex. test.rabbit.com, localhost\u003e",
               "type": "named",
-              "name": "--rabbitmq-host <hostname ex. test.rabbit.com, localhost>",
-              "value_hint": "<hostname ex. test.rabbit.com, localhost>"
+              "name": "--rabbitmq-host \u003chostname ex. test.rabbit.com, localhost\u003e",
+              "value_hint": "\u003chostname ex. test.rabbit.com, localhost\u003e"
             },
             {
               "description": "RabbitMQ port number",
               "is_required": true,
               "format": "string",
-              "value": "--port <port number ex. 5672>",
-              "default": "--port <port number ex. 5672>",
+              "value": "--port \u003cport number ex. 5672\u003e",
+              "default": "--port \u003cport number ex. 5672\u003e",
               "type": "named",
-              "name": "--port <port number ex. 5672>",
-              "value_hint": "<port number ex. 5672>"
+              "name": "--port \u003cport number ex. 5672\u003e",
+              "value_hint": "\u003cport number ex. 5672\u003e"
             },
             {
               "description": "RabbitMQ username",
               "is_required": true,
               "format": "string",
-              "value": "--username <rabbitmq username>",
-              "default": "--username <rabbitmq username>",
+              "value": "--username \u003crabbitmq username\u003e",
+              "default": "--username \u003crabbitmq username\u003e",
               "type": "named",
-              "name": "--username <rabbitmq username>",
-              "value_hint": "<rabbitmq username>"
+              "name": "--username \u003crabbitmq username\u003e",
+              "value_hint": "\u003crabbitmq username\u003e"
             },
             {
               "description": "RabbitMQ password",
               "is_required": true,
               "format": "string",
-              "value": "--password <rabbitmq password>",
-              "default": "--password <rabbitmq password>",
+              "value": "--password \u003crabbitmq password\u003e",
+              "default": "--password \u003crabbitmq password\u003e",
               "type": "named",
-              "name": "--password <rabbitmq password>",
-              "value_hint": "<rabbitmq password>"
+              "name": "--password \u003crabbitmq password\u003e",
+              "value_hint": "\u003crabbitmq password\u003e"
             },
             {
               "description": "Whether to use TLS (amqps protocol)",
               "is_required": true,
               "format": "string",
-              "value": "--use-tls <true if uses amqps, false otherwise>",
-              "default": "--use-tls <true if uses amqps, false otherwise>",
+              "value": "--use-tls \u003ctrue if uses amqps, false otherwise\u003e",
+              "default": "--use-tls \u003ctrue if uses amqps, false otherwise\u003e",
               "type": "named",
-              "name": "--use-tls <true if uses amqps, false otherwise>",
-              "value_hint": "<true if uses amqps, false otherwise>"
+              "name": "--use-tls \u003ctrue if uses amqps, false otherwise\u003e",
+              "value_hint": "\u003ctrue if uses amqps, false otherwise\u003e"
             }
           ],
           "package_type": "python",
@@ -15158,24 +15158,24 @@
           "version": "1.0.5",
           "package_arguments": [
             {
-              "description": "--accessToken <YOUR_ACCESS_TOKEN>",
+              "description": "--accessToken \u003cYOUR_ACCESS_TOKEN\u003e",
               "is_required": true,
               "format": "string",
-              "value": "--accessToken <YOUR_ACCESS_TOKEN>",
-              "default": "--accessToken <YOUR_ACCESS_TOKEN>",
+              "value": "--accessToken \u003cYOUR_ACCESS_TOKEN\u003e",
+              "default": "--accessToken \u003cYOUR_ACCESS_TOKEN\u003e",
               "type": "named",
-              "name": "--accessToken <YOUR_ACCESS_TOKEN>",
-              "value_hint": "<YOUR_ACCESS_TOKEN>"
+              "name": "--accessToken \u003cYOUR_ACCESS_TOKEN\u003e",
+              "value_hint": "\u003cYOUR_ACCESS_TOKEN\u003e"
             },
             {
-              "description": "--domain <YOUR_SHOP>.myshopify.com",
+              "description": "--domain \u003cYOUR_SHOP\u003e.myshopify.com",
               "is_required": true,
               "format": "string",
-              "value": "--domain <YOUR_SHOP>.myshopify.com",
-              "default": "--domain <YOUR_SHOP>.myshopify.com",
+              "value": "--domain \u003cYOUR_SHOP\u003e.myshopify.com",
+              "default": "--domain \u003cYOUR_SHOP\u003e.myshopify.com",
               "type": "named",
-              "name": "--domain <YOUR_SHOP>.myshopify.com",
-              "value_hint": "<YOUR_SHOP>.myshopify.com"
+              "name": "--domain \u003cYOUR_SHOP\u003e.myshopify.com",
+              "value_hint": "\u003cYOUR_SHOP\u003e.myshopify.com"
             }
           ],
           "package_type": "javascript",
@@ -15550,10 +15550,10 @@
               "description": "Path to the ShaderToy-MCP server script",
               "is_required": true,
               "format": "string",
-              "value": "<path_to_project>/ShaderToy-MCP/src/ShaderToy-MCP/server.py",
-              "default": "<path_to_project>/ShaderToy-MCP/src/ShaderToy-MCP/server.py",
+              "value": "\u003cpath_to_project\u003e/ShaderToy-MCP/src/ShaderToy-MCP/server.py",
+              "default": "\u003cpath_to_project\u003e/ShaderToy-MCP/src/ShaderToy-MCP/server.py",
               "type": "positional",
-              "value_hint": "<path_to_project>/ShaderToy-MCP/src/ShaderToy-MCP/server.py"
+              "value_hint": "\u003cpath_to_project\u003e/ShaderToy-MCP/src/ShaderToy-MCP/server.py"
             }
           ],
           "environment_variables": [
@@ -15780,34 +15780,34 @@
           "version": "0.1.3",
           "package_arguments": [
             {
-              "description": "<YOUR_RIOT_API_KEY>",
+              "description": "\u003cYOUR_RIOT_API_KEY\u003e",
               "is_required": true,
               "format": "string",
-              "value": "--apiKey <YOUR_RIOT_API_KEY>",
-              "default": "--apiKey <YOUR_RIOT_API_KEY>",
+              "value": "--apiKey \u003cYOUR_RIOT_API_KEY\u003e",
+              "default": "--apiKey \u003cYOUR_RIOT_API_KEY\u003e",
               "type": "named",
-              "name": "--apiKey <YOUR_RIOT_API_KEY>",
-              "value_hint": "<YOUR_RIOT_API_KEY>"
+              "name": "--apiKey \u003cYOUR_RIOT_API_KEY\u003e",
+              "value_hint": "\u003cYOUR_RIOT_API_KEY\u003e"
             },
             {
-              "description": "<YOUR_GAME_NAME>",
+              "description": "\u003cYOUR_GAME_NAME\u003e",
               "is_required": true,
               "format": "string",
-              "value": "--gameName <YOUR_GAME_NAME>",
-              "default": "--gameName <YOUR_GAME_NAME>",
+              "value": "--gameName \u003cYOUR_GAME_NAME\u003e",
+              "default": "--gameName \u003cYOUR_GAME_NAME\u003e",
               "type": "named",
-              "name": "--gameName <YOUR_GAME_NAME>",
-              "value_hint": "<YOUR_GAME_NAME>"
+              "name": "--gameName \u003cYOUR_GAME_NAME\u003e",
+              "value_hint": "\u003cYOUR_GAME_NAME\u003e"
             },
             {
-              "description": "<YOUR_TAG_LINE>",
+              "description": "\u003cYOUR_TAG_LINE\u003e",
               "is_required": true,
               "format": "string",
-              "value": "--tagLine <YOUR_TAG_LINE>",
-              "default": "--tagLine <YOUR_TAG_LINE>",
+              "value": "--tagLine \u003cYOUR_TAG_LINE\u003e",
+              "default": "--tagLine \u003cYOUR_TAG_LINE\u003e",
               "type": "named",
-              "name": "--tagLine <YOUR_TAG_LINE>",
-              "value_hint": "<YOUR_TAG_LINE>"
+              "name": "--tagLine \u003cYOUR_TAG_LINE\u003e",
+              "value_hint": "\u003cYOUR_TAG_LINE\u003e"
             }
           ],
           "package_type": "javascript",
@@ -15996,15 +15996,15 @@
           ],
           "environment_variables": [
             {
-              "description": "<YOUR_CLIENT_ID>",
+              "description": "\u003cYOUR_CLIENT_ID\u003e",
               "name": "TICKTICK_CLIENT_ID"
             },
             {
-              "description": "<YOUR_CLIENT_SECRET>",
+              "description": "\u003cYOUR_CLIENT_SECRET\u003e",
               "name": "TICKTICK_CLIENT_SECRET"
             },
             {
-              "description": "<YOUR_ACCESS_TOKEN>",
+              "description": "\u003cYOUR_ACCESS_TOKEN\u003e",
               "name": "TICKTICK_ACCESS_TOKEN"
             }
           ],
@@ -16393,31 +16393,31 @@
               "description": "Specify Unity Catalog server URL",
               "is_required": true,
               "format": "string",
-              "value": "--uc_server <your unity catalog url>",
-              "default": "--uc_server <your unity catalog url>",
+              "value": "--uc_server \u003cyour unity catalog url\u003e",
+              "default": "--uc_server \u003cyour unity catalog url\u003e",
               "type": "named",
-              "name": "--uc_server <your unity catalog url>",
-              "value_hint": "<your unity catalog url>"
+              "name": "--uc_server \u003cyour unity catalog url\u003e",
+              "value_hint": "\u003cyour unity catalog url\u003e"
             },
             {
               "description": "Specify Unity Catalog name",
               "is_required": true,
               "format": "string",
-              "value": "--uc_catalog <your catalog name>",
-              "default": "--uc_catalog <your catalog name>",
+              "value": "--uc_catalog \u003cyour catalog name\u003e",
+              "default": "--uc_catalog \u003cyour catalog name\u003e",
               "type": "named",
-              "name": "--uc_catalog <your catalog name>",
-              "value_hint": "<your catalog name>"
+              "name": "--uc_catalog \u003cyour catalog name\u003e",
+              "value_hint": "\u003cyour catalog name\u003e"
             },
             {
               "description": "Specify Unity Catalog schema name",
               "is_required": true,
               "format": "string",
-              "value": "--uc_schema <your schema name>",
-              "default": "--uc_schema <your schema name>",
+              "value": "--uc_schema \u003cyour schema name\u003e",
+              "default": "--uc_schema \u003cyour schema name\u003e",
               "type": "named",
-              "name": "--uc_schema <your schema name>",
-              "value_hint": "<your schema name>"
+              "name": "--uc_schema \u003cyour schema name\u003e",
+              "value_hint": "\u003cyour schema name\u003e"
             }
           ],
           "package_type": "docker",
@@ -16551,11 +16551,11 @@
               "description": "Directory to use",
               "is_required": true,
               "format": "string",
-              "value": "--directory /Users/<PATH_TO>/video-jungle-mcp",
-              "default": "--directory /Users/<PATH_TO>/video-jungle-mcp",
+              "value": "--directory /Users/\u003cPATH_TO\u003e/video-jungle-mcp",
+              "default": "--directory /Users/\u003cPATH_TO\u003e/video-jungle-mcp",
               "type": "named",
-              "name": "--directory /Users/<PATH_TO>/video-jungle-mcp",
-              "value_hint": "/Users/<PATH_TO>/video-jungle-mcp"
+              "name": "--directory /Users/\u003cPATH_TO\u003e/video-jungle-mcp",
+              "value_hint": "/Users/\u003cPATH_TO\u003e/video-jungle-mcp"
             },
             {
               "description": "Script or module name",
@@ -16570,10 +16570,10 @@
               "description": "API Key input",
               "is_required": true,
               "format": "string",
-              "value": "<YOURAPIKEY>",
-              "default": "<YOURAPIKEY>",
+              "value": "\u003cYOURAPIKEY\u003e",
+              "default": "\u003cYOURAPIKEY\u003e",
               "type": "positional",
-              "value_hint": "<YOURAPIKEY>"
+              "value_hint": "\u003cYOURAPIKEY\u003e"
             }
           ],
           "environment_variables": [
@@ -17671,13 +17671,13 @@
           "version": "",
           "package_arguments": [
             {
-              "description": "<REMOTE_MCP_SERVER_URL>",
+              "description": "\u003cREMOTE_MCP_SERVER_URL\u003e",
               "is_required": true,
               "format": "string",
-              "value": "<REMOTE_MCP_SERVER_URL>",
-              "default": "<REMOTE_MCP_SERVER_URL>",
+              "value": "\u003cREMOTE_MCP_SERVER_URL\u003e",
+              "default": "\u003cREMOTE_MCP_SERVER_URL\u003e",
               "type": "positional",
-              "value_hint": "<REMOTE_MCP_SERVER_URL>"
+              "value_hint": "\u003cREMOTE_MCP_SERVER_URL\u003e"
             }
           ],
           "package_type": "javascript",
