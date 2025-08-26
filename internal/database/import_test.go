@@ -98,14 +98,6 @@ func TestReadSeedFile_RegistryURL(t *testing.T) {
 		Server: model.ServerDetail{
 			Name:        "Test Server 1",
 			Description: "First test server",
-			Packages: []model.Package{
-				{
-					PackageType:  "javascript",
-					RegistryName: "npm",
-					Identifier:   "test-package-1",
-					Version:      "1.0.0",
-				},
-			},
 		},
 		XIOModelContextProtocolRegistry: map[string]interface{}{
 			"id":           "server-1",
@@ -117,19 +109,36 @@ func TestReadSeedFile_RegistryURL(t *testing.T) {
 		Server: model.ServerDetail{
 			Name:        "Test Server 2",
 			Description: "Second test server",
-			Packages: []model.Package{
-				{
-					PackageType:  "javascript",
-					RegistryName: "npm",
-					Identifier:   "test-package-2",
-					Version:      "2.0.0",
-				},
-			},
 		},
 		XIOModelContextProtocolRegistry: map[string]interface{}{
 			"id":           "server-2",
 			"published_at": "2023-01-01T00:00:00Z",
 			"is_latest":    true,
+		},
+	}
+
+	serverDetail1 := model.ServerDetail{
+		Name:        "Test Server 1",
+		Description: "First test server",
+		Packages: []model.Package{
+			{
+				PackageType:  "javascript",
+				RegistryName: "npm",
+				Identifier:   "test-package-1",
+				Version:      "1.0.0",
+			},
+		},
+	}
+	serverDetail2 := model.ServerDetail{
+		Name:        "Test Server 2",
+		Description: "Second test server",
+		Packages: []model.Package{
+			{
+				PackageType:  "javascript",
+				RegistryName: "npm",
+				Identifier:   "test-package-2",
+				Version:      "2.0.0",
+			},
 		},
 	}
 
@@ -184,6 +193,21 @@ func TestReadSeedFile_RegistryURL(t *testing.T) {
 		}
 	})
 
+	// Handle individual server detail endpoints
+	mux.HandleFunc("/v0/servers/server-1", func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode(serverDetail1); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+	})
+
+	mux.HandleFunc("/v0/servers/server-2", func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode(serverDetail2); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+	})
+
 	server := httptest.NewServer(mux)
 	defer server.Close()
 
@@ -196,7 +220,7 @@ func TestReadSeedFile_RegistryURL(t *testing.T) {
 	assert.Equal(t, "Test Server 1", result[0].ServerJSON.Name)
 	assert.Equal(t, "Test Server 2", result[1].ServerJSON.Name)
 
-	// Verify packages were included
+	// Verify packages were imported with new schema
 	assert.Len(t, result[0].ServerJSON.Packages, 1)
 	assert.Equal(t, "javascript", result[0].ServerJSON.Packages[0].PackageType)
 	assert.Equal(t, "npm", result[0].ServerJSON.Packages[0].RegistryName)
