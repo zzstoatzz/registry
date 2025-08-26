@@ -76,8 +76,13 @@ func (s *registryServiceImpl) Publish(req model.PublishRequest) (*model.ServerRe
 		return nil, err
 	}
 
-	// Validate server name exists
+	// Validate server name exists and format
 	if _, err := model.ParseServerName(req.Server); err != nil {
+		return nil, err
+	}
+
+	// Validate reverse-DNS namespace matching for remote URLs
+	if err := model.ValidateRemoteNamespaceMatch(req.Server); err != nil {
 		return nil, err
 	}
 

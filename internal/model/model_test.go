@@ -263,3 +263,247 @@ func TestServerResponse_EmptyExtensions(t *testing.T) {
 		assert.Nil(t, publisherValue)
 	}
 }
+
+func TestValidateRemoteNamespaceMatch(t *testing.T) {
+	tests := []struct {
+		name        string
+		serverDetail ServerDetail
+		expectError bool
+		errorMsg    string
+	}{
+		{
+			name: "valid namespace match - microsoft.com",
+			serverDetail: ServerDetail{
+				Name: "com.microsoft.example.test-server",
+				Remotes: []Remote{
+					{URL: "https://example.microsoft.com/mcp"},
+				},
+			},
+			expectError: false,
+		},
+		{
+			name: "valid namespace match - subdomain",
+			serverDetail: ServerDetail{
+				Name: "com.microsoft.subdomain.server",
+				Remotes: []Remote{
+					{URL: "https://subdomain.microsoft.com/mcp"},
+				},
+			},
+			expectError: false,
+		},
+		{
+			name: "invalid namespace - wrong domain",
+			serverDetail: ServerDetail{
+				Name: "com.github.microsoft.example-server",
+				Remotes: []Remote{
+					{URL: "https://example.google.com/mcp"},
+				},
+			},
+			expectError: true,
+			errorMsg:    "namespace must start with com.google.example",
+		},
+		{
+			name: "invalid namespace - missing subdomain",
+			serverDetail: ServerDetail{
+				Name: "com.microsoft.server",
+				Remotes: []Remote{
+					{URL: "https://subdomain.microsoft.com/mcp"},
+				},
+			},
+			expectError: true,
+			errorMsg:    "namespace must start with com.microsoft.subdomain",
+		},
+		{
+			name: "localhost URLs allowed with any namespace",
+			serverDetail: ServerDetail{
+				Name: "com.example.test-server",
+				Remotes: []Remote{
+					{URL: "http://localhost:3000/sse"},
+				},
+			},
+			expectError: false,
+		},
+		{
+			name: "invalid URL format",
+			serverDetail: ServerDetail{
+				Name: "com.example.test",
+				Remotes: []Remote{
+					{URL: "not-a-valid-url"},
+				},
+			},
+			expectError: true,
+			errorMsg:    "URL must have a valid hostname",
+		},
+		{
+			name: "empty remotes array",
+			serverDetail: ServerDetail{
+				Name:    "com.example.test",
+				Remotes: []Remote{},
+			},
+			expectError: false,
+		},
+		{
+			name: "multiple valid remotes",
+			serverDetail: ServerDetail{
+				Name: "com.microsoft.example.server",
+				Remotes: []Remote{
+					{URL: "https://example.microsoft.com/sse"},
+					{URL: "https://example.microsoft.com/websocket"},
+				},
+			},
+			expectError: false,
+		},
+		{
+			name: "one valid, one invalid remote",
+			serverDetail: ServerDetail{
+				Name: "com.microsoft.example.server",
+				Remotes: []Remote{
+					{URL: "https://example.microsoft.com/sse"},
+					{URL: "https://example.google.com/websocket"},
+				},
+			},
+			expectError: true,
+			errorMsg:    "namespace must start with com.google.example",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := ValidateRemoteNamespaceMatch(tt.serverDetail)
+			
+			if tt.expectError {
+				assert.Error(t, err)
+				assert.Contains(t, err.Error(), tt.errorMsg)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestConvertHostnameToReverseDNS(t *testing.T) {
+	tests := []struct {
+		name     string
+		hostname string
+		expected string
+	}{
+		{
+			name:     "simple domain",
+			hostname: "example.com",
+			expected: "com.example",
+		},
+		{
+			name:     "subdomain",
+			hostname: "api.example.com",
+			expected: "com.example.api",
+		},
+		{
+			name:     "multiple subdomains",
+			hostname: "api.v1.example.com",
+			expected: "com.example.v1.api",
+		},
+		{
+			name:     "localhost",
+			hostname: "localhost",
+			expected: "",
+		},
+		{
+			name:     "localhost subdomain",
+			hostname: "test.localhost",
+			expected: "",
+		},
+		{
+			name:     "IP address",
+			hostname: "127.0.0.1",
+			expected: "",
+		},
+		{
+			name:     "single part hostname",
+			hostname: "server",
+			expected: "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := convertHostnameToReverseDNS(tt.hostname)
+			assert.Equal(t, tt.expected, result)
+		})
+	}
+}
+
+func TestParseServerName(t *testing.T) {
+	tests := []struct {
+		name        string
+		serverDetail ServerDetail
+		expectError bool
+		errorMsg    string
+	}{
+		{
+			name: "valid namespace/name format",
+			serverDetail: ServerDetail{
+				Name: "com.example.api/server",
+			},
+			expectError: false,
+		},
+		{
+			name: "valid complex namespace",
+			serverDetail: ServerDetail{
+				Name: "com.github.microsoft.azure/webapp-server",
+			},
+			expectError: false,
+		},
+		{
+			name: "empty server name",
+			serverDetail: ServerDetail{
+				Name: "",
+			},
+			expectError: true,
+			errorMsg:    "server name is required",
+		},
+		{
+			name: "missing slash separator",
+			serverDetail: ServerDetail{
+				Name: "com.example.server",
+			},
+			expectError: true,
+			errorMsg:    "server name must be in format 'dns-namespace/name'",
+		},
+		{
+			name: "empty namespace part",
+			serverDetail: ServerDetail{
+				Name: "/server-name",
+			},
+			expectError: true,
+			errorMsg:    "non-empty namespace and name parts",
+		},
+		{
+			name: "empty name part",
+			serverDetail: ServerDetail{
+				Name: "com.example/",
+			},
+			expectError: true,
+			errorMsg:    "non-empty namespace and name parts",
+		},
+		{
+			name: "multiple slashes - uses first as separator",
+			serverDetail: ServerDetail{
+				Name: "com.example/server/path",
+			},
+			expectError: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := ParseServerName(tt.serverDetail)
+			
+			if tt.expectError {
+				assert.Error(t, err)
+				assert.Contains(t, err.Error(), tt.errorMsg)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
+}
