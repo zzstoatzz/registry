@@ -240,8 +240,8 @@ This will essentially instruct the MCP client to execute `dnx Knapcode.SampleMcp
         "package_type": "python",
         "registry_name": "pypi",
         "identifier": "weather-mcp-server",
-      "version": "0.5.0",
-      "runtime_hint": "uvx",
+        "version": "0.5.0",
+        "runtime_hint": "uvx",
       "environment_variables": [
         {
           "name": "WEATHER_API_KEY",
@@ -291,10 +291,10 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
     "packages": [
       {
         "package_type": "dotnet",
-      "registry": "nuget",
-      "identifier": "Knapcode.SampleMcpServer",
-      "version": "0.5.0",
-      "runtime_hint": "dnx",
+        "registry_name": "nuget",
+        "identifier": "Knapcode.SampleMcpServer",
+        "version": "0.5.0",
+        "runtime_hint": "dnx",
       "environment_variables": [
         {
           "name": "WEATHER_CHOICES",
@@ -362,8 +362,7 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
               }
             }
           }
-        }
-      ],
+        ],
       "package_arguments": [
         {
           "type": "named",
@@ -441,8 +440,8 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
         "package_type": "javascript",
         "registry_name": "npm",
         "identifier": "@example/hybrid-mcp-server",
-      "version": "1.5.0",
-      "runtime_hint": "npx",
+        "version": "1.5.0",
+        "runtime_hint": "npx",
       "package_arguments": [
         {
           "type": "named",
@@ -515,8 +514,8 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
         "package_type": "mcpb",
         "registry_name": "github-releases",
         "identifier": "https://github.com/modelcontextprotocol/text-editor-mcpb/releases/download/v1.0.2/text-editor.mcpb",
-      "version": "1.0.2",
-      "file_hashes": {
+        "version": "1.0.2",
+        "file_hashes": {
         "sha-256": "fe333e598595000ae021bd27117db32ec69af6987f507ba7a63c90638ff633ce"
       }
     }
@@ -559,17 +558,17 @@ This example shows an MCPB (MCP Bundle) package that:
         "package_type": "javascript",
         "registry_name": "npm",
         "identifier": "@legacy/old-weather-server",
-      "version": "0.9.5",
-      "environment_variables": [
-        {
-          "name": "WEATHER_API_KEY",
-          "description": "Weather API key",
-          "is_required": true,
-          "is_secret": true
-        }
-      ]
-    }
-    }
+        "version": "0.9.5",
+        "environment_variables": [
+          {
+            "name": "WEATHER_API_KEY",
+            "description": "Weather API key",
+            "is_required": true,
+            "is_secret": true
+          }
+        ]
+      }
+    ]
   },
   "x-publisher": {
     "tool": "legacy-publisher",
