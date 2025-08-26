@@ -2,14 +2,18 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/url"
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/modelcontextprotocol/registry/internal/database"
 	"github.com/modelcontextprotocol/registry/internal/model"
 )
+
+const maxServerVersionsPerServer = 10000
 
 // registryServiceImpl implements the RegistryService interface using our Database
 type registryServiceImpl struct {
@@ -17,8 +21,6 @@ type registryServiceImpl struct {
 }
 
 // NewRegistryServiceWithDB creates a new registry service with the provided database
-//
-//nolint:ireturn // Factory function intentionally returns interface for dependency injection
 func NewRegistryServiceWithDB(db database.Database) RegistryService {
 	return &registryServiceImpl{
 		db: db,
@@ -147,11 +149,69 @@ func (s *registryServiceImpl) Publish(req model.PublishRequest) (*model.ServerRe
 		}
 	}
 
+	// Get the new version's details
+	newVersion := req.Server.VersionDetail.Version
+	newName := req.Server.Name
+	currentTime := time.Now()
+
+	// Check for existing versions of this server
+	existingServers, _, err := s.db.List(ctx, map[string]any{"name": newName}, "", maxServerVersionsPerServer)
+	if err != nil && !errors.Is(err, database.ErrNotFound) {
+		return nil, err
+	}
+
+	if len(existingServers) == maxServerVersionsPerServer {
+		return nil, database.ErrMaxServersReached
+	}
+
+	// Determine if this version should be marked as latest
+	isLatest := true
+	var existingLatestID string
+
+	// Check all existing versions for duplicates and determine if new version should be latest
+	for _, server := range existingServers {
+		existingVersion := server.ServerJSON.VersionDetail.Version
+
+		// Early exit: check for duplicate version
+		if existingVersion == newVersion {
+			return nil, database.ErrInvalidVersion
+		}
+
+		if server.RegistryMetadata.IsLatest {
+			existingLatestID = server.RegistryMetadata.ID
+			existingTime, _ := time.Parse(time.RFC3339, server.RegistryMetadata.ReleaseDate)
+
+			// Compare versions using the proper versioning strategy
+			comparison := CompareVersions(newVersion, existingVersion, currentTime, existingTime)
+			if comparison <= 0 {
+				// New version is not greater than existing latest
+				isLatest = false
+			}
+		}
+	}
+
 	// Extract publisher extensions from request
 	publisherExtensions := model.ExtractPublisherExtensions(req)
 
-	// Publish to database
-	serverRecord, err := s.db.Publish(ctx, req.Server, publisherExtensions)
+	// Create registry metadata with service-determined values
+	registryMetadata := model.RegistryMetadata{
+		ID:          uuid.New().String(),
+		PublishedAt: currentTime,
+		UpdatedAt:   currentTime,
+		IsLatest:    isLatest,
+		ReleaseDate: currentTime.Format(time.RFC3339),
+	}
+
+	// If this will be the latest version, we need to update the existing latest
+	if isLatest && existingLatestID != "" {
+		// Update the existing latest to no longer be latest
+		if err := s.db.UpdateLatestFlag(ctx, existingLatestID, false); err != nil {
+			return nil, err
+		}
+	}
+
+	// Publish to database with the registry metadata
+	serverRecord, err := s.db.Publish(ctx, req.Server, publisherExtensions, registryMetadata)
 	if err != nil {
 		return nil, err
 	}
