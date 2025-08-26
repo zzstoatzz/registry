@@ -17,18 +17,25 @@
     "packages": {
       "items": {
         "properties": {
-          "location": {
-            "properties": {
-              "type": {
-                "enum": [
-                  "javascript",
-                  "python",
-                  "docker",
-                  "dotnet",
-                  "mcpb"
-                ]
-              }
-            }
+          "package_type": {
+            "enum": [
+              "javascript",
+              "python",
+              "docker",
+              "dotnet",
+              "mcpb",
+              "binary"
+            ]
+          },
+          "registry": {
+            "enum": [
+              "npm",
+              "pypi",
+              "docker-hub",
+              "nuget",
+              "github-releases",
+              "gitlab-releases"
+            ]
           },
           "runtime_hint": {
             "enum": [

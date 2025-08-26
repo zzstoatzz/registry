@@ -73,36 +73,23 @@
         }
       }
     },
-    "PackageLocation": {
-      "type": "object",
-      "required": ["url", "type"],
-      "properties": {
-        "url": {
-          "type": "string",
-          "format": "uri",
-          "description": "URL to the package (e.g., npm registry URL, PyPI URL, or direct download URL)",
-          "examples": [
-            "https://www.npmjs.com/package/@modelcontextprotocol/server-filesystem/v/1.5.0",
-            "https://pypi.org/project/example-server/1.5.0",
-            "https://github.com/modelcontextprotocol/text-editor-mcpb/releases/download/v1.0.2/text-editor.mcpb",
-            "docker://myregistry.com/example-server:1.0.0"
-          ]
-        },
-        "type": {
-          "type": "string",
-          "description": "Type of the package",
-          "examples": ["javascript", "python", "docker", "mcpb"]
-        }
-      }
-    },
     "Package": {
       "type": "object",
-      "required": [
-        "location"
-      ],
       "properties": {
-        "location": {
-          "$ref": "#/$defs/PackageLocation"
+        "package_type": {
+          "type": "string",
+          "description": "Type of package (e.g., 'javascript', 'python', 'docker', 'dotnet', 'mcpb', 'binary')",
+          "examples": ["javascript", "python", "docker", "dotnet", "mcpb", "binary"]
+        },
+        "registry": {
+          "type": "string",
+          "description": "Package registry or source (e.g., 'npm', 'pypi', 'docker-hub', 'nuget', 'github-releases', 'gitlab-releases')",
+          "examples": ["npm", "pypi", "docker-hub", "nuget", "github-releases", "gitlab-releases"]
+        },
+        "identifier": {
+          "type": "string",
+          "description": "Package identifier - either a package name (for registries) or URL (for direct downloads)",
+          "examples": ["@modelcontextprotocol/server-brave-search", "https://github.com/example/releases/download/v1.0.0/package.mcpb"]
         },
         "version": {
           "type": "string",

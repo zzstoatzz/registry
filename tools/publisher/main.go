@@ -19,6 +19,11 @@ import (
 // Package type constants
 const (
 	packageTypeDocker = "docker"
+	registryNPM       = "npm"
+	registryPyPI      = "pypi"
+	registryDocker    = "docker"
+	registryNuGet     = "nuget"
+	registryURL       = "url"
 )
 
 // Server structure types for JSON generation
@@ -46,15 +51,10 @@ type RuntimeArgument struct {
 	ValueHint   string `json:"value_hint"`
 }
 
-type PackageLocation struct {
-	// URL to the package (e.g., https://www.npmjs.com/package/@example/server/v/1.5.0)
-	URL  string `json:"url"`
-	// Type of the package (e.g., "javascript", "python", "mcpb")
-	Type string `json:"type"`
-}
-
 type Package struct {
-	Location             PackageLocation       `json:"location"`
+	PackageType          string                `json:"package_type,omitempty"`
+	Registry             string                `json:"registry,omitempty"`
+	Identifier           string                `json:"identifier,omitempty"`
 	Version              string                `json:"version,omitempty"`
 	RuntimeHint          string                `json:"runtime_hint,omitempty"`
 	RuntimeArguments     []RuntimeArgument     `json:"runtime_arguments,omitempty"`
@@ -236,7 +236,7 @@ func createCommand() error {
 	createFlags.StringVar(&output, "o", "server.json", "Output file path (shorthand)")
 	createFlags.StringVar(&status, "status", "active", "Server status (active or deprecated)")
 
-	createFlags.StringVar(&registryName, "registry", "npm", "Package registry name")
+	createFlags.StringVar(&registryName, "registry", registryNPM, "Package registry name")
 	createFlags.StringVar(&packageName, "package-name", "", "Package name (defaults to server name)")
 	createFlags.StringVar(&packageVersion, "package-version", "", "Package version (defaults to server version)")
 	createFlags.StringVar(&runtimeHint, "runtime-hint", "", "Runtime hint (e.g., docker)")
@@ -316,7 +316,7 @@ func createCommand() error {
 		switch registryName {
 		case packageTypeDocker:
 			runtimeHint = packageTypeDocker
-		case "npm":
+		case registryNPM:
 			runtimeHint = "npx"
 		}
 	}
@@ -516,44 +516,54 @@ func createServerStructure(
 	// Parse execute command to create runtime arguments
 	runtimeArguments := parseRuntimeArguments(execute)
 
-	// Create package with URL based on registry type
-	var packageURL string
-	var packageType string
-	
+	// Determine package_type and registry from registryName
+	var packageType, registry, identifier string
 	switch registryName {
-	case "npm":
+	case registryNPM:
 		packageType = "javascript"
-		if packageVersion != "" {
-			packageURL = fmt.Sprintf("https://www.npmjs.com/package/%s/v/%s", packageName, packageVersion)
-		} else {
-			packageURL = fmt.Sprintf("https://www.npmjs.com/package/%s", packageName)
-		}
-	case "pypi":
+		registry = registryNPM
+		identifier = packageName
+	case registryPyPI:
 		packageType = "python"
-		if packageVersion != "" {
-			packageURL = fmt.Sprintf("https://pypi.org/project/%s/%s", packageName, packageVersion)
-		} else {
-			packageURL = fmt.Sprintf("https://pypi.org/project/%s", packageName)
-		}
-	case packageTypeDocker:
+		registry = registryPyPI
+		identifier = packageName
+	case registryDocker:
 		packageType = packageTypeDocker
-		if packageVersion != "" {
-			// Note: This is a Docker tag, not a port (docker://image:tag format)
-			packageURL = fmt.Sprintf("docker://%s:%s", packageName, packageVersion) //nolint:nosprintfhostport
+		registry = "docker-hub"
+		identifier = packageName
+	case registryNuGet:
+		packageType = "dotnet"
+		registry = registryNuGet
+		identifier = packageName
+	case registryURL:
+		// For URL-based packages, determine type from the URL
+		if strings.HasSuffix(packageName, ".mcpb") {
+			packageType = "mcpb"
 		} else {
-			packageURL = fmt.Sprintf("docker://%s", packageName)
+			packageType = "binary"
 		}
+		// Determine registry from URL
+		switch {
+		case strings.Contains(packageName, "github.com") && strings.Contains(packageName, "/releases/"):
+			registry = "github-releases"
+		case strings.Contains(packageName, "gitlab.com") && strings.Contains(packageName, "/releases/"):
+			registry = "gitlab-releases"
+		default:
+			registry = "url"
+		}
+		identifier = packageName
 	default:
-		// Default to a generic URL format
-		packageType = registryName
-		packageURL = fmt.Sprintf("%s://%s/%s", registryName, packageName, packageVersion)
+		// Unknown or custom registry
+		packageType = "unknown"
+		registry = registryName
+		identifier = packageName
 	}
-	
+
+	// Create package with new structured fields
 	pkg := Package{
-		Location: PackageLocation{
-			URL:  packageURL,
-			Type: packageType,
-		},
+		PackageType:          packageType,
+		Registry:             registry,
+		Identifier:           identifier,
 		Version:              packageVersion,
 		RuntimeHint:          runtimeHint,
 		RuntimeArguments:     runtimeArguments,

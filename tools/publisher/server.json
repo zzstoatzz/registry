@@ -4,10 +4,9 @@
     "status": "active",
     "packages": [
         {
-            "location": {
-                "url": "https://www.npmjs.com/package/io.github.<owner>/<server-name>/v/0.2.23",
-                "type": "javascript"
-            },
+            "package_type": "javascript",
+            "registry": "npm",
+            "identifier": "io.github.<owner>/<server-name>",
             "version": "0.2.23",
             "package_arguments": [
                 {
@@ -27,10 +26,9 @@
                 }
             ]
         },{
-            "location": {
-                "url": "docker://io.github.<owner>/<server-name>-cli:0.123.223",
-                "type": "docker"
-            },
+            "package_type": "docker",
+            "registry": "docker-hub",
+            "identifier": "io.github.<owner>/<server-name>-cli:0.123.223",
             "version": "0.123.223",
             "runtime_hint": "docker",
             "runtime_arguments": [

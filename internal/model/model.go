@@ -86,18 +86,13 @@ type Argument struct {
 	ValueHint          string       `json:"value_hint,omitempty" bson:"value_hint,omitempty"`
 }
 
-// PackageLocation represents the location of a package
-type PackageLocation struct {
-	// URL to the package (e.g., https://www.npmjs.com/package/@example/server/v/1.5.0 for npm,
-	// https://pypi.org/project/example-server/1.5.0 for PyPI, or direct download URLs)
-	URL string `json:"url" bson:"url"`
-	
-	// Type of the package (e.g., "javascript", "python", "mcpb")
-	Type string `json:"type" bson:"type"`
-}
-
 type Package struct {
-	Location             PackageLocation   `json:"location" bson:"location"`
+	// PackageType indicates the type of package (e.g., "javascript", "python", "docker", "mcpb")
+	PackageType          string            `json:"package_type,omitempty" bson:"package_type,omitempty"`
+	// Registry indicates the source registry (e.g., "npm", "pypi", "docker-hub", "github-releases")
+	Registry             string            `json:"registry,omitempty" bson:"registry,omitempty"`
+	// Identifier is the package identifier - either a package name (for registries) or URL (for direct downloads)
+	Identifier           string            `json:"identifier,omitempty" bson:"identifier,omitempty"`
 	Version              string            `json:"version,omitempty" bson:"version,omitempty"`
 	FileHashes           map[string]string `json:"file_hashes,omitempty" bson:"file_hashes,omitempty"`
 	RunTimeHint          string            `json:"runtime_hint,omitempty" bson:"runtime_hint,omitempty"`
