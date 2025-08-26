@@ -139,6 +139,18 @@ func (db *MemoryDB) List(
 				if string(entry.ServerJSON.Status) != value.(string) {
 					include = false
 				}
+			case "remote_url":
+				found := false
+				remoteURL := value.(string)
+				for _, remote := range entry.ServerJSON.Remotes {
+					if remote.URL == remoteURL {
+						found = true
+						break
+					}
+				}
+				if !found {
+					include = false
+				}
 			}
 		}
 

@@ -76,6 +76,10 @@ func (db *PostgreSQL) List(
 			whereClause += fmt.Sprintf(" AND s.status = $%d", argIndex)
 			args = append(args, v)
 			argIndex++
+		case "remote_url":
+			whereClause += fmt.Sprintf(" AND EXISTS (SELECT 1 FROM jsonb_array_elements(s.remotes) AS remote WHERE remote->>'url' = $%d)", argIndex)
+			args = append(args, v)
+			argIndex++
 		}
 	}
 
