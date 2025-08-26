@@ -88,13 +88,12 @@ type Argument struct {
 
 // PackageLocation represents the location of a package
 type PackageLocation struct {
-	// For registry-based packages
-	RegistryName string `json:"registry_name,omitempty" bson:"registry_name,omitempty"`
-	Name         string `json:"name,omitempty" bson:"name,omitempty"`
+	// URL to the package (e.g., https://www.npmjs.com/package/@example/server/v/1.5.0 for npm,
+	// https://pypi.org/project/example-server/1.5.0 for PyPI, or direct download URLs)
+	URL string `json:"url" bson:"url"`
 	
-	// For direct URL packages (e.g., MCPB)
-	Type string `json:"type,omitempty" bson:"type,omitempty"`
-	URL  string `json:"url,omitempty" bson:"url,omitempty"`
+	// Type of the package (e.g., "javascript", "python", "mcpb")
+	Type string `json:"type" bson:"type"`
 }
 
 type Package struct {

@@ -17,14 +17,18 @@
     "packages": {
       "items": {
         "properties": {
-          "registry_name": {
-            "enum": [
-              "npm",
-              "pypi",
-              "docker",
-              "nuget",
-              "mcpb"
-            ]
+          "location": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "javascript",
+                  "python",
+                  "docker",
+                  "dotnet",
+                  "mcpb"
+                ]
+              }
+            }
           },
           "runtime_hint": {
             "enum": [

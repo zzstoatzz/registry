@@ -103,7 +103,10 @@ func TestReadSeedFile_RegistryURL(t *testing.T) {
 		Server: server1,
 		Packages: []model.Package{
 			{
-				Name:    "test-package-1",
+				Location: model.PackageLocation{
+					URL:  "https://www.npmjs.com/package/test-package-1/v/1.0.0",
+					Type: "javascript",
+				},
 				Version: "1.0.0",
 			},
 		},
@@ -112,7 +115,10 @@ func TestReadSeedFile_RegistryURL(t *testing.T) {
 		Server: server2,
 		Packages: []model.Package{
 			{
-				Name:    "test-package-2",
+				Location: model.PackageLocation{
+					URL:  "https://www.npmjs.com/package/test-package-2/v/2.0.0",
+					Type: "javascript",
+				},
 				Version: "2.0.0",
 			},
 		},
@@ -182,7 +188,7 @@ func TestReadSeedFile_RegistryURL(t *testing.T) {
 
 	// Verify packages were included
 	assert.Len(t, result[0].Packages, 1)
-	assert.Equal(t, "test-package-1", result[0].Packages[0].Name)
+	assert.Equal(t, "https://www.npmjs.com/package/test-package-1/v/1.0.0", result[0].Packages[0].Location.URL)
 	assert.Len(t, result[1].Packages, 1)
-	assert.Equal(t, "test-package-2", result[1].Packages[0].Name)
+	assert.Equal(t, "https://www.npmjs.com/package/test-package-2/v/2.0.0", result[1].Packages[0].Location.URL)
 }

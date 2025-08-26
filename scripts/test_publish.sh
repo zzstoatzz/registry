@@ -91,8 +91,10 @@ cat > "$PAYLOAD_FILE" << EOF
   },
   "packages": [
     {
-      "registry_name": "npm",
-      "name": "test-mcp-server",
+      "location": {
+        "url": "https://www.npmjs.com/package/test-mcp-server/v/1.0.$(date +%s)",
+        "type": "javascript"
+      },
       "version": "1.0.$(date +%s)",
       "runtime_hint": "node",
       "runtime_arguments": [

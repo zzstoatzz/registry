@@ -76,41 +76,25 @@
     },
     "PackageLocation": {
       "type": "object",
-      "oneOf": [
-        {
-          "type": "object",
-          "required": ["registry_name", "name"],
-          "properties": {
-            "registry_name": {
-              "type": "string",
-              "description": "Package registry type",
-              "example": "npm"
-            },
-            "name": {
-              "type": "string",
-              "description": "Package name in the registry",
-              "example": "@modelcontextprotocol/server-filesystem"
-            }
-          }
+      "required": ["url", "type"],
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to the package (e.g., npm registry URL, PyPI URL, or direct download URL)",
+          "examples": [
+            "https://www.npmjs.com/package/@modelcontextprotocol/server-filesystem/v/1.5.0",
+            "https://pypi.org/project/example-server/1.5.0",
+            "https://github.com/modelcontextprotocol/text-editor-mcpb/releases/download/v1.0.2/text-editor.mcpb",
+            "docker://myregistry.com/example-server:1.0.0"
+          ]
         },
-        {
-          "type": "object",
-          "required": ["type", "url"],
-          "properties": {
-            "type": {
-              "type": "string",
-              "enum": ["mcpb"],
-              "description": "Package location type for direct URL references"
-            },
-            "url": {
-              "type": "string",
-              "format": "uri",
-              "description": "Direct URL to the package file",
-              "example": "https://github.com/modelcontextprotocol/text-editor-mcpb/releases/download/v1.0.2/text-editor.mcpb"
-            }
-          }
+        "type": {
+          "type": "string",
+          "description": "Type of the package",
+          "examples": ["javascript", "python", "docker", "mcpb"]
         }
-      ]
+      }
     },
     "Package": {
       "type": "object",

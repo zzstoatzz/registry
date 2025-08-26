@@ -44,13 +44,10 @@ type RuntimeArgument struct {
 }
 
 type PackageLocation struct {
-	// For registry-based packages
-	RegistryName string `json:"registry_name,omitempty"`
-	Name         string `json:"name,omitempty"`
-	
-	// For direct URL packages (e.g., MCPB)
-	Type string `json:"type,omitempty"`
-	URL  string `json:"url,omitempty"`
+	// URL to the package (e.g., https://www.npmjs.com/package/@example/server/v/1.5.0)
+	URL  string `json:"url"`
+	// Type of the package (e.g., "javascript", "python", "mcpb")
+	Type string `json:"type"`
 }
 
 type Package struct {
@@ -492,11 +489,42 @@ func createServerStructure(
 		}
 	}
 
-	// Create package
+	// Create package with URL based on registry type
+	var packageURL string
+	var packageType string
+	
+	switch registryName {
+	case "npm":
+		packageType = "javascript"
+		if packageVersion != "" {
+			packageURL = fmt.Sprintf("https://www.npmjs.com/package/%s/v/%s", packageName, packageVersion)
+		} else {
+			packageURL = fmt.Sprintf("https://www.npmjs.com/package/%s", packageName)
+		}
+	case "pypi":
+		packageType = "python"
+		if packageVersion != "" {
+			packageURL = fmt.Sprintf("https://pypi.org/project/%s/%s", packageName, packageVersion)
+		} else {
+			packageURL = fmt.Sprintf("https://pypi.org/project/%s", packageName)
+		}
+	case "docker":
+		packageType = "docker"
+		if packageVersion != "" {
+			packageURL = fmt.Sprintf("docker://%s:%s", packageName, packageVersion)
+		} else {
+			packageURL = fmt.Sprintf("docker://%s", packageName)
+		}
+	default:
+		// Default to a generic URL format
+		packageType = registryName
+		packageURL = fmt.Sprintf("%s://%s/%s", registryName, packageName, packageVersion)
+	}
+	
 	pkg := Package{
 		Location: PackageLocation{
-			RegistryName: registryName,
-			Name:         packageName,
+			URL:  packageURL,
+			Type: packageType,
 		},
 		Version:              packageVersion,
 		RuntimeHint:          runtimeHint,
@@ -564,27 +592,62 @@ func generateFileHashes(serverJSON *ServerJSON) (map[string]string, error) {
 	
 	for _, pkg := range serverJSON.Packages {
 		// Handle different package location types
+		// Parse the URL to determine package type and extract details
+		url := pkg.Location.URL
+		
 		switch {
-		case pkg.Location.Type == "mcpb":
-			// Direct URL package (MCPB)
-			if pkg.Location.URL != "" {
-				identifier := pkg.Location.URL
-				hash, err := downloadAndHash(pkg.Location.URL)
-				if err != nil {
-					return nil, fmt.Errorf("failed to hash %s: %w", identifier, err)
+		case pkg.Location.Type == "mcpb" || strings.HasPrefix(url, "https://") && strings.Contains(url, ".mcpb"):
+			// Direct URL package (MCPB or direct download)
+			identifier := url
+			hash, err := downloadAndHash(url)
+			if err != nil {
+				return nil, fmt.Errorf("failed to hash %s: %w", identifier, err)
+			}
+			hashes[identifier] = fmt.Sprintf("sha256:%s", hash)
+			
+		case pkg.Location.Type == "javascript" || strings.Contains(url, "npmjs.com"):
+			// NPM package - extract package name and version from URL
+			// URL format: https://www.npmjs.com/package/@example/server/v/1.5.0
+			var packageName, version string
+			
+			if strings.Contains(url, "npmjs.com/package/") {
+				// Extract package name from URL
+				parts := strings.Split(url, "npmjs.com/package/")
+				if len(parts) > 1 {
+					pathParts := strings.Split(parts[1], "/")
+					if strings.HasPrefix(pathParts[0], "@") && len(pathParts) > 1 {
+						// Scoped package like @example/server
+						packageName = pathParts[0] + "/" + pathParts[1]
+						if len(pathParts) > 3 && pathParts[2] == "v" {
+							version = pathParts[3]
+						}
+					} else {
+						// Regular package
+						packageName = pathParts[0]
+						if len(pathParts) > 2 && pathParts[1] == "v" {
+							version = pathParts[2]
+						}
+					}
 				}
-				hashes[identifier] = fmt.Sprintf("sha256:%s", hash)
 			}
 			
-		case pkg.Location.RegistryName == "npm" && pkg.Location.Name != "":
-			// NPM package
-			packageFullName := pkg.Location.Name
-			if pkg.Version != "" {
-				packageFullName = fmt.Sprintf("%s@%s", pkg.Location.Name, pkg.Version)
+			if packageName == "" {
+				log.Printf("Warning: Could not parse NPM package name from URL: %s", url)
+				continue
+			}
+			
+			// Use pkg.Version if version not in URL
+			if version == "" && pkg.Version != "" {
+				version = pkg.Version
+			}
+			
+			packageFullName := packageName
+			if version != "" {
+				packageFullName = fmt.Sprintf("%s@%s", packageName, version)
 			}
 			
 			// For NPM packages, we need to fetch the package metadata to get the tarball URL
-			tarballURL, err := getNPMTarballURL(pkg.Location.Name, pkg.Version)
+			tarballURL, err := getNPMTarballURL(packageName, version)
 			if err != nil {
 				log.Printf("Warning: Could not get NPM tarball URL for %s: %v", packageFullName, err)
 				continue
@@ -598,20 +661,31 @@ func generateFileHashes(serverJSON *ServerJSON) (map[string]string, error) {
 			identifier := fmt.Sprintf("npm:%s", packageFullName)
 			hashes[identifier] = fmt.Sprintf("sha256:%s", hash)
 			
-		case pkg.Location.RegistryName == "pypi" && pkg.Location.Name != "":
-			// Python package
-			packageFullName := pkg.Location.Name
-			if pkg.Version != "" {
-				packageFullName = fmt.Sprintf("%s==%s", pkg.Location.Name, pkg.Version)
+		case pkg.Location.Type == "python" || strings.Contains(url, "pypi.org"):
+			// Python package - extract package name from URL
+			// URL format: https://pypi.org/project/example-server/1.5.0
+			var packageName string
+			if strings.Contains(url, "pypi.org/project/") {
+				parts := strings.Split(url, "pypi.org/project/")
+				if len(parts) > 1 {
+					pathParts := strings.Split(parts[1], "/")
+					packageName = pathParts[0]
+				}
 			}
 			
-			// For PyPI packages, we would need to fetch from PyPI API
-			// This is a simplified version - real implementation would need PyPI API calls
-			log.Printf("Warning: PyPI hash generation not yet implemented for %s", packageFullName)
+			if packageName != "" {
+				packageFullName := packageName
+				if pkg.Version != "" {
+					packageFullName = fmt.Sprintf("%s==%s", packageName, pkg.Version)
+				}
+				log.Printf("Warning: PyPI hash generation not yet implemented for %s", packageFullName)
+			} else {
+				log.Printf("Warning: Could not parse PyPI package name from URL: %s", url)
+			}
 			
-		case pkg.Location.RegistryName == "docker" && pkg.Location.Name != "":
+		case pkg.Location.Type == "docker" || strings.HasPrefix(url, "docker://"):
 			// Docker images - skip hash generation as they have their own digest system
-			log.Printf("Info: Skipping hash generation for Docker image %s (uses digests)", pkg.Location.Name)
+			log.Printf("Info: Skipping hash generation for Docker image %s (uses digests)", url)
 			
 		default:
 			log.Printf("Warning: Unsupported package type for hash generation: %+v", pkg.Location)

@@ -17,8 +17,10 @@
   },
   "packages": [
     {
-      "registry_name": "npm",
-      "name": "@modelcontextprotocol/server-brave-search",
+      "location": {
+        "url": "https://www.npmjs.com/package/@modelcontextprotocol/server-brave-search/v/1.0.2",
+        "type": "javascript"
+      },
       "version": "1.0.2",
       "environment_variables": [
         {
@@ -46,8 +48,10 @@ Suppose your MCP server application requires a `mcp start` CLI arguments to star
   },
   "packages": [
     {
-      "registry_name": "nuget",
-      "name": "Knapcode.SampleMcpServer",
+      "location": {
+        "url": "https://www.nuget.org/packages/Knapcode.SampleMcpServer/0.4.0-beta",
+        "type": "dotnet"
+      },
       "version": "0.4.0-beta",
       "package_arguments": [
         {
@@ -83,8 +87,10 @@ This will essentially instruct the MCP client to execute `dnx Knapcode.SampleMcp
   },
   "packages": [
     {
-      "registry_name": "npm",
-      "name": "@modelcontextprotocol/server-filesystem",
+      "location": {
+        "url": "https://www.npmjs.com/package/@modelcontextprotocol/server-filesystem/v/1.0.2",
+        "type": "javascript"
+      },
       "version": "1.0.2",
       "package_arguments": [
         {
@@ -105,8 +111,10 @@ This will essentially instruct the MCP client to execute `dnx Knapcode.SampleMcp
       ]
     },
     {
-      "registry_name": "docker",
-      "name": "mcp/filesystem",
+      "location": {
+        "url": "docker://mcp/filesystem:1.0.2",
+        "type": "docker"
+      },
       "version": "1.0.2",
       "runtime_arguments": [
         {
@@ -188,8 +196,10 @@ This will essentially instruct the MCP client to execute `dnx Knapcode.SampleMcp
   },
   "packages": [
     {
-      "registry_name": "pypi",
-      "name": "weather-mcp-server",
+      "location": {
+        "url": "https://pypi.org/project/weather-mcp-server/0.5.0",
+        "type": "python"
+      },
       "version": "0.5.0",
       "runtime_hint": "uvx",
       "environment_variables": [
@@ -229,8 +239,8 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
   "packages": [
     {
       "location": {
-        "registry_name": "nuget",
-        "name": "Knapcode.SampleMcpServer"
+        "url": "https://www.nuget.org/packages/Knapcode.SampleMcpServer/0.5.0",
+        "type": "dotnet"
       },
       "version": "0.5.0",
       "runtime_hint": "dnx",
@@ -264,8 +274,8 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
   "packages": [
     {
       "location": {
-        "registry_name": "docker",
-        "name": "mcp/database-manager"
+        "url": "docker://mcp/database-manager:3.1.0",
+        "type": "docker"
       },
       "version": "3.1.0",
       "runtime_arguments": [
@@ -352,8 +362,8 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
   "packages": [
     {
       "location": {
-        "registry_name": "npm",
-        "name": "@example/hybrid-mcp-server"
+        "url": "https://www.npmjs.com/package/@example/hybrid-mcp-server/v/1.5.0",
+        "type": "javascript"
       },
       "version": "1.5.0",
       "runtime_hint": "npx",
@@ -447,8 +457,8 @@ This example shows an MCPB (MCP Bundle) package that:
   "packages": [
     {
       "location": {
-        "registry_name": "npm",
-        "name": "@legacy/old-weather-server"
+        "url": "https://www.npmjs.com/package/@legacy/old-weather-server/v/0.9.5",
+        "type": "javascript"
       },
       "version": "0.9.5",
       "environment_variables": [
