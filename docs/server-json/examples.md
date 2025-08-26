@@ -7,33 +7,34 @@ _These examples show the PublishRequest format used by the `/v0/publish` API end
 ```json
 {
   "server": {
-  "name": "io.modelcontextprotocol/brave-search",
-  "description": "MCP server for Brave Search API integration",
-  "status": "active",
-  "repository": {
-    "url": "https://github.com/modelcontextprotocol/servers",
-    "source": "github",
-    "id": "abc123de-f456-7890-ghij-klmnopqrstuv"
-  },
-  "version_detail": {
-    "version": "1.0.2"
-  },
-  "packages": [
-    {
-      "location": {
-        "url": "https://www.npmjs.com/package/@modelcontextprotocol/server-brave-search/v/1.0.2",
-        "type": "javascript"
-      },
-      "version": "1.0.2",
-      "environment_variables": [
-        {
-          "name": "BRAVE_API_KEY",
-          "description": "Brave Search API Key",
-          "is_required": true,
-          "is_secret": true
-        }
-      ]
-    }
+    "name": "io.modelcontextprotocol/brave-search",
+    "description": "MCP server for Brave Search API integration",
+    "status": "active",
+    "repository": {
+      "url": "https://github.com/modelcontextprotocol/servers",
+      "source": "github",
+      "id": "abc123de-f456-7890-ghij-klmnopqrstuv"
+    },
+    "version_detail": {
+      "version": "1.0.2"
+    },
+    "packages": [
+      {
+        "location": {
+          "url": "https://www.npmjs.com/package/@modelcontextprotocol/server-brave-search/v/1.0.2",
+          "type": "javascript"
+        },
+        "version": "1.0.2",
+        "environment_variables": [
+          {
+            "name": "BRAVE_API_KEY",
+            "description": "Brave Search API Key",
+            "is_required": true,
+            "is_secret": true
+          }
+        ]
+      }
+    ]
   },
   "x-publisher": {
     "tool": "npm-publisher",
@@ -52,29 +53,30 @@ Suppose your MCP server application requires a `mcp start` CLI arguments to star
 ```json
 {
   "server": {
-  "name": "Knapcode.SampleMcpServer",
-  "description": "Sample NuGet MCP server for a random number and random weather",
-  "version_detail": {
-    "version": "0.4.0-beta"
-  },
-  "packages": [
-    {
-      "location": {
-        "url": "https://www.nuget.org/packages/Knapcode.SampleMcpServer/0.4.0-beta",
-        "type": "dotnet"
-      },
-      "version": "0.4.0-beta",
-      "package_arguments": [
-        {
-          "type": "positional",
-          "value": "mcp"
+    "name": "Knapcode.SampleMcpServer",
+    "description": "Sample NuGet MCP server for a random number and random weather",
+    "version_detail": {
+      "version": "0.4.0-beta"
+    },
+    "packages": [
+      {
+        "location": {
+          "url": "https://www.nuget.org/packages/Knapcode.SampleMcpServer/0.4.0-beta",
+          "type": "dotnet"
         },
-        {
-          "type": "positional",
-          "value": "start"
-        }
-      ]
-    }
+        "version": "0.4.0-beta",
+        "package_arguments": [
+          {
+            "type": "positional",
+            "value": "mcp"
+          },
+          {
+            "type": "positional",
+            "value": "start"
+          }
+        ]
+      }
+    ]
   },
   "x-publisher": {
     "tool": "nuget-publisher",
@@ -94,18 +96,18 @@ This will essentially instruct the MCP client to execute `dnx Knapcode.SampleMcp
 ```json
 {
   "server": {
-  "name": "io.modelcontextprotocol/filesystem",
-  "description": "Node.js server implementing Model Context Protocol (MCP) for filesystem operations.",
-  "status": "active",
-  "repository": {
-    "url": "https://github.com/modelcontextprotocol/servers",
-    "source": "github",
-    "id": "b94b5f7e-c7c6-d760-2c78-a5e9b8a5b8c9"
-  },
-  "version_detail": {
-    "version": "1.0.2"
-  },
-  "packages": [
+    "name": "io.modelcontextprotocol/filesystem",
+    "description": "Node.js server implementing Model Context Protocol (MCP) for filesystem operations.",
+    "status": "active",
+    "repository": {
+      "url": "https://github.com/modelcontextprotocol/servers",
+      "source": "github",
+      "id": "b94b5f7e-c7c6-d760-2c78-a5e9b8a5b8c9"
+    },
+    "version_detail": {
+      "version": "1.0.2"
+    },
+    "packages": [
     {
       "location": {
         "url": "https://www.npmjs.com/package/@modelcontextprotocol/server-filesystem/v/1.0.2",
@@ -173,6 +175,7 @@ This will essentially instruct the MCP client to execute `dnx Knapcode.SampleMcp
         }
       ]
     }
+  ]
   },
   "x-publisher": {
     "tool": "ci-publisher",
@@ -192,21 +195,22 @@ This will essentially instruct the MCP client to execute `dnx Knapcode.SampleMcp
 ```json
 {
   "server": {
-  "name": "Remote Filesystem Server",
-  "description": "Cloud-hosted MCP filesystem server",
-  "repository": {
-    "url": "https://github.com/example/remote-fs",
-    "source": "github",
-    "id": "xyz789ab-cdef-0123-4567-890ghijklmno"
-  },
-  "version_detail": {
-    "version": "2.0.0"
-  },
-  "remotes": [
-    {
-      "transport_type": "sse",
-      "url": "https://mcp-fs.example.com/sse"
-    }
+    "name": "Remote Filesystem Server",
+    "description": "Cloud-hosted MCP filesystem server",
+    "repository": {
+      "url": "https://github.com/example/remote-fs",
+      "source": "github",
+      "id": "xyz789ab-cdef-0123-4567-890ghijklmno"
+    },
+    "version_detail": {
+      "version": "2.0.0"
+    },
+    "remotes": [
+      {
+        "transport_type": "sse",
+        "url": "https://mcp-fs.example.com/sse"
+      }
+    ]
   },
   "x-publisher": {
     "tool": "cloud-deployer",
@@ -226,15 +230,15 @@ This will essentially instruct the MCP client to execute `dnx Knapcode.SampleMcp
 ```json
 {
   "server": {
-  "name": "weather-mcp-server",
-  "description": "Python MCP server for weather data access",
-  "repository": {
-    "url": "https://github.com/example/weather-mcp",
-    "source": "github",
-    "id": "def456gh-ijkl-7890-mnop-qrstuvwxyz12"
-  },
-  "version_detail": {
-    "version": "0.5.0"
+    "name": "weather-mcp-server",
+    "description": "Python MCP server for weather data access",
+    "repository": {
+      "url": "https://github.com/example/weather-mcp",
+      "source": "github",
+      "id": "def456gh-ijkl-7890-mnop-qrstuvwxyz12"
+    },
+    "version_detail": {
+      "version": "0.5.0"
   },
   "packages": [
     {
@@ -258,6 +262,7 @@ This will essentially instruct the MCP client to execute `dnx Knapcode.SampleMcp
         }
       ]
     }
+    ]
   },
   "x-publisher": {
     "tool": "poetry-publisher",
@@ -279,15 +284,15 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
 ```json
 {
   "server": {
-  "name": "Knapcode.SampleMcpServer",
-  "description": "Sample NuGet MCP server for a random number and random weather",
-  "repository": {
-    "url": "https://github.com/joelverhagen/Knapcode.SampleMcpServer",
-    "source": "github",
-    "id": "example-nuget-id-0000-1111-222222222222"
-  },
-  "version_detail": {
-    "version": "0.5.0"
+    "name": "Knapcode.SampleMcpServer",
+    "description": "Sample NuGet MCP server for a random number and random weather",
+    "repository": {
+      "url": "https://github.com/joelverhagen/Knapcode.SampleMcpServer",
+      "source": "github",
+      "id": "example-nuget-id-0000-1111-222222222222"
+    },
+    "version_detail": {
+      "version": "0.5.0"
   },
   "packages": [
     {
@@ -306,6 +311,7 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
         }
       ]
     }
+    ]
   },
   "x-publisher": {
     "tool": "dotnet-publisher",
@@ -326,15 +332,15 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
 ```json
 {
   "server": {
-  "name": "mcp-database-manager",
-  "description": "MCP server for database operations with support for multiple database types",
-  "repository": {
-    "url": "https://github.com/example/mcp-database",
-    "source": "github",
-    "id": "ghi789jk-lmno-1234-pqrs-tuvwxyz56789"
-  },
-  "version_detail": {
-    "version": "3.1.0"
+    "name": "mcp-database-manager",
+    "description": "MCP server for database operations with support for multiple database types",
+    "repository": {
+      "url": "https://github.com/example/mcp-database",
+      "source": "github",
+      "id": "ghi789jk-lmno-1234-pqrs-tuvwxyz56789"
+    },
+    "version_detail": {
+      "version": "3.1.0"
   },
   "packages": [
     {
@@ -406,6 +412,7 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
         }
       ]
     }
+    ]
   },
   "x-publisher": {
     "tool": "docker-buildx",
@@ -426,15 +433,15 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
 ```json
 {
   "server": {
-  "name": "hybrid-mcp-server",
-  "description": "MCP server available as both local package and remote service",
-  "repository": {
-    "url": "https://github.com/example/hybrid-mcp",
-    "source": "github",
-    "id": "klm012no-pqrs-3456-tuvw-xyz789abcdef"
-  },
-  "version_detail": {
-    "version": "1.5.0"
+    "name": "hybrid-mcp-server",
+    "description": "MCP server available as both local package and remote service",
+    "repository": {
+      "url": "https://github.com/example/hybrid-mcp",
+      "source": "github",
+      "id": "klm012no-pqrs-3456-tuvw-xyz789abcdef"
+    },
+    "version_detail": {
+      "version": "1.5.0"
   },
   "packages": [
     {
@@ -454,8 +461,8 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
         }
       ]
     }
-  ],
-  "remotes": [
+    ],
+    "remotes": [
     {
       "transport_type": "sse",
       "url": "https://hybrid-mcp.example.com/sse",
@@ -478,6 +485,7 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
       "transport_type": "streamable",
       "url": "https://hybrid-mcp.example.com/stream"
     }
+    ]
   },
   "x-publisher": {
     "tool": "hybrid-deployer",
@@ -501,15 +509,15 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
 ```json
 {
   "server": {
-  "name": "io.modelcontextprotocol/text-editor",
-  "description": "MCP Bundle server for advanced text editing capabilities",
-  "repository": {
-    "url": "https://github.com/modelcontextprotocol/text-editor-mcpb",
-    "source": "github",
-    "id": "mcpb-123ab-cdef4-56789-012ghi-jklmnopqrstu"
-  },
-  "version_detail": {
-    "version": "1.0.2"
+    "name": "io.modelcontextprotocol/text-editor",
+    "description": "MCP Bundle server for advanced text editing capabilities",
+    "repository": {
+      "url": "https://github.com/modelcontextprotocol/text-editor-mcpb",
+      "source": "github",
+      "id": "mcpb-123ab-cdef4-56789-012ghi-jklmnopqrstu"
+    },
+    "version_detail": {
+      "version": "1.0.2"
   },
   "packages": [
     {
@@ -523,6 +531,15 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
       }
     }
   ]
+  },
+  "x-publisher": {
+    "tool": "mcpb-publisher",
+    "version": "1.0.0",
+    "build_info": {
+      "timestamp": "2023-12-02T09:15:00Z",
+      "bundle_format": "mcpb-v1"
+    }
+  }
 }
 ```
 
@@ -536,16 +553,16 @@ This example shows an MCPB (MCP Bundle) package that:
 ```json
 {
   "server": {
-  "name": "io.legacy/old-weather-server",
-  "description": "Legacy weather server - DEPRECATED: Use weather-v2 instead for new projects",
-  "status": "deprecated",
-  "repository": {
-    "url": "https://github.com/example/old-weather",
-    "source": "github",
-    "id": "legacy-abc123-def456-789012-345678-901234567890"
-  },
-  "version_detail": {
-    "version": "0.9.5"
+    "name": "io.legacy/old-weather-server",
+    "description": "Legacy weather server - DEPRECATED: Use weather-v2 instead for new projects",
+    "status": "deprecated",
+    "repository": {
+      "url": "https://github.com/example/old-weather",
+      "source": "github",
+      "id": "legacy-abc123-def456-789012-345678-901234567890"
+    },
+    "version_detail": {
+      "version": "0.9.5"
   },
   "packages": [
     {
@@ -562,6 +579,7 @@ This example shows an MCPB (MCP Bundle) package that:
           "is_secret": true
         }
       ]
+    }
     }
   },
   "x-publisher": {
