@@ -94,7 +94,7 @@ func validateMCPBPackage(host string) error {
 
 // validatePackage validates packages to ensure they meet requirements
 func validatePackage(pkg *model.Package) error {
-	registry := strings.ToLower(pkg.Registry)
+	registry := strings.ToLower(pkg.RegistryName)
 	packageType := strings.ToLower(pkg.PackageType)
 	
 	// For direct download packages (github-releases, gitlab-releases, or direct URLs)

@@ -53,7 +53,7 @@ type RuntimeArgument struct {
 
 type Package struct {
 	PackageType          string                `json:"package_type,omitempty"`
-	Registry             string                `json:"registry,omitempty"`
+	RegistryName         string                `json:"registry_name,omitempty"`
 	Identifier           string                `json:"identifier,omitempty"`
 	Version              string                `json:"version,omitempty"`
 	RuntimeHint          string                `json:"runtime_hint,omitempty"`
@@ -516,24 +516,24 @@ func createServerStructure(
 	// Parse execute command to create runtime arguments
 	runtimeArguments := parseRuntimeArguments(execute)
 
-	// Determine package_type and registry from registryName
-	var packageType, registry, identifier string
+	// Determine package_type and registry_name from registryName
+	var packageType, registryNameValue, identifier string
 	switch registryName {
 	case registryNPM:
 		packageType = "javascript"
-		registry = registryNPM
+		registryNameValue = registryNPM
 		identifier = packageName
 	case registryPyPI:
 		packageType = "python"
-		registry = registryPyPI
+		registryNameValue = registryPyPI
 		identifier = packageName
 	case registryDocker:
 		packageType = packageTypeDocker
-		registry = "docker-hub"
+		registryNameValue = "docker-hub"
 		identifier = packageName
 	case registryNuGet:
 		packageType = "dotnet"
-		registry = registryNuGet
+		registryNameValue = registryNuGet
 		identifier = packageName
 	case registryURL:
 		// For URL-based packages, determine type from the URL
@@ -545,24 +545,24 @@ func createServerStructure(
 		// Determine registry from URL
 		switch {
 		case strings.Contains(packageName, "github.com") && strings.Contains(packageName, "/releases/"):
-			registry = "github-releases"
+			registryNameValue = "github-releases"
 		case strings.Contains(packageName, "gitlab.com") && strings.Contains(packageName, "/releases/"):
-			registry = "gitlab-releases"
+			registryNameValue = "gitlab-releases"
 		default:
-			registry = "url"
+			registryNameValue = "url"
 		}
 		identifier = packageName
 	default:
 		// Unknown or custom registry
 		packageType = "unknown"
-		registry = registryName
+		registryNameValue = registryName
 		identifier = packageName
 	}
 
 	// Create package with new structured fields
 	pkg := Package{
 		PackageType:          packageType,
-		Registry:             registry,
+		RegistryName:         registryNameValue,
 		Identifier:           identifier,
 		Version:              packageVersion,
 		RuntimeHint:          runtimeHint,

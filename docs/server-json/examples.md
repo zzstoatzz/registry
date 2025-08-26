@@ -21,7 +21,7 @@ _These examples show the PublishRequest format used by the `/v0/publish` API end
     "packages": [
       {
         "package_type": "javascript",
-        "registry": "npm",
+        "registry_name": "npm",
         "identifier": "@modelcontextprotocol/server-brave-search",
         "version": "1.0.2",
         "environment_variables": [
@@ -60,7 +60,7 @@ Suppose your MCP server application requires a `mcp start` CLI arguments to star
     "packages": [
       {
         "package_type": "dotnet",
-        "registry": "nuget",
+        "registry_name": "nuget",
         "identifier": "Knapcode.SampleMcpServer",
         "version": "0.4.0-beta",
         "package_arguments": [
@@ -108,7 +108,7 @@ This will essentially instruct the MCP client to execute `dnx Knapcode.SampleMcp
     "packages": [
       {
         "package_type": "javascript",
-        "registry": "npm",
+        "registry_name": "npm",
         "identifier": "@modelcontextprotocol/server-filesystem",
       "version": "1.0.2",
       "package_arguments": [
@@ -131,7 +131,7 @@ This will essentially instruct the MCP client to execute `dnx Knapcode.SampleMcp
       },
       {
         "package_type": "docker",
-        "registry": "docker-hub",
+        "registry_name": "docker-hub",
         "identifier": "mcp/filesystem:1.0.2",
       "version": "1.0.2",
       "runtime_arguments": [
@@ -239,7 +239,7 @@ This will essentially instruct the MCP client to execute `dnx Knapcode.SampleMcp
     "packages": [
       {
         "package_type": "python",
-        "registry": "pypi",
+        "registry_name": "pypi",
         "identifier": "weather-mcp-server",
       "version": "0.5.0",
       "runtime_hint": "uvx",
@@ -339,7 +339,7 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
     "packages": [
       {
         "package_type": "docker",
-        "registry": "docker-hub",
+        "registry_name": "docker-hub",
         "identifier": "mcp/database-manager:3.1.0",
       "version": "3.1.0",
       "runtime_arguments": [
@@ -439,7 +439,7 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
     "packages": [
       {
         "package_type": "javascript",
-        "registry": "npm",
+        "registry_name": "npm",
         "identifier": "@example/hybrid-mcp-server",
       "version": "1.5.0",
       "runtime_hint": "npx",
@@ -514,7 +514,7 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
     "packages": [
       {
         "package_type": "mcpb",
-        "registry": "github-releases",
+        "registry_name": "github-releases",
         "identifier": "https://github.com/modelcontextprotocol/text-editor-mcpb/releases/download/v1.0.2/text-editor.mcpb",
       "version": "1.0.2",
       "file_hashes": {
@@ -558,7 +558,7 @@ This example shows an MCPB (MCP Bundle) package that:
     "packages": [
       {
         "package_type": "javascript",
-        "registry": "npm",
+        "registry_name": "npm",
         "identifier": "@legacy/old-weather-server",
       "version": "0.9.5",
       "environment_variables": [

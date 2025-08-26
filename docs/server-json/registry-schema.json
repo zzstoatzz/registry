@@ -27,7 +27,7 @@
               "binary"
             ]
           },
-          "registry": {
+          "registry_name": {
             "enum": [
               "npm",
               "pypi",

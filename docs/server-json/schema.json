@@ -81,7 +81,7 @@
           "description": "Type of package (e.g., 'javascript', 'python', 'docker', 'dotnet', 'mcpb', 'binary')",
           "examples": ["javascript", "python", "docker", "dotnet", "mcpb", "binary"]
         },
-        "registry": {
+        "registry_name": {
           "type": "string",
           "description": "Package registry or source (e.g., 'npm', 'pypi', 'docker-hub', 'nuget', 'github-releases', 'gitlab-releases')",
           "examples": ["npm", "pypi", "docker-hub", "nuget", "github-releases", "gitlab-releases"]

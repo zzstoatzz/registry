@@ -141,25 +141,25 @@ func convertLegacyPackage(legacy LegacyPackage) model.Package {
 		registryURL    = "url"
 	)
 	
-	// Determine package_type and registry from legacy fields
-	var packageType, registry, identifier string
+	// Determine package_type and registry_name from legacy fields
+	var packageType, registryName, identifier string
 	
 	switch legacy.RegistryName {
 	case registryNPM:
 		packageType = "javascript"
-		registry = registryNPM
+		registryName = registryNPM
 		identifier = legacy.Name
 	case registryPyPI:
 		packageType = "python"
-		registry = registryPyPI
+		registryName = registryPyPI
 		identifier = legacy.Name
 	case registryDocker:
 		packageType = "docker"
-		registry = "docker-hub"
+		registryName = "docker-hub"
 		identifier = legacy.Name
 	case registryNuGet:
 		packageType = "dotnet"
-		registry = registryNuGet
+		registryName = registryNuGet
 		identifier = legacy.Name
 	case registryURL:
 		// For URL-based packages, determine type from the URL
@@ -171,23 +171,23 @@ func convertLegacyPackage(legacy LegacyPackage) model.Package {
 		// Determine registry from URL
 		switch {
 		case strings.Contains(legacy.Name, "github.com") && strings.Contains(legacy.Name, "/releases/"):
-			registry = "github-releases"
+			registryName = "github-releases"
 		case strings.Contains(legacy.Name, "gitlab.com") && strings.Contains(legacy.Name, "/releases/"):
-			registry = "gitlab-releases"
+			registryName = "gitlab-releases"
 		default:
-			registry = "url"
+			registryName = "url"
 		}
 		identifier = legacy.Name
 	default:
 		// Unknown registry type
 		packageType = "unknown"
-		registry = legacy.RegistryName
+		registryName = legacy.RegistryName
 		identifier = legacy.Name
 	}
 
 	pkg := model.Package{
 		PackageType:          packageType,
-		Registry:             registry,
+		RegistryName:         registryName,
 		Identifier:           identifier,
 		Version:              legacy.Version,
 		RunTimeHint:          legacy.RunTimeHint,

@@ -89,8 +89,8 @@ type Argument struct {
 type Package struct {
 	// PackageType indicates the type of package (e.g., "javascript", "python", "docker", "mcpb")
 	PackageType          string            `json:"package_type,omitempty" bson:"package_type,omitempty"`
-	// Registry indicates the source registry (e.g., "npm", "pypi", "docker-hub", "github-releases")
-	Registry             string            `json:"registry,omitempty" bson:"registry,omitempty"`
+	// RegistryName indicates the source registry (e.g., "npm", "pypi", "docker-hub", "github-releases")
+	RegistryName         string            `json:"registry_name,omitempty" bson:"registry_name,omitempty"`
 	// Identifier is the package identifier - either a package name (for registries) or URL (for direct downloads)
 	Identifier           string            `json:"identifier,omitempty" bson:"identifier,omitempty"`
 	Version              string            `json:"version,omitempty" bson:"version,omitempty"`
