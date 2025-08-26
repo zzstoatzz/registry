@@ -113,6 +113,10 @@ func publishCommand() error {
 	var forceLogin bool
 	var authMethod string
 	var noHash bool
+	var dnsDomain string
+	var dnsPrivateKey string
+	var httpDomain string
+	var httpPrivateKey string
 
 	// Command-line flags for configuration
 	publishFlags.StringVar(&registryURL, "registry-url", "", "URL of the registry (required)")
@@ -120,6 +124,10 @@ func publishCommand() error {
 	publishFlags.BoolVar(&forceLogin, "login", false, "force a new login even if a token exists")
 	publishFlags.StringVar(&authMethod, "auth-method", "github-at", "authentication method (default: github-at)")
 	publishFlags.BoolVar(&noHash, "no-hash", false, "skip file hash generation")
+	publishFlags.StringVar(&dnsDomain, "dns-domain", "", "domain name for DNS authentication (required for dns auth method)")
+	publishFlags.StringVar(&dnsPrivateKey, "dns-private-key", "", "64-character hex seed for DNS authentication (required for dns auth method)")
+	publishFlags.StringVar(&httpDomain, "http-domain", "", "domain name for HTTP authentication (required for http auth method)")
+	publishFlags.StringVar(&httpPrivateKey, "http-private-key", "", "64-character hex seed for HTTP authentication (required for http auth method)")
 
 	// Set custom usage function
 	publishFlags.Usage = func() {
@@ -128,11 +136,15 @@ func publishCommand() error {
 		fmt.Fprint(os.Stdout, "Publish a server.json file to the registry\n")
 		fmt.Fprint(os.Stdout, "\n")
 		fmt.Fprint(os.Stdout, "Flags:\n")
-		fmt.Fprint(os.Stdout, "  --registry-url string    URL of the registry (required)\n")
-		fmt.Fprint(os.Stdout, "  --mcp-file string        path to the MCP file (required)\n")
-		fmt.Fprint(os.Stdout, "  --login                  force a new login even if a token exists\n")
-		fmt.Fprint(os.Stdout, "  --auth-method string     authentication method (default: github-at)\n")
-		fmt.Fprint(os.Stdout, "  --no-hash                skip file hash generation\n")
+		fmt.Fprint(os.Stdout, "  --registry-url string       URL of the registry (required)\n")
+		fmt.Fprint(os.Stdout, "  --mcp-file string           path to the MCP file (required)\n")
+		fmt.Fprint(os.Stdout, "  --login                     force a new login even if a token exists\n")
+		fmt.Fprint(os.Stdout, "  --auth-method string        authentication method (default: github-at)\n")
+		fmt.Fprint(os.Stdout, "  --no-hash                   skip file hash generation\n")
+		fmt.Fprint(os.Stdout, "  --dns-domain string         domain name for DNS authentication\n")
+		fmt.Fprint(os.Stdout, "  --dns-private-key string    64-character hex seed for DNS authentication\n")
+		fmt.Fprint(os.Stdout, "  --http-domain string        domain name for HTTP authentication\n")
+		fmt.Fprint(os.Stdout, "  --http-private-key string   64-character hex seed for HTTP authentication\n")
 	}
 
 	if err := publishFlags.Parse(os.Args[2:]); err != nil {
@@ -180,6 +192,12 @@ func publishCommand() error {
 	case "github-oidc":
 		log.Println("Using GitHub Actions OIDC for authentication")
 		authProvider = auth.NewGitHubOIDCProvider(registryURL)
+	case "dns":
+		log.Println("Using DNS-based authentication")
+		authProvider = auth.NewDNSProvider(registryURL, dnsDomain, dnsPrivateKey)
+	case "http":
+		log.Println("Using HTTP-based authentication")
+		authProvider = auth.NewHTTPProvider(registryURL, httpDomain, httpPrivateKey)
 	case "none":
 		log.Println("Using anonymous authentication")
 		authProvider = auth.NewNoneProvider(registryURL)
@@ -366,8 +384,17 @@ func publishToRegistry(registryURL string, mcpData []byte, token string) error {
 		return fmt.Errorf("error parsing server.json file: %w", err)
 	}
 
-	// Create the publish request payload (without authentication)
-	publishReq := mcpDetails
+	// Create the publish request payload
+	var publishReq map[string]any
+	if _, hasServerField := mcpDetails["server"]; hasServerField {
+		// Already in PublishRequest format with server field (and possibly x-publisher)
+		publishReq = mcpDetails
+	} else {
+		// Legacy ServerDetail format - wrap it in extension wrapper format
+		publishReq = map[string]any{
+			"server": mcpDetails,
+		}
+	}
 
 	// Convert the request to JSON
 	jsonData, err := json.Marshal(publishReq)

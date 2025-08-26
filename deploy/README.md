@@ -11,7 +11,7 @@ Pre-requisites:
 - Access to a Kubernetes cluster via kubeconfig. You can run a cluster locally with [minikube](https://minikube.sigs.k8s.io/docs/start/).
 
 1. Ensure your kubeconfig is configured at the cluster you want to use. For minikube, run `minikube start && minikube tunnel`.
-2. Run `make local-up` to deploy the stack. Run this again if the first attempt fails.
+2. Run `make local-up` to deploy the stack.
 3. Access the repository via the ingress load balancer. You can find its external IP with `kubectl get svc ingress-nginx-controller -n ingress-nginx`. Then run `curl -H "Host: local.registry.modelcontextprotocol.io" -k https://<EXTERNAL-IP>/v0/ping` to check that the service is up.
 
 #### To change config
@@ -46,6 +46,7 @@ Pre-requisites:
    gcloud projects add-iam-policy-binding mcp-registry-prod --member="serviceAccount:pulumi-svc@mcp-registry-prod.iam.gserviceaccount.com" --role="roles/container.admin"
    gcloud projects add-iam-policy-binding mcp-registry-prod --member="serviceAccount:pulumi-svc@mcp-registry-prod.iam.gserviceaccount.com" --role="roles/compute.admin"
    gcloud projects add-iam-policy-binding mcp-registry-prod --member="serviceAccount:pulumi-svc@mcp-registry-prod.iam.gserviceaccount.com" --role="roles/storage.admin"
+   gcloud projects add-iam-policy-binding mcp-registry-prod --member="serviceAccount:pulumi-svc@mcp-registry-prod.iam.gserviceaccount.com" --role="roles/storage.hmacKeyAdmin"
    gcloud iam service-accounts add-iam-policy-binding $(gcloud projects describe mcp-registry-prod --format="value(projectNumber)")-compute@developer.gserviceaccount.com --member="serviceAccount:pulumi-svc@mcp-registry-prod.iam.gserviceaccount.com" --role="roles/iam.serviceAccountUser"
    gcloud iam service-accounts keys create sa-key.json --iam-account=pulumi-svc@mcp-registry-prod.iam.gserviceaccount.com
    ```
@@ -100,10 +101,11 @@ Pre-requisites:
 ├── go.sum               # Go module checksums
 └── pkg/                 # Infrastructure packages
     ├── k8s/             # Kubernetes deployment components
+    │   ├── backup.go          # Database backup configuration
     │   ├── cert_manager.go    # SSL certificate management
     │   ├── deploy.go          # Deployment orchestration
     │   ├── ingress.go         # Ingress controller setup
-    │   ├── mongodb.go         # MongoDB deployment
+    │   ├── postgres.go        # PostgreSQL database deployment
     │   └── registry.go        # MCP Registry deployment
     └── providers/       # Kubernetes cluster providers
         ├── types.go           # Provider interface definitions
@@ -122,7 +124,8 @@ Pre-requisites:
 5. `k8s.DeployAll()` orchestrates complete deployment:
    - Certificate manager for SSL/TLS
    - Ingress controller for external access
-   - MongoDB for data persistence
+   - Database for data persistence
+   - Backup infrastructure for database
    - MCP Registry application
 
 ## Configuration
@@ -135,6 +138,48 @@ Pre-requisites:
 | `githubClientSecret` | GitHub OAuth Client Secret | Yes |
 | `gcpProjectId` | GCP Project ID (required when provider=gcp) | No |
 | `gcpRegion` | GCP Region (default: us-central1) | No |
+
+## Database Backups
+
+The deployment uses [K8up](https://k8up.io/) (a Kubernetes backup operator) that uses [Restic](https://restic.net/) under the hood.
+
+When running locally they are stored in a Minio bucket. In staging and production, backups are stored in a GCS bucket.
+
+### Accessing Backup Files
+
+#### Local Development (MinIO)
+
+```bash
+# Expose MinIO web console
+kubectl port-forward -n minio svc/minio 9000:9000 9001:9001
+```
+
+Then open [localhost:9001](http://localhost:9001), login with username `minioadmin` and password `minioadmin`, and navigate to the k8up-backups bucket.
+
+##### Staging and Production (GCS)
+
+- [Staging](https://console.cloud.google.com/storage/browser/mcp-registry-staging-backups?project=mcp-registry-staging)
+- [Production](https://console.cloud.google.com/storage/browser/mcp-registry-prod-backups?project=mcp-registry-prod)
+
+#### Decrypting and Restoring Backups
+
+Backups are encrypted using Restic. To access the backup data:
+
+1. **Download the backup files from the bucket:**
+   ```bash
+   # Local (MinIO) - ensure port-forward is active: kubectl port-forward -n minio svc/minio 9000:9000 9001:9001
+   AWS_ACCESS_KEY_ID=minioadmin AWS_SECRET_ACCESS_KEY=minioadmin \
+     aws --endpoint-url http://localhost:9000 s3 sync s3://k8up-backups/ ./backup-files/
+   
+   # GCS (staging/production)
+   gsutil -m cp -r gs://mcp-registry-{staging|prod}-backups/* ./backup-files/
+   ```
+2. **[Install Restic](https://restic.readthedocs.io/en/latest/020_installation.html)**
+3. **Restore the backup:**
+   ```bash
+   RESTIC_PASSWORD=password restic -r ./backup-files restore latest --target ./restored-files
+   ```
+   PostgreSQL data will be in `./restored-files/data/registry-pg-1/pgdata/`
 
 ## Troubleshooting
 
@@ -152,5 +197,11 @@ kubectl get svc -n ingress-nginx
 
 ```bash
 kubectl logs -l app=mcp-registry
-kubectl logs -l app=mongodb
+kubectl logs -l app=postgres
+```
+
+### Check Backup Status
+```bash
+kubectl describe schedule.k8up.io 
+kubectl get backup
 ```

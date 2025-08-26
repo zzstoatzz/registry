@@ -1,9 +1,12 @@
 # Server JSON Examples
 
+_These examples show the PublishRequest format used by the `/v0/publish` API endpoint. Each example includes the `server` specification and optional `x-publisher` extensions for build metadata._
+
 ## Basic Server with NPM Package
 
 ```json
 {
+  "server": {
   "name": "io.modelcontextprotocol/brave-search",
   "description": "MCP server for Brave Search API integration",
   "status": "active",
@@ -31,7 +34,14 @@
         }
       ]
     }
-  ]
+  },
+  "x-publisher": {
+    "tool": "npm-publisher",
+    "version": "1.0.1",
+    "build_info": {
+      "timestamp": "2023-12-01T10:30:00Z"
+    }
+  }
 }
 ```
 
@@ -41,6 +51,7 @@ Suppose your MCP server application requires a `mcp start` CLI arguments to star
 
 ```json
 {
+  "server": {
   "name": "Knapcode.SampleMcpServer",
   "description": "Sample NuGet MCP server for a random number and random weather",
   "version_detail": {
@@ -64,7 +75,15 @@ Suppose your MCP server application requires a `mcp start` CLI arguments to star
         }
       ]
     }
-  ]
+  },
+  "x-publisher": {
+    "tool": "nuget-publisher",
+    "version": "2.1.0",
+    "build_info": {
+      "timestamp": "2023-11-15T14:22:00Z",
+      "pipeline_id": "nuget-build-456"
+    }
+  }
 }
 ```
 
@@ -74,6 +93,7 @@ This will essentially instruct the MCP client to execute `dnx Knapcode.SampleMcp
 
 ```json
 {
+  "server": {
   "name": "io.modelcontextprotocol/filesystem",
   "description": "Node.js server implementing Model Context Protocol (MCP) for filesystem operations.",
   "status": "active",
@@ -153,7 +173,17 @@ This will essentially instruct the MCP client to execute `dnx Knapcode.SampleMcp
         }
       ]
     }
-  ]
+  },
+  "x-publisher": {
+    "tool": "ci-publisher",
+    "version": "3.2.1",
+    "build_info": {
+      "commit": "a1b2c3d4e5f6789",
+      "timestamp": "2023-12-01T10:30:00Z",
+      "pipeline_id": "filesystem-build-789",
+      "environment": "production"
+    }
+  }
 }
 ```
 
@@ -161,6 +191,7 @@ This will essentially instruct the MCP client to execute `dnx Knapcode.SampleMcp
 
 ```json
 {
+  "server": {
   "name": "Remote Filesystem Server",
   "description": "Cloud-hosted MCP filesystem server",
   "repository": {
@@ -176,7 +207,17 @@ This will essentially instruct the MCP client to execute `dnx Knapcode.SampleMcp
       "transport_type": "sse",
       "url": "https://mcp-fs.example.com/sse"
     }
-  ]
+  },
+  "x-publisher": {
+    "tool": "cloud-deployer",
+    "version": "2.4.0",
+    "build_info": {
+      "commit": "f7e8d9c2b1a0",
+      "timestamp": "2023-12-05T08:45:00Z",
+      "deployment_id": "remote-fs-deploy-456",
+      "region": "us-west-2"
+    }
+  }
 }
 ```
 
@@ -184,6 +225,7 @@ This will essentially instruct the MCP client to execute `dnx Knapcode.SampleMcp
 
 ```json
 {
+  "server": {
   "name": "weather-mcp-server",
   "description": "Python MCP server for weather data access",
   "repository": {
@@ -216,7 +258,17 @@ This will essentially instruct the MCP client to execute `dnx Knapcode.SampleMcp
         }
       ]
     }
-  ]
+  },
+  "x-publisher": {
+    "tool": "poetry-publisher",
+    "version": "1.8.3",
+    "build_info": {
+      "python_version": "3.11.5",
+      "timestamp": "2023-11-28T16:20:00Z",
+      "build_id": "pypi-weather-123",
+      "dependencies_hash": "sha256:a9b8c7d6e5f4"
+    }
+  }
 }
 ```
 
@@ -226,6 +278,7 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
 
 ```json
 {
+  "server": {
   "name": "Knapcode.SampleMcpServer",
   "description": "Sample NuGet MCP server for a random number and random weather",
   "repository": {
@@ -253,7 +306,18 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
         }
       ]
     }
-  ]
+  },
+  "x-publisher": {
+    "tool": "dotnet-publisher",
+    "version": "8.0.100",
+    "build_info": {
+      "dotnet_version": "8.0.0",
+      "timestamp": "2023-12-10T12:15:00Z",
+      "configuration": "Release",
+      "target_framework": "net8.0",
+      "build_number": "20231210.1"
+    }
+  }
 }
 ```
 
@@ -261,6 +325,7 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
 
 ```json
 {
+  "server": {
   "name": "mcp-database-manager",
   "description": "MCP server for database operations with support for multiple database types",
   "repository": {
@@ -341,7 +406,18 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
         }
       ]
     }
-  ]
+  },
+  "x-publisher": {
+    "tool": "docker-buildx",
+    "version": "0.12.1",
+    "build_info": {
+      "docker_version": "24.0.7",
+      "timestamp": "2023-12-08T14:30:00Z",
+      "platform": "linux/amd64,linux/arm64",
+      "registry": "docker.io",
+      "image_digest": "sha256:1a2b3c4d5e6f7890"
+    }
+  }
 }
 ```
 
@@ -349,6 +425,7 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
 
 ```json
 {
+  "server": {
   "name": "hybrid-mcp-server",
   "description": "MCP server available as both local package and remote service",
   "repository": {
@@ -401,7 +478,21 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
       "transport_type": "streamable",
       "url": "https://hybrid-mcp.example.com/stream"
     }
-  ]
+  },
+  "x-publisher": {
+    "tool": "hybrid-deployer",
+    "version": "1.7.2",
+    "build_info": {
+      "timestamp": "2023-12-03T11:00:00Z",
+      "deployment_strategy": "blue-green",
+      "npm_version": "10.2.4",
+      "node_version": "20.10.0",
+      "service_endpoints": {
+        "sse": "deployed",
+        "streamable": "deployed"
+      }
+    }
+  }
 }
 ```
 
@@ -409,6 +500,7 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
 
 ```json
 {
+  "server": {
   "name": "io.modelcontextprotocol/text-editor",
   "description": "MCP Bundle server for advanced text editing capabilities",
   "repository": {
@@ -443,6 +535,7 @@ This example shows an MCPB (MCP Bundle) package that:
 
 ```json
 {
+  "server": {
   "name": "io.legacy/old-weather-server",
   "description": "Legacy weather server - DEPRECATED: Use weather-v2 instead for new projects",
   "status": "deprecated",
@@ -470,6 +563,16 @@ This example shows an MCPB (MCP Bundle) package that:
         }
       ]
     }
-  ]
+  },
+  "x-publisher": {
+    "tool": "legacy-publisher",
+    "version": "0.8.1",
+    "build_info": {
+      "timestamp": "2023-06-15T09:30:00Z",
+      "deprecation_notice": "This publisher is deprecated. Use npm-publisher v2.0+ for new projects.",
+      "maintenance_mode": true,
+      "final_version": true
+    }
+  }
 }
 ```

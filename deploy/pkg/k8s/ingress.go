@@ -13,7 +13,7 @@ import (
 )
 
 // SetupIngressController sets up the NGINX Ingress Controller
-func SetupIngressController(ctx *pulumi.Context, cluster *providers.ProviderInfo, environment string) error {
+func SetupIngressController(ctx *pulumi.Context, cluster *providers.ProviderInfo, environment string) (*helm.Chart, error) {
 	conf := config.New(ctx, "mcp-registry")
 	provider := conf.Get("provider")
 	if provider == "" {
@@ -27,8 +27,18 @@ func SetupIngressController(ctx *pulumi.Context, cluster *providers.ProviderInfo
 		},
 	}, pulumi.Provider(cluster.Provider))
 	if err != nil {
-		return err
+		return nil, err
 	}
+
+	// Usually we should expose the ingress to a LoadBalancer
+	// This works in GCP and most local setups e.g. minikube (with minikube tunnel)
+	// Kind unfortunately does not support LoadBalancer type, and hangs indefinitely. This is a workaround for that.
+	serviceType := cluster.Name.ApplyT(func(name string) string {
+		if name == "kind-kind" {
+			return "NodePort"
+		}
+		return "LoadBalancer"
+	}).(pulumi.StringOutput)
 
 	// Install NGINX Ingress Controller
 	ingressNginx, err := helm.NewChart(ctx, "ingress-nginx", helm.ChartArgs{
@@ -41,7 +51,7 @@ func SetupIngressController(ctx *pulumi.Context, cluster *providers.ProviderInfo
 		Values: pulumi.Map{
 			"controller": pulumi.Map{
 				"service": pulumi.Map{
-					"type": pulumi.String("LoadBalancer"),
+					"type": serviceType,
 					"annotations": pulumi.Map{
 						// Add Azure Load Balancer health probe annotation as otherwise it defaults to / which fails
 						"service.beta.kubernetes.io/azure-load-balancer-health-probe-request-path": pulumi.String("/healthz"),
@@ -60,7 +70,7 @@ func SetupIngressController(ctx *pulumi.Context, cluster *providers.ProviderInfo
 		},
 	}, pulumi.Provider(cluster.Provider))
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// Extract ingress IPs from the Helm chart's controller service
@@ -90,5 +100,5 @@ func SetupIngressController(ctx *pulumi.Context, cluster *providers.ProviderInfo
 	})
 	ctx.Export("ingressIps", ingressIps)
 
-	return nil
+	return ingressNginx, nil
 }

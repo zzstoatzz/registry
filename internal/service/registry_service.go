@@ -25,29 +25,8 @@ func NewRegistryServiceWithDB(db database.Database) RegistryService {
 	}
 }
 
-// GetAll returns all registry entries
-func (s *registryServiceImpl) GetAll() ([]model.Server, error) {
-	// Create a timeout context for the database operation
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	// Use the database's List method with no filters to get all entries
-	entries, _, err := s.db.List(ctx, nil, "", 30)
-	if err != nil {
-		return nil, err
-	}
-
-	// Convert from []*model.Server to []model.Server
-	result := make([]model.Server, len(entries))
-	for i, entry := range entries {
-		result[i] = *entry
-	}
-
-	return result, nil
-}
-
-// List returns registry entries with cursor-based pagination
-func (s *registryServiceImpl) List(cursor string, limit int) ([]model.Server, string, error) {
+// List returns registry entries with cursor-based pagination in extension wrapper format
+func (s *registryServiceImpl) List(cursor string, limit int) ([]model.ServerResponse, string, error) {
 	// Create a timeout context for the database operation
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -58,33 +37,35 @@ func (s *registryServiceImpl) List(cursor string, limit int) ([]model.Server, st
 	}
 
 	// Use the database's List method with pagination
-	entries, nextCursor, err := s.db.List(ctx, nil, cursor, limit)
+	serverRecords, nextCursor, err := s.db.List(ctx, nil, cursor, limit)
 	if err != nil {
 		return nil, "", err
 	}
 
-	// Convert from []*model.Server to []model.Server
-	result := make([]model.Server, len(entries))
-	for i, entry := range entries {
-		result[i] = *entry
+	// Convert ServerRecord to ServerResponse format
+	result := make([]model.ServerResponse, len(serverRecords))
+	for i, record := range serverRecords {
+		result[i] = record.ToServerResponse()
 	}
 
 	return result, nextCursor, nil
 }
 
-// GetByID retrieves a specific server detail by its ID
-func (s *registryServiceImpl) GetByID(id string) (*model.ServerDetail, error) {
+// GetByID retrieves a specific server by its registry metadata ID in extension wrapper format
+func (s *registryServiceImpl) GetByID(id string) (*model.ServerResponse, error) {
 	// Create a timeout context for the database operation
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	// Use the database's GetByID method to retrieve the server detail
-	serverDetail, err := s.db.GetByID(ctx, id)
+	// Use the database's GetByID method to retrieve the server record
+	serverRecord, err := s.db.GetByID(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
-	return serverDetail, nil
+	// Convert ServerRecord to ServerResponse format
+	response := serverRecord.ToServerResponse()
+	return &response, nil
 }
 
 // validateJavaScriptPackage validates JavaScript/NPM packages
@@ -192,27 +173,39 @@ func validatePackage(pkg *model.Package) error {
 	return nil
 }
 
-// Publish adds a new server detail to the registry
-func (s *registryServiceImpl) Publish(serverDetail *model.ServerDetail) error {
+// Publish publishes a server with separated extensions
+func (s *registryServiceImpl) Publish(req model.PublishRequest) (*model.ServerResponse, error) {
 	// Create a timeout context for the database operation
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	if serverDetail == nil {
-		return database.ErrInvalidInput
+	// Validate the request
+	if err := model.ValidatePublisherExtensions(req); err != nil {
+		return nil, err
+	}
+
+	// Validate server name exists
+	if _, err := model.ParseServerName(req.Server); err != nil {
+		return nil, err
 	}
 
 	// Validate all packages
-	for _, pkg := range serverDetail.Packages {
+	for _, pkg := range req.Server.Packages {
 		if err := validatePackage(&pkg); err != nil {
-			return fmt.Errorf("validation failed: %w", err)
+			return nil, fmt.Errorf("validation failed: %w", err)
 		}
 	}
 
-	err := s.db.Publish(ctx, serverDetail)
+	// Extract publisher extensions from request
+	publisherExtensions := model.ExtractPublisherExtensions(req)
+
+	// Publish to database
+	serverRecord, err := s.db.Publish(ctx, req.Server, publisherExtensions)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	// Convert ServerRecord to ServerResponse format
+	response := serverRecord.ToServerResponse()
+	return &response, nil
 }

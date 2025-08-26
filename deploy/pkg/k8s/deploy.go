@@ -8,7 +8,7 @@ import (
 )
 
 // DeployAll orchestrates the complete deployment of the MCP Registry to Kubernetes
-func DeployAll(ctx *pulumi.Context, cluster *providers.ProviderInfo, environment string) (service *corev1.Service, err error) {
+func DeployAll(ctx *pulumi.Context, cluster *providers.ProviderInfo, backupStorage *providers.BackupStorageInfo, environment string) (service *corev1.Service, err error) {
 	// Setup cert-manager
 	err = SetupCertManager(ctx, cluster)
 	if err != nil {
@@ -16,19 +16,25 @@ func DeployAll(ctx *pulumi.Context, cluster *providers.ProviderInfo, environment
 	}
 
 	// Setup ingress controller
-	err = SetupIngressController(ctx, cluster, environment)
+	ingressNginx, err := SetupIngressController(ctx, cluster, environment)
 	if err != nil {
 		return nil, err
 	}
 
-	// Deploy MongoDB
-	err = DeployMongoDB(ctx, cluster, environment)
+	// Deploy PostgreSQL databases
+	pgCluster, err := DeployPostgresDatabases(ctx, cluster, environment)
+	if err != nil {
+		return nil, err
+	}
+
+	// Deploy k8up backup operator
+	err = DeployK8up(ctx, cluster, environment, backupStorage)
 	if err != nil {
 		return nil, err
 	}
 
 	// Deploy MCP Registry
-	service, err = DeployMCPRegistry(ctx, cluster, environment)
+	service, err = DeployMCPRegistry(ctx, cluster, environment, ingressNginx, pgCluster)
 	if err != nil {
 		return nil, err
 	}
