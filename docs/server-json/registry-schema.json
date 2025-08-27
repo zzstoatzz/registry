@@ -20,18 +20,17 @@
           "registry_type": {
             "enum": [
               "npm",
-              "pypi",
+              "pypi", 
               "docker-hub",
               "nuget",
-              "github-releases",
-              "gitlab-releases"
+              "mcpb"
             ]
           },
           "registry_base_url": {
             "enum": [
               "https://registry.npmjs.org",
               "https://pypi.org",
-              "https://docker.io",
+              "https://docker.io", 
               "https://api.nuget.org",
               "https://github.com",
               "https://gitlab.com"

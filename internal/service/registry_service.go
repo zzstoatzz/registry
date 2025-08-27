@@ -98,8 +98,8 @@ func validateMCPBPackage(host string) error {
 func validatePackage(pkg *model.Package) error {
 	registryType := strings.ToLower(pkg.RegistryType)
 	
-	// For direct download packages (github-releases, gitlab-releases, or direct URLs)
-	if registryType == "github-releases" || registryType == "gitlab-releases" || 
+	// For direct download packages (mcpb or direct URLs)
+	if registryType == "mcpb" || 
 	   strings.HasPrefix(pkg.Identifier, "http://") || strings.HasPrefix(pkg.Identifier, "https://") {
 		parsedURL, err := url.Parse(pkg.Identifier)
 		if err != nil {
@@ -108,8 +108,8 @@ func validatePackage(pkg *model.Package) error {
 		
 		host := strings.ToLower(parsedURL.Host)
 		
-		// For MCPB packages (determined by file extension), validate they're from allowed hosts
-		if strings.HasSuffix(strings.ToLower(pkg.Identifier), ".mcpb") {
+		// For MCPB packages, validate they're from allowed hosts
+		if registryType == "mcpb" || strings.HasSuffix(strings.ToLower(pkg.Identifier), ".mcpb") {
 			return validateMCPBPackage(host)
 		}
 		

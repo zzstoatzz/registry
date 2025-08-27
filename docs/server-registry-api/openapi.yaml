@@ -277,14 +277,13 @@ components:
       properties:
         registry_type:
           type: string
-          description: Registry type indicating how to download packages (e.g., 'npm', 'pypi', 'docker-hub', 'nuget', 'github-releases', 'gitlab-releases')
+          description: Registry type indicating how to download packages (e.g., 'npm', 'pypi', 'docker-hub', 'nuget', 'mcpb')
           examples:
             - "npm"
             - "pypi"
             - "docker-hub"
             - "nuget"
-            - "github-releases"
-            - "gitlab-releases"
+            - "mcpb"
         registry_base_url:
           type: string
           format: uri

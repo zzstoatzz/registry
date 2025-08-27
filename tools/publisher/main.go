@@ -537,15 +537,19 @@ func createServerStructure(
 		registryBaseURLValue = "https://api.nuget.org"
 		identifier = packageName
 	case registryURL:
-		// For URL-based packages, determine registry from URL
-		switch {
-		case strings.Contains(packageName, "github.com") && strings.Contains(packageName, "/releases/"):
-			registryTypeValue = "github-releases"
-			registryBaseURLValue = "https://github.com"
-		case strings.Contains(packageName, "gitlab.com") && strings.Contains(packageName, "/releases/"):
-			registryTypeValue = "gitlab-releases"
-			registryBaseURLValue = "https://gitlab.com"
-		default:
+		// For URL-based packages, determine registry from URL and file type
+		if strings.HasSuffix(strings.ToLower(packageName), ".mcpb") {
+			registryTypeValue = "mcpb"
+			// Determine base URL from the download URL
+			switch {
+			case strings.Contains(packageName, "github.com"):
+				registryBaseURLValue = "https://github.com"
+			case strings.Contains(packageName, "gitlab.com"):
+				registryBaseURLValue = "https://gitlab.com"
+			default:
+				registryBaseURLValue = ""
+			}
+		} else {
 			registryTypeValue = "url"
 			registryBaseURLValue = ""
 		}
