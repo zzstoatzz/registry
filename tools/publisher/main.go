@@ -16,6 +16,16 @@ import (
 	"github.com/modelcontextprotocol/registry/tools/publisher/auth"
 )
 
+// Package type constants
+const (
+	packageTypeDocker = "docker"
+	registryNPM       = "npm"
+	registryPyPI      = "pypi"
+	registryDocker    = "docker"
+	registryNuGet     = "nuget"
+	registryURL       = "url"
+)
+
 // Server structure types for JSON generation
 type Repository struct {
 	URL    string `json:"url"`
@@ -42,9 +52,10 @@ type RuntimeArgument struct {
 }
 
 type Package struct {
-	RegistryName         string                `json:"registry_name"`
-	Name                 string                `json:"name"`
-	Version              string                `json:"version"`
+	RegistryType         string                `json:"registry_type,omitempty"`
+	RegistryBaseURL      string                `json:"registry_base_url,omitempty"`
+	Identifier           string                `json:"identifier,omitempty"`
+	Version              string                `json:"version,omitempty"`
 	RuntimeHint          string                `json:"runtime_hint,omitempty"`
 	RuntimeArguments     []RuntimeArgument     `json:"runtime_arguments,omitempty"`
 	PackageArguments     []RuntimeArgument     `json:"package_arguments,omitempty"`
@@ -226,7 +237,7 @@ func createCommand() error {
 	createFlags.StringVar(&output, "o", "server.json", "Output file path (shorthand)")
 	createFlags.StringVar(&status, "status", "active", "Server status (active or deprecated)")
 
-	createFlags.StringVar(&registryName, "registry", "npm", "Package registry name")
+	createFlags.StringVar(&registryName, "registry", registryNPM, "Package registry name")
 	createFlags.StringVar(&packageName, "package-name", "", "Package name (defaults to server name)")
 	createFlags.StringVar(&packageVersion, "package-version", "", "Package version (defaults to server version)")
 	createFlags.StringVar(&runtimeHint, "runtime-hint", "", "Runtime hint (e.g., docker)")
@@ -304,9 +315,9 @@ func createCommand() error {
 	// Set runtime hint based on registry name if not explicitly provided
 	if runtimeHint == "" {
 		switch registryName {
-		case "docker":
-			runtimeHint = "docker"
-		case "npm":
+		case packageTypeDocker:
+			runtimeHint = packageTypeDocker
+		case registryNPM:
 			runtimeHint = "npx"
 		}
 	}
@@ -398,12 +409,8 @@ func publishToRegistry(registryURL string, mcpData []byte, token string) error {
 	return nil
 }
 
-func createServerStructure(
-	name, description, version, repoURL, repoSource, registryName,
-	packageName, packageVersion, runtimeHint, execute string,
-	envVars []string, packageArgs []string, status string,
-) ServerJSON {
-	// Parse environment variables
+// parseEnvironmentVariables parses environment variable specifications
+func parseEnvironmentVariables(envVars []string) []EnvironmentVariable {
 	var environmentVariables []EnvironmentVariable
 	for _, envVar := range envVars {
 		parts := strings.SplitN(envVar, ":", 2)
@@ -420,8 +427,11 @@ func createServerStructure(
 			})
 		}
 	}
+	return environmentVariables
+}
 
-	// Parse package arguments
+// parsePackageArguments parses package argument specifications
+func parsePackageArguments(packageArgs []string) []RuntimeArgument {
 	var packageArguments []RuntimeArgument
 	for i, pkgArg := range packageArgs {
 		parts := strings.SplitN(pkgArg, ":", 2)
@@ -441,46 +451,121 @@ func createServerStructure(
 			ValueHint:   value,
 		})
 	}
+	return packageArguments
+}
 
-	// Parse execute command to create runtime arguments
+// parseRuntimeArguments parses the execute command to create runtime arguments
+func parseRuntimeArguments(execute string) []RuntimeArgument {
 	var runtimeArguments []RuntimeArgument
-	if execute != "" {
-		// Split the execute command into parts, handling quoted strings
-		parts := smartSplit(execute)
-		if len(parts) > 1 {
-			// Skip the first part (command) and add each argument as a runtime argument
-			for i, arg := range parts[1:] {
-				description := fmt.Sprintf("Runtime argument %d", i+1)
-
-				// Try to provide better descriptions based on common patterns
-				switch {
-				case strings.HasPrefix(arg, "--"):
-					description = fmt.Sprintf("Command line flag: %s", arg)
-				case strings.HasPrefix(arg, "-") && len(arg) == 2:
-					description = fmt.Sprintf("Command line option: %s", arg)
-				case strings.Contains(arg, "="):
-					description = fmt.Sprintf("Configuration parameter: %s", arg)
-				case i > 0 && strings.HasPrefix(parts[i], "-"):
-					description = fmt.Sprintf("Value for %s", parts[i])
-				}
-
-				runtimeArguments = append(runtimeArguments, RuntimeArgument{
-					Description: description,
-					IsRequired:  false,
-					Format:      "string",
-					Value:       arg,
-					Default:     arg,
-					Type:        "positional",
-					ValueHint:   arg,
-				})
-			}
-		}
+	if execute == "" {
+		return runtimeArguments
 	}
 
-	// Create package
+	// Split the execute command into parts, handling quoted strings
+	parts := smartSplit(execute)
+	if len(parts) <= 1 {
+		return runtimeArguments
+	}
+
+	// Skip the first part (command) and add each argument as a runtime argument
+	for i, arg := range parts[1:] {
+		description := getArgumentDescription(arg, i, parts)
+		runtimeArguments = append(runtimeArguments, RuntimeArgument{
+			Description: description,
+			IsRequired:  false,
+			Format:      "string",
+			Value:       arg,
+			Default:     arg,
+			Type:        "positional",
+			ValueHint:   arg,
+		})
+	}
+
+	return runtimeArguments
+}
+
+// getArgumentDescription provides a description for a runtime argument
+func getArgumentDescription(arg string, index int, parts []string) string {
+	description := fmt.Sprintf("Runtime argument %d", index+1)
+
+	// Try to provide better descriptions based on common patterns
+	switch {
+	case strings.HasPrefix(arg, "--"):
+		description = fmt.Sprintf("Command line flag: %s", arg)
+	case strings.HasPrefix(arg, "-") && len(arg) == 2:
+		description = fmt.Sprintf("Command line option: %s", arg)
+	case strings.Contains(arg, "="):
+		description = fmt.Sprintf("Configuration parameter: %s", arg)
+	case index > 0 && strings.HasPrefix(parts[index], "-"):
+		description = fmt.Sprintf("Value for %s", parts[index])
+	}
+
+	return description
+}
+
+func createServerStructure(
+	name, description, version, repoURL, repoSource, registryName,
+	packageName, packageVersion, runtimeHint, execute string,
+	envVars []string, packageArgs []string, status string,
+) ServerJSON {
+	// Parse environment variables
+	environmentVariables := parseEnvironmentVariables(envVars)
+
+	// Parse package arguments
+	packageArguments := parsePackageArguments(packageArgs)
+
+	// Parse execute command to create runtime arguments
+	runtimeArguments := parseRuntimeArguments(execute)
+
+	// Determine registry_type and registry_base_url from registryName
+	var registryTypeValue, registryBaseURLValue, identifier string
+	switch registryName {
+	case registryNPM:
+		registryTypeValue = "npm"
+		registryBaseURLValue = "https://registry.npmjs.org"
+		identifier = packageName
+	case registryPyPI:
+		registryTypeValue = "pypi"
+		registryBaseURLValue = "https://pypi.org"
+		identifier = packageName
+	case registryDocker:
+		registryTypeValue = "docker-hub"
+		registryBaseURLValue = "https://docker.io"
+		identifier = packageName
+	case registryNuGet:
+		registryTypeValue = "nuget"
+		registryBaseURLValue = "https://api.nuget.org"
+		identifier = packageName
+	case registryURL:
+		// For URL-based packages, determine registry from URL and file type
+		if strings.HasSuffix(strings.ToLower(packageName), ".mcpb") {
+			registryTypeValue = "mcpb"
+			// Determine base URL from the download URL
+			switch {
+			case strings.Contains(packageName, "github.com"):
+				registryBaseURLValue = "https://github.com"
+			case strings.Contains(packageName, "gitlab.com"):
+				registryBaseURLValue = "https://gitlab.com"
+			default:
+				registryBaseURLValue = ""
+			}
+		} else {
+			registryTypeValue = "url"
+			registryBaseURLValue = ""
+		}
+		identifier = packageName
+	default:
+		// Unknown or custom registry
+		registryTypeValue = registryName
+		registryBaseURLValue = ""
+		identifier = packageName
+	}
+
+	// Create package with new structured fields
 	pkg := Package{
-		RegistryName:         registryName,
-		Name:                 packageName,
+		RegistryType:         registryTypeValue,
+		RegistryBaseURL:      registryBaseURLValue,
+		Identifier:           identifier,
 		Version:              packageVersion,
 		RuntimeHint:          runtimeHint,
 		RuntimeArguments:     runtimeArguments,

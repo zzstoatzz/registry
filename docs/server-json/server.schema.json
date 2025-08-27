@@ -80,27 +80,33 @@
     },
     "Package": {
       "type": "object",
-      "required": [
-        "registry_name",
-        "name",
-        "version"
-      ],
       "properties": {
-        "registry_name": {
+        "registry_type": {
           "type": "string",
-          "description": "Package registry type",
-          "example": "npm"
+          "description": "Registry type indicating how to download packages (e.g., 'npm', 'pypi', 'docker-hub', 'nuget', 'mcpb')",
+          "examples": ["npm", "pypi", "docker-hub", "nuget", "mcpb"]
         },
-        "name": {
+        "registry_base_url": {
           "type": "string",
-          "description": "Package name in the registry",
-          "example": "io.modelcontextprotocol/filesystem"
+          "format": "uri",
+          "description": "Base URL of the package registry",
+          "examples": ["https://registry.npmjs.org", "https://pypi.org", "https://docker.io", "https://api.nuget.org", "https://github.com", "https://gitlab.com"]
+        },
+        "identifier": {
+          "type": "string",
+          "description": "Package identifier - either a package name (for registries) or URL (for direct downloads)",
+          "examples": ["@modelcontextprotocol/server-brave-search", "https://github.com/example/releases/download/v1.0.0/package.mcpb"]
         },
         "version": {
           "type": "string",
           "description": "Package version",
           "example": "1.0.2",
           "minLength": 1
+        },
+        "file_sha256": {
+          "type": "string",
+          "description": "SHA-256 hash of the package file for integrity verification.",
+          "example": "fe333e598595000ae021bd27117db32ec69af6987f507ba7a63c90638ff633ce"
         },
         "runtime_hint": {
           "type": "string",

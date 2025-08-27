@@ -98,6 +98,14 @@ func TestReadSeedFile_RegistryURL(t *testing.T) {
 		Server: model.ServerDetail{
 			Name:        "Test Server 1",
 			Description: "First test server",
+			Packages: []model.Package{
+				{
+					RegistryType:    "npm",
+					RegistryBaseURL: "https://registry.npmjs.org",
+					Identifier:      "test-package-1",
+					Version:         "1.0.0",
+				},
+			},
 		},
 		XIOModelContextProtocolRegistry: map[string]interface{}{
 			"id":           "server-1",
@@ -109,6 +117,14 @@ func TestReadSeedFile_RegistryURL(t *testing.T) {
 		Server: model.ServerDetail{
 			Name:        "Test Server 2",
 			Description: "Second test server",
+			Packages: []model.Package{
+				{
+					RegistryType:    "npm",
+					RegistryBaseURL: "https://registry.npmjs.org",
+					Identifier:      "test-package-2",
+					Version:         "2.0.0",
+				},
+			},
 		},
 		XIOModelContextProtocolRegistry: map[string]interface{}{
 			"id":           "server-2",
@@ -118,24 +134,26 @@ func TestReadSeedFile_RegistryURL(t *testing.T) {
 	}
 
 	serverDetail1 := model.ServerDetail{
-		Name: "Test Server 1",
+		Name:        "Test Server 1",
 		Description: "First test server",
 		Packages: []model.Package{
 			{
-				RegistryName: "npm",
-				Name:    "test-package-1",
-				Version: "1.0.0",
+				RegistryType:    "npm",
+				RegistryBaseURL: "https://registry.npmjs.org",
+				Identifier:      "test-package-1",
+				Version:         "1.0.0",
 			},
 		},
 	}
 	serverDetail2 := model.ServerDetail{
-		Name: "Test Server 2",
+		Name:        "Test Server 2",
 		Description: "Second test server",
 		Packages: []model.Package{
 			{
-				RegistryName: "npm",
-				Name:    "test-package-2",
-				Version: "2.0.0",
+				RegistryType:    "npm",
+				RegistryBaseURL: "https://registry.npmjs.org",
+				Identifier:      "test-package-2",
+				Version:         "2.0.0",
 			},
 		},
 	}
@@ -177,6 +195,12 @@ func TestReadSeedFile_RegistryURL(t *testing.T) {
 					// No NextCursor means end of pagination
 				},
 			}
+		default:
+			// No more pages
+			response = PaginatedResponse{
+				Servers:  []model.ServerResponse{},
+				Metadata: &Metadata{},
+			}
 		}
 
 		w.Header().Set("Content-Type", "application/json")
@@ -211,6 +235,16 @@ func TestReadSeedFile_RegistryURL(t *testing.T) {
 	// Verify the servers were imported correctly
 	assert.Equal(t, "Test Server 1", result[0].ServerJSON.Name)
 	assert.Equal(t, "Test Server 2", result[1].ServerJSON.Name)
+
+	// Verify packages were imported with new schema
+	assert.Len(t, result[0].ServerJSON.Packages, 1)
+	assert.Equal(t, "npm", result[0].ServerJSON.Packages[0].RegistryType)
+	assert.Equal(t, "https://registry.npmjs.org", result[0].ServerJSON.Packages[0].RegistryBaseURL)
+	assert.Equal(t, "test-package-1", result[0].ServerJSON.Packages[0].Identifier)
+	assert.Len(t, result[1].ServerJSON.Packages, 1)
+	assert.Equal(t, "npm", result[1].ServerJSON.Packages[0].RegistryType)
+	assert.Equal(t, "https://registry.npmjs.org", result[1].ServerJSON.Packages[0].RegistryBaseURL)
+	assert.Equal(t, "test-package-2", result[1].ServerJSON.Packages[0].Identifier)
 
 	// Verify metadata was extracted
 	assert.Equal(t, "server-1", result[0].RegistryMetadata.ID)

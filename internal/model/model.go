@@ -88,13 +88,18 @@ type Argument struct {
 }
 
 type Package struct {
-	RegistryName         string          `json:"registry_name" bson:"registry_name"`
-	Name                 string          `json:"name" bson:"name"`
-	Version              string          `json:"version" bson:"version"`
-	RunTimeHint          string          `json:"runtime_hint,omitempty" bson:"runtime_hint,omitempty"`
-	RuntimeArguments     []Argument      `json:"runtime_arguments,omitempty" bson:"runtime_arguments,omitempty"`
-	PackageArguments     []Argument      `json:"package_arguments,omitempty" bson:"package_arguments,omitempty"`
-	EnvironmentVariables []KeyValueInput `json:"environment_variables,omitempty" bson:"environment_variables,omitempty"`
+	// RegistryType indicates how to download packages (e.g., "npm", "pypi", "docker-hub", "mcpb")
+	RegistryType         string            `json:"registry_type,omitempty" bson:"registry_type,omitempty"`
+	// RegistryBaseURL is the base URL of the package registry
+	RegistryBaseURL      string            `json:"registry_base_url,omitempty" bson:"registry_base_url,omitempty"`
+	// Identifier is the package identifier - either a package name (for registries) or URL (for direct downloads)
+	Identifier           string            `json:"identifier,omitempty" bson:"identifier,omitempty"`
+	Version              string            `json:"version,omitempty" bson:"version,omitempty"`
+	FileSHA256           string            `json:"file_sha256,omitempty" bson:"file_sha256,omitempty"`
+	RunTimeHint          string            `json:"runtime_hint,omitempty" bson:"runtime_hint,omitempty"`
+	RuntimeArguments     []Argument        `json:"runtime_arguments,omitempty" bson:"runtime_arguments,omitempty"`
+	PackageArguments     []Argument        `json:"package_arguments,omitempty" bson:"package_arguments,omitempty"`
+	EnvironmentVariables []KeyValueInput   `json:"environment_variables,omitempty" bson:"environment_variables,omitempty"`
 }
 
 // Remote represents a remote connection endpoint

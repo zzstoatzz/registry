@@ -14,15 +14,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@21st-dev/magic",
           "version": "0.0.46",
           "environment_variables": [
             {
               "description": "${input:apiKey}",
               "name": "API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@21st-dev/magic",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -49,8 +50,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "adfinmcp",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -82,7 +81,10 @@
               "description": "\u003cpassword\u003e",
               "name": "ADFIN_PASSWORD"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "adfinmcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -109,15 +111,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "agentql-mcp",
           "version": "1.0.0",
           "environment_variables": [
             {
               "description": "YOUR_API_KEY",
               "name": "AGENTQL_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "agentql-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -144,8 +147,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "agentrpc/agentrpc",
           "version": "",
           "package_arguments": [
             {
@@ -163,7 +164,10 @@
               "description": "\u003cYOUR_API_SECRET\u003e",
               "name": "AGENTRPC_API_SECRET"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "agentrpc",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -190,8 +194,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-aiven",
           "version": "0.1.4",
           "package_arguments": [
             {
@@ -243,7 +245,10 @@
               "description": "$AIVEN_TOKEN",
               "name": "AIVEN_TOKEN"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "mcp-aiven",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -270,8 +275,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "adb-mysql-mcp-server",
           "version": "1.0.0",
           "package_arguments": [
             {
@@ -315,7 +318,10 @@
               "description": "database",
               "name": "ADB_MYSQL_DATABASE"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "adb-mysql-mcp-server",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -342,8 +348,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "alibaba-cloud-ops-mcp-server",
           "version": "0.8.6",
           "environment_variables": [
             {
@@ -354,7 +358,10 @@
               "description": "Your Access Key SECRET",
               "name": "ALIBABA_CLOUD_ACCESS_KEY_SECRET"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "alibaba-cloud-ops-mcp-server",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -381,8 +388,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "iotdb-mcp-server",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -430,7 +435,10 @@
               "description": "table",
               "name": "IOTDB_SQL_DIALECT"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "iotdb-mcp-server",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -457,9 +465,10 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "apache/iotdb",
-          "version": ""
+          "version": "",
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/apache/iotdb",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -486,8 +495,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@apify/actors-mcp-server",
           "version": "0.1.31",
           "package_arguments": [
             {
@@ -506,7 +513,10 @@
               "description": "${input:apify_token}",
               "name": "APIFY_TOKEN"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@apify/actors-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -533,15 +543,16 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "apimatic-validator---mcp",
           "version": "1.0.0",
           "environment_variables": [
             {
               "description": "\u003cAdd your APIMatic token here\u003e",
               "name": "APIMATIC_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/apimatic-validator---mcp",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -556,7 +567,7 @@
   {
     "server": {
       "name": "io.github.arize-ai/phoenix",
-      "description": "AI Observability \u0026 Evaluation",
+      "description": "AI Observability & Evaluation",
       "status": "active",
       "repository": {
         "url": "https://github.com/Arize-ai/phoenix",
@@ -568,9 +579,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "arize-phoenix",
-          "version": ""
+          "version": "",
+          "registry_type": "pypi",
+          "identifier": "arize-phoenix",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -597,9 +609,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@datastax/astra-db-mcp",
-          "version": "1.2.0"
+          "version": "1.2.0",
+          "registry_type": "npm",
+          "identifier": "@datastax/astra-db-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -626,8 +639,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "mcp-audiense-insights",
           "version": "0.2.0",
           "environment_variables": [
             {
@@ -642,7 +653,10 @@
               "description": "your_token_here",
               "name": "TWITTER_BEARER_TOKEN"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "mcp-audiense-insights",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -669,15 +683,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@bankless/onchain-mcp",
           "version": "1.0.6",
           "environment_variables": [
             {
               "description": "your_api_token_here",
               "name": "BANKLESS_API_TOKEN"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@bankless/onchain-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -704,8 +719,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "bicscan-mcp",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -733,7 +746,10 @@
               "description": "YOUR_BICSCAN_API_KEY_HERE",
               "name": "BICSCAN_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/bicscan-mcp",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -760,8 +776,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "bitrise-mcp",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -799,7 +813,10 @@
               "description": "\u003cYOUR_PAT\u003e",
               "name": "BITRISE_TOKEN"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/bitrise-mcp",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -826,8 +843,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-server-box",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -838,7 +853,10 @@
               "type": "positional",
               "value_hint": "src/mcp_server_box.py"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "mcp-server-box",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -865,9 +883,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "chroma-mcp",
-          "version": "0.2.2"
+          "version": "0.2.2",
+          "registry_type": "pypi",
+          "identifier": "chroma-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -894,8 +913,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@circleci/mcp-server-circleci",
           "version": "0.7.1",
           "environment_variables": [
             {
@@ -906,7 +923,10 @@
               "description": "https://circleci.com",
               "name": "CIRCLECI_BASE_URL"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@circleci/mcp-server-circleci",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -933,8 +953,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-clickhouse",
           "version": "0.1.7",
           "package_arguments": [
             {
@@ -984,7 +1002,10 @@
               "description": "\u003coptional-database\u003e",
               "name": "CLICKHOUSE_DATABASE"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "mcp-clickhouse",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -1011,8 +1032,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@cloudflare/mcp-server-cloudflare",
           "version": "1.0.0",
           "package_arguments": [
             {
@@ -1024,7 +1043,10 @@
               "type": "positional",
               "value_hint": "https://observability.mcp.cloudflare.com/sse"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@cloudflare/mcp-server-cloudflare",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ],
       "remotes": [
@@ -1061,8 +1083,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@codacy/codacy-mcp",
           "version": "0.0.1",
           "environment_variables": [
             {
@@ -1073,7 +1093,10 @@
               "description": "\u003cVERSION\u003e",
               "name": "CODACY_CLI_VERSION"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@codacy/codacy-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -1100,9 +1123,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "codelogic-mcp-server",
-          "version": "1.0.2"
+          "version": "1.0.2",
+          "registry_type": "pypi",
+          "identifier": "codelogic-mcp-server",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -1129,8 +1153,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "test-opik-mcp",
           "version": "0.0.1",
           "package_arguments": [
             {
@@ -1187,7 +1209,10 @@
               "description": "default",
               "name": "OPIK_WORKSPACE_NAME"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/test-opik-mcp",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -1214,8 +1239,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-couchbase",
           "version": "0.2.0",
           "package_arguments": [
             {
@@ -1255,7 +1278,10 @@
               "description": "bucket_name",
               "name": "CB_BUCKET_NAME"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "mcp-couchbase",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -1282,8 +1308,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "dart-mcp-server",
           "version": "0.1.13",
           "package_arguments": [
             {
@@ -1329,7 +1353,10 @@
               "description": "dsa_...",
               "name": "DART_TOKEN"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/dart-mcp-server",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -1356,9 +1383,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "devhub-cms-mcp",
-          "version": "0.3.0"
+          "version": "0.3.0",
+          "registry_type": "pypi",
+          "identifier": "devhub-cms-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -1385,9 +1413,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@dynatrace-oss/dynatrace-mcp-server",
-          "version": "0.1.2"
+          "version": "0.1.2",
+          "registry_type": "npm",
+          "identifier": "@dynatrace-oss/dynatrace-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -1414,9 +1443,10 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "e2b-mcp-root",
-          "version": ""
+          "version": "",
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/e2b-mcp-root",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -1443,15 +1473,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@edgee/mcp-server-edgee",
           "version": "0.1.3",
           "environment_variables": [
             {
               "description": "\u003cYOUR_TOKEN\u003e",
               "name": "EDGEE_TOKEN"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@edgee/mcp-server-edgee",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -1478,8 +1509,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "@edubase/mcp",
           "version": "1.0.10",
           "package_arguments": [
             {
@@ -1553,7 +1582,10 @@
               "description": "your_integration_secret_key",
               "name": "EDUBASE_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/@edubase/mcp",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -1580,8 +1612,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@elastic/mcp-server-elasticsearch",
           "version": "0.1.1",
           "package_arguments": [
             {
@@ -1603,7 +1633,10 @@
               "description": "your-api-key",
               "name": "ES_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@elastic/mcp-server-elasticsearch",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -1630,9 +1663,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-server-esignatures",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "pypi",
+          "identifier": "mcp-server-esignatures",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -1659,8 +1693,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "exa-mcp-server",
           "version": "0.3.10",
           "package_arguments": [
             {
@@ -1679,7 +1711,10 @@
               "description": "your-api-key-here",
               "name": "EXA_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "exa-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -1706,15 +1741,16 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "fewsats-mcp",
           "version": "0.1.4",
           "environment_variables": [
             {
               "description": "YOUR_FEWSATS_API_KEY",
               "name": "FEWSATS_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "fewsats-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -1741,8 +1777,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "fibery-mcp-server",
           "version": "0.1.3",
           "package_arguments": [
             {
@@ -1784,7 +1818,10 @@
               "name": "--fibery-api-token your-api-token",
               "value_hint": "your-api-token"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "fibery-mcp-server",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -1811,8 +1848,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-server",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -1823,7 +1858,10 @@
               "type": "positional",
               "value_hint": "server.py"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "mcp-server",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -1850,9 +1888,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "firecrawl-mcp",
-          "version": "1.9.0"
+          "version": "1.9.0",
+          "registry_type": "npm",
+          "identifier": "firecrawl-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -1879,9 +1918,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "todos",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "pypi",
+          "identifier": "todos",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -1908,8 +1948,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@gleanwork/mcp-server",
           "version": "0.6.1",
           "environment_variables": [
             {
@@ -1920,7 +1958,10 @@
               "description": "\u003cglean api token\u003e",
               "name": "GLEAN_API_TOKEN"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@gleanwork/mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -1947,8 +1988,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "@notainc/gyazo-mcp-server",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -2005,7 +2044,10 @@
               "description": "your-access-token-here",
               "name": "GYAZO_ACCESS_TOKEN"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/@notainc/gyazo-mcp-server",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -2032,15 +2074,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@gotohuman/mcp-server",
           "version": "0.1.2",
           "environment_variables": [
             {
               "description": "your-api-key",
               "name": "GOTOHUMAN_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@gotohuman/mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -2067,8 +2110,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "grafana/mcp-grafana",
           "version": "",
           "package_arguments": [
             {
@@ -2137,7 +2178,10 @@
               "description": "\u003cyour service account token\u003e",
               "name": "GRAFANA_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/grafana/mcp-grafana",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -2164,8 +2208,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "graphlit-mcp-server",
           "version": "1.0.0",
           "environment_variables": [
             {
@@ -2180,7 +2222,10 @@
               "description": "${input:jwt_secret}",
               "name": "GRAPHLIT_JWT_SECRET"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "graphlit-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -2207,8 +2252,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "greptimedb-mcp-server",
           "version": "0.1.0",
           "environment_variables": [
             {
@@ -2227,7 +2270,10 @@
               "description": "public",
               "name": "GREPTIMEDB_DATABASE"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "greptimedb-mcp-server",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -2254,9 +2300,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@heroku/mcp-server",
-          "version": "1.0.4"
+          "version": "1.0.4",
+          "registry_type": "npm",
+          "identifier": "@heroku/mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -2283,8 +2330,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "hologres-mcp-server",
           "version": "0.1.9",
           "environment_variables": [
             {
@@ -2307,7 +2352,10 @@
               "description": "database",
               "name": "HOLOGRES_DATABASE"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "hologres-mcp-server",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -2334,15 +2382,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "hyperbrowser-mcp",
           "version": "1.0.25",
           "environment_variables": [
             {
               "description": "your-api-key",
               "name": "HYPERBROWSER_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "hyperbrowser-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -2369,9 +2418,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "inbox-zero",
-          "version": ""
+          "version": "",
+          "registry_type": "npm",
+          "identifier": "inbox-zero",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -2398,8 +2448,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "inkeep-mcp-server",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -2444,7 +2492,10 @@
               "description": "Retrieves product documentation about Inkeep. The query should be framed as a conversational question about Inkeep.",
               "name": "INKEEP_MCP_TOOL_DESCRIPTION"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "inkeep-mcp-server",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -2471,8 +2522,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@integration-app/mcp-server",
           "version": "1.0.3",
           "environment_variables": [
             {
@@ -2483,7 +2532,10 @@
               "description": "hubspot",
               "name": "INTEGRATION_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@integration-app/mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -2510,15 +2562,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@jetbrains/mcp-proxy",
           "version": "1.8.0",
           "environment_variables": [
             {
               "description": "true",
               "name": "LOG_ENABLED"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@jetbrains/mcp-proxy",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -2533,7 +2586,7 @@
   {
     "server": {
       "name": "io.github.kagisearch/kagimcp",
-      "description": "A Model Context Protocol (MCP) server for Kagi search \u0026 other tools.",
+      "description": "A Model Context Protocol (MCP) server for Kagi search & other tools.",
       "status": "active",
       "repository": {
         "url": "https://github.com/kagisearch/kagimcp",
@@ -2545,8 +2598,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "kagimcp",
           "version": "0.1.3",
           "package_arguments": [
             {
@@ -2578,7 +2629,10 @@
               "description": "YOUR_ENGINE_CHOICE_HERE",
               "name": "KAGI_SUMMARIZER_ENGINE"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "kagimcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -2605,8 +2659,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "keboola-mcp-server",
           "version": "0.17.4",
           "package_arguments": [
             {
@@ -2648,7 +2700,10 @@
               "description": "your_workspace_schema",
               "name": "KBC_WORKSPACE_SCHEMA"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "keboola-mcp-server",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -2675,8 +2730,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "@translated/lara-mcp",
           "version": "0.0.10",
           "package_arguments": [
             {
@@ -2727,7 +2780,10 @@
               "description": "\u003cYOUR_ACCESS_KEY_SECRET\u003e",
               "name": "LARA_ACCESS_KEY_SECRET"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/@translated/lara-mcp",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -2754,8 +2810,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "logfire-mcp",
           "version": "",
           "package_arguments": [
             {
@@ -2778,7 +2832,10 @@
               "name": "1440",
               "value_hint": "1440"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "logfire-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -2805,8 +2862,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mcp-server-langfuse",
           "version": "0.0.1",
           "environment_variables": [
             {
@@ -2821,7 +2876,10 @@
               "description": "https://cloud.langfuse.com",
               "name": "LANGFUSE_BASEURL"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mcp-server-langfuse",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -2836,7 +2894,7 @@
   {
     "server": {
       "name": "io.github.lingodotdev/lingo.dev",
-      "description": "⚡️ Open-source AI-powered CLI for web \u0026 mobile localization. Bring your own LLM or use Lingo.dev-managed localization engine.",
+      "description": "⚡️ Open-source AI-powered CLI for web & mobile localization. Bring your own LLM or use Lingo.dev-managed localization engine.",
       "status": "active",
       "repository": {
         "url": "https://github.com/lingodotdev/lingo.dev",
@@ -2848,9 +2906,10 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "@lingo.dev",
-          "version": ""
+          "version": "",
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/@lingo.dev",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -2877,8 +2936,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@makehq/mcp-server",
           "version": "0.5.0",
           "environment_variables": [
             {
@@ -2893,7 +2950,10 @@
               "description": "\u003cyour-team-id\u003e",
               "name": "MAKE_TEAM"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@makehq/mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -2920,9 +2980,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "meilisearch-mcp",
-          "version": "0.4.0"
+          "version": "0.4.0",
+          "registry_type": "pypi",
+          "identifier": "meilisearch-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -2949,9 +3010,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-memgraph",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "pypi",
+          "identifier": "mcp-memgraph",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -2978,8 +3040,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-server-milvus",
           "version": "0.1.1",
           "package_arguments": [
             {
@@ -3011,7 +3071,10 @@
               "name": "--milvus-uri http://127.0.0.1:19530",
               "value_hint": "http://127.0.0.1:19530"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "mcp-server-milvus",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -3038,8 +3101,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@gomomento/mcp-momento",
           "version": "0.1.0",
           "environment_variables": [
             {
@@ -3054,7 +3115,10 @@
               "description": "60",
               "name": "DEFAULT_TTL_SECONDS"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@gomomento/mcp-momento",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -3081,8 +3145,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "mongodb-mcp-server",
           "version": "0.1.1",
           "package_arguments": [
             {
@@ -3105,7 +3167,10 @@
               "name": "--apiClientSecret your-atlas-service-accounts-client-secret",
               "value_hint": "your-atlas-service-accounts-client-secret"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "mongodb-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -3132,8 +3197,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-server-motherduck",
           "version": "0.4.2",
           "package_arguments": [
             {
@@ -3175,7 +3238,10 @@
               "name": "--motherduck-token \u003cYOUR_MOTHERDUCK_TOKEN_HERE\u003e",
               "value_hint": "\u003cYOUR_MOTHERDUCK_TOKEN_HERE\u003e"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "mcp-server-motherduck",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -3202,8 +3268,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "needle-mcp",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -3230,7 +3294,10 @@
               "description": "your_needle_api_key",
               "name": "NEEDLE_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "needle-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -3257,8 +3324,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@neondatabase/mcp-server-neon",
           "version": "0.4.0",
           "package_arguments": [
             {
@@ -3279,7 +3344,10 @@
               "type": "positional",
               "value_hint": "\u003cYOUR_NEON_API_KEY\u003e"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@neondatabase/mcp-server-neon",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -3306,9 +3374,10 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mcp-oceanbase",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mcp-oceanbase",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -3335,15 +3404,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "octagon-mcp",
           "version": "1.0.18",
           "environment_variables": [
             {
               "description": "YOUR_API_KEY_HERE",
               "name": "OCTAGON_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "octagon-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -3370,8 +3440,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "oxylabs-mcp",
           "version": "0.2.0",
           "package_arguments": [
             {
@@ -3403,7 +3471,10 @@
               "description": "OXYLABS_PASSWORD",
               "name": "OXYLABS_PASSWORD"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "oxylabs-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -3430,8 +3501,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@paddle/paddle-mcp",
           "version": "0.1.2",
           "package_arguments": [
             {
@@ -3453,7 +3522,10 @@
               "description": "sandbox",
               "name": "PADDLE_ENVIRONMENT"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@paddle/paddle-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -3480,15 +3552,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "ppl-ai/modelcontextprotocol",
           "version": "",
           "environment_variables": [
             {
               "description": "YOUR_API_KEY_HERE",
               "name": "PERPLEXITY_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "ppl-ai",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -3515,9 +3588,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@pinecone-database/mcp",
-          "version": "0.1.14"
+          "version": "0.1.14",
+          "registry_type": "npm",
+          "identifier": "@pinecone-database/mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -3544,8 +3618,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "pinecone-io/assistant-mcp",
           "version": "",
           "package_arguments": [
             {
@@ -3605,7 +3677,10 @@
               "description": "\u003cYOUR_PINECONE_ASSISTANT_HOST_HERE\u003e",
               "name": "PINECONE_ASSISTANT_HOST"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/pinecone-io/assistant-mcp",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -3632,8 +3707,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@ragieai/mcp-server",
           "version": "0.0.7",
           "package_arguments": [
             {
@@ -3652,7 +3725,10 @@
               "description": "your_api_key",
               "name": "RAGIE_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@ragieai/mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -3679,15 +3755,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "redis-mcp-server",
           "version": "0.2.0",
           "environment_variables": [
             {
               "description": "${input:apiKey}",
               "name": "API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "redis-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -3714,8 +3791,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mcp-redis-cloud",
           "version": "1.0.0",
           "package_arguments": [
             {
@@ -3758,7 +3833,10 @@
               "name": "-e SECRET_KEY=\u003cyour_redis_cloud_api_secret_key\u003e",
               "value_hint": "SECRET_KEY=\u003cyour_redis_cloud_api_secret_key\u003e"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mcp-redis-cloud",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -3785,8 +3863,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mcp-server-qdrant",
           "version": "0.7.1",
           "package_arguments": [
             {
@@ -3870,7 +3946,10 @@
               "description": "${input:collectionName}",
               "name": "COLLECTION_NAME"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mcp-server-qdrant",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -3897,8 +3976,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "ramp-mcp",
           "version": "0.0.1",
           "package_arguments": [
             {
@@ -3952,7 +4029,10 @@
               "description": "\u003cdemo|qa|prd\u003e",
               "name": "RAMP_ENV"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "ramp-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -3979,15 +4059,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@raygun.io/mcp-server-raygun",
           "version": "0.1.0",
           "environment_variables": [
             {
               "description": "your-pat-token-ken",
               "name": "RAYGUN_PAT_TOKEN"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@raygun.io/mcp-server-raygun",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -4014,8 +4095,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@getrember/mcp",
           "version": "1.1.3",
           "package_arguments": [
             {
@@ -4028,7 +4107,10 @@
               "name": "--api-key=YOUR_REMBER_API_KEY",
               "value_hint": "YOUR_REMBER_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@getrember/mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -4055,15 +4137,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "riza-io/riza-mcp",
           "version": "",
           "environment_variables": [
             {
               "description": "your-api-key",
               "name": "RIZA_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "riza-io",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -4090,15 +4173,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "search1api-mcp",
           "version": "0.2.0",
           "environment_variables": [
             {
               "description": "YOUR_SEARCH1API_KEY",
               "name": "SEARCH1API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "search1api-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -4125,8 +4209,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "screenshotone-mcp-server",
           "version": "1.0.0",
           "package_arguments": [
             {
@@ -4144,7 +4226,10 @@
               "description": "\u003cyour api key\u003e",
               "name": "SCREENSHOTONE_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "screenshotone-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -4171,9 +4256,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "semgrep-mcp",
-          "version": "0.2.0"
+          "version": "0.2.0",
+          "registry_type": "pypi",
+          "identifier": "semgrep-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -4200,8 +4286,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "singlestore_mcp_server",
           "version": "",
           "package_arguments": [
             {
@@ -4222,7 +4306,10 @@
               "type": "positional",
               "value_hint": "\u003cSINGLESTORE_API_KEY\u003e"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "singlestore_mcp_server",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -4249,15 +4336,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "tavily-mcp",
           "version": "0.2.0",
           "environment_variables": [
             {
               "description": "your-api-key-here",
               "name": "TAVILY_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "tavily-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -4284,9 +4372,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "tianji",
-          "version": "1.20.9"
+          "version": "1.20.9",
+          "registry_type": "npm",
+          "identifier": "tianji",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -4313,9 +4402,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-tinybird",
-          "version": "1.0.2"
+          "version": "1.0.2",
+          "registry_type": "pypi",
+          "identifier": "mcp-tinybird",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -4342,8 +4432,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "uns_mcp",
           "version": "0.1.6",
           "package_arguments": [
             {
@@ -4365,7 +4453,10 @@
               "type": "positional",
               "value_hint": "server.py"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "uns_mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -4392,8 +4483,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@vectorize-io/vectorize-mcp-server",
           "version": "0.4.3",
           "package_arguments": [
             {
@@ -4416,7 +4505,10 @@
               "name": "true",
               "value_hint": "true"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@vectorize-io/vectorize-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -4443,8 +4535,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "verodat-mcp-server",
           "version": "1.0.0",
           "package_arguments": [
             {
@@ -4466,7 +4556,10 @@
               "description": "https://verodat.io/api/v3",
               "name": "VERODAT_API_BASE_URL"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "verodat-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -4493,9 +4586,10 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "veyrax-mcp",
-          "version": "1.0.0"
+          "version": "1.0.0",
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/veyrax-mcp",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -4522,8 +4616,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@xeroapi/xero-mcp-server",
           "version": "0.0.12",
           "package_arguments": [
             {
@@ -4545,7 +4637,10 @@
               "description": "your_client_secret_here",
               "name": "XERO_CLIENT_SECRET"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@xeroapi/xero-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -4572,8 +4667,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "zenml-io/mcp-zenml",
           "version": "",
           "package_arguments": [
             {
@@ -4611,7 +4704,10 @@
               "description": "your-api-key-here",
               "name": "ZENML_STORE_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "zenml-io",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -4638,9 +4734,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "ableton-live-mcp-server",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "pypi",
+          "identifier": "ableton-live-mcp-server",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -4667,9 +4764,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "ableton-mcp",
-          "version": "1.0.0"
+          "version": "1.0.0",
+          "registry_type": "pypi",
+          "identifier": "ableton-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -4696,8 +4794,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@openbnb/mcp-server-airbnb",
           "version": "0.1.1",
           "package_arguments": [
             {
@@ -4709,7 +4805,10 @@
               "type": "named",
               "name": "--ignore-robots-txt"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@openbnb/mcp-server-airbnb",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -4736,8 +4835,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "ai-agent-marketplace-index-mcp",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -4748,7 +4845,10 @@
               "type": "positional",
               "value_hint": "server.py"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "ai-agent-marketplace-index-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -4763,7 +4863,7 @@
   {
     "server": {
       "name": "io.github.goplausible/algorand-mcp",
-      "description": "Algorand Model Context Protocol (Server \u0026 Client)",
+      "description": "Algorand Model Context Protocol (Server & Client)",
       "status": "active",
       "repository": {
         "url": "https://github.com/GoPlausible/algorand-mcp",
@@ -4775,9 +4875,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "algorand-mcp",
-          "version": "2.7.7"
+          "version": "2.7.7",
+          "registry_type": "npm",
+          "identifier": "algorand-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -4804,8 +4905,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-server-apache-airflow",
           "version": "0.2.2",
           "package_arguments": [
             {
@@ -4841,7 +4940,10 @@
               "description": "your-password",
               "name": "AIRFLOW_PASSWORD"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "mcp-server-apache-airflow",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -4868,15 +4970,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "airtable-mcp-server",
           "version": "1.4.1",
           "environment_variables": [
             {
               "description": "pat123.abc123",
               "name": "AIRTABLE_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "airtable-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -4903,8 +5006,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@felores/airtable-mcp-server",
           "version": "0.3.0",
           "package_arguments": [
             {
@@ -4922,7 +5023,10 @@
               "description": "your_api_key_here",
               "name": "AIRTABLE_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@felores/airtable-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -4949,9 +5053,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "alphavantage",
-          "version": "0.3.10"
+          "version": "0.3.10",
+          "registry_type": "pypi",
+          "identifier": "alphavantage",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -4978,9 +5083,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-amadeus",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "pypi",
+          "identifier": "mcp-amadeus",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -5007,8 +5113,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-server-gravitino",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -5088,7 +5192,10 @@
               "description": "metalake_demo",
               "name": "GRAVITINO_METALAKE"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "mcp-server-gravitino",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -5115,8 +5222,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-ical",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -5127,7 +5232,10 @@
               "type": "positional",
               "value_hint": "mcp-ical"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "mcp-ical",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -5154,9 +5262,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "mcp-server-applescript",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "npm",
+          "identifier": "mcp-server-applescript",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -5183,8 +5292,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "aranet4-mcp-server",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -5206,7 +5313,10 @@
               "type": "positional",
               "value_hint": "src/server.py"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/aranet4-mcp-server",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -5233,8 +5343,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "arango-server",
           "version": "0.4.4",
           "environment_variables": [
             {
@@ -5253,7 +5361,10 @@
               "description": "your_password",
               "name": "ARANGO_PASSWORD"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "arango-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -5280,9 +5391,10 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "choturoboserver",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/choturoboserver",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -5309,9 +5421,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-atlassian",
-          "version": "0.10.6"
+          "version": "0.10.6",
+          "registry_type": "pypi",
+          "identifier": "mcp-atlassian",
+          "registry_base_url": "https://pypi.org"
         }
       ],
       "remotes": [
@@ -5344,9 +5457,10 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "attestable-mcp-server",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/attestable-mcp-server",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -5373,9 +5487,10 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mcp-server-aws",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mcp-server-aws",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -5402,8 +5517,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@lishenxydlgzs/aws-athena-mcp",
           "version": "1.0.0",
           "package_arguments": [
             {
@@ -5426,7 +5539,10 @@
               "name": "--maxRows 100",
               "value_hint": "100"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@lishenxydlgzs/aws-athena-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -5453,8 +5569,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "aws-cost-explorer-mcp",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -5502,7 +5616,10 @@
               "description": "stdio",
               "name": "MCP_TRANSPORT"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "aws-cost-explorer-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -5529,8 +5646,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mcp-server-aws-resources",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -5580,7 +5695,10 @@
               "type": "positional",
               "value_hint": "buryhuang/mcp-server-aws-resources:latest"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mcp-server-aws-resources",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -5607,9 +5725,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "s3-mcp-server",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "npm",
+          "identifier": "s3-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -5636,8 +5755,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "adx_mcp_server",
           "version": "1.0.9",
           "package_arguments": [
             {
@@ -5741,7 +5858,10 @@
               "description": "/var/run/secrets/azure/tokens/azure-identity-token",
               "name": "ADX_TOKEN_FILE_PATH"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/adx_mcp_server",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -5768,9 +5888,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-azure-devops",
-          "version": "0.6.0"
+          "version": "0.6.0",
+          "registry_type": "pypi",
+          "identifier": "mcp-azure-devops",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -5797,15 +5918,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "baidubce/app-builder",
           "version": "",
           "environment_variables": [
             {
               "description": "${input:apiKey}",
               "name": "API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "baidubce",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -5832,8 +5954,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@magnetai/free-usdc-transfer",
           "version": "0.1.5",
           "environment_variables": [
             {
@@ -5844,7 +5964,10 @@
               "description": "YOUR_COINBASE_CDP_PRIVATE_KEY",
               "name": "COINBASE_CDP_PRIVATE_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@magnetai/free-usdc-transfer",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -5871,8 +5994,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "basic-memory",
           "version": "0.12.3",
           "package_arguments": [
             {
@@ -5883,7 +6004,10 @@
               "type": "positional",
               "value_hint": "mcp"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "basic-memory",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -5910,9 +6034,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-server-bigquery",
-          "version": "0.2.0"
+          "version": "0.2.0",
+          "registry_type": "pypi",
+          "identifier": "mcp-server-bigquery",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -5939,8 +6064,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@ergut/mcp-bigquery-server",
           "version": "1.0.3",
           "package_arguments": [
             {
@@ -5973,7 +6096,10 @@
               "name": "--key-file /path/to/service-account-key.json",
               "value_hint": "/path/to/service-account-key.json"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@ergut/mcp-bigquery-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -6000,15 +6126,16 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mcp_server_bing",
           "version": "0.1.0",
           "environment_variables": [
             {
               "description": "your-bing-api-key",
               "name": "BING_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mcp_server_bing",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -6035,8 +6162,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "bitable-mcp",
           "version": "0.2.1",
           "package_arguments": [
             {
@@ -6059,7 +6184,10 @@
               "description": "your-app-token",
               "name": "APP_TOKEN"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "bitable-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -6086,8 +6214,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "blender-mcp",
           "version": "1.1.3",
           "package_arguments": [
             {
@@ -6106,7 +6232,10 @@
               "type": "positional",
               "value_hint": "blender-mcp"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "blender-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -6133,9 +6262,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@agree-able/room-mcp",
-          "version": "1.0.3"
+          "version": "1.0.3",
+          "registry_type": "npm",
+          "identifier": "@agree-able/room-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -6162,8 +6292,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "browser-use-mcp-server",
           "version": "",
           "package_arguments": [
             {
@@ -6210,7 +6338,10 @@
               "description": "your-api-key",
               "name": "OPENAI_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "browser-use-mcp-server",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -6237,9 +6368,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "bnbchain-mcp",
-          "version": "1.0.12"
+          "version": "1.0.12",
+          "registry_type": "npm",
+          "identifier": "bnbchain-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -6266,9 +6398,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-server-calculator",
-          "version": "0.2.0"
+          "version": "0.2.0",
+          "registry_type": "pypi",
+          "identifier": "mcp-server-calculator",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -6295,8 +6428,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "cfbd-mcp-server",
           "version": "0.5.0",
           "package_arguments": [
             {
@@ -6317,7 +6448,10 @@
               "description": "/full/path/to/python",
               "name": "PATH"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "cfbd-mcp-server",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -6344,8 +6478,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "aiql-desktop",
           "version": "1.0.0",
           "package_arguments": [
             {
@@ -6357,7 +6489,10 @@
               "type": "positional",
               "value_hint": "D:/Github/mcp-test"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/aiql-desktop",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -6384,15 +6519,16 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mcp-server-chatsum",
           "version": "0.1.0",
           "environment_variables": [
             {
               "description": "path-to/mcp-server-chatsum/chatbot/data/chat.db",
               "name": "CHAT_DB_PATH"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mcp-server-chatsum",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -6419,8 +6555,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "chess_mcp",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -6442,7 +6576,10 @@
               "type": "positional",
               "value_hint": "run src/chess_mcp/main.py"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "chess_mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -6469,8 +6606,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "chroma",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -6492,7 +6627,10 @@
               "type": "positional",
               "value_hint": "chroma"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "chroma",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -6519,8 +6657,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "email_client",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -6542,7 +6678,10 @@
               "type": "positional",
               "value_hint": "email-client"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "email_client",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -6569,8 +6708,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@taazkareem/clickup-mcp-server",
           "version": "0.7.2",
           "environment_variables": [
             {
@@ -6589,7 +6726,10 @@
               "description": "8000",
               "name": "PORT"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@taazkareem/clickup-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -6616,8 +6756,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@felores/cloudinary-mcp-server",
           "version": "1.1.3",
           "package_arguments": [
             {
@@ -6643,7 +6781,10 @@
               "description": "your_api_secret",
               "name": "CLOUDINARY_API_SECRET"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@felores/cloudinary-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -6670,8 +6811,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "code_execution_server",
           "version": "0.2.0",
           "package_arguments": [
             {
@@ -6683,7 +6822,10 @@
               "type": "positional",
               "value_hint": "/path/to/code/storage/my_script_abc123.py"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/code_execution_server",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -6710,9 +6852,10 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "consul-mcp",
-          "version": "1.0.0"
+          "version": "1.0.0",
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/consul-mcp",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -6739,9 +6882,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "cognee",
-          "version": "0.1.40"
+          "version": "0.1.40",
+          "registry_type": "pypi",
+          "identifier": "cognee",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -6768,8 +6912,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "coin-api-mcp",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -6788,7 +6930,10 @@
               "description": "your_api_key_here",
               "name": "COINMARKETCAP_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/coin-api-mcp",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -6815,9 +6960,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@shinzolabs/coinmarketcap-mcp",
-          "version": "1.3.7"
+          "version": "1.3.7",
+          "registry_type": "npm",
+          "identifier": "@shinzolabs/coinmarketcap-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -6844,8 +6990,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mcp_remote_macos_use",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -6897,7 +7041,10 @@
               "type": "positional",
               "value_hint": "buryhuang/mcp-remote-macos-use:latest"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mcp_remote_macos_use",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -6924,8 +7071,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@ivotoby/contentful-management-mcp-server",
           "version": "1.14.0",
           "package_arguments": [
             {
@@ -6948,7 +7093,10 @@
               "name": "--host http://api.contentful.com",
               "value_hint": "http://api.contentful.com"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@ivotoby/contentful-management-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -6963,7 +7111,7 @@
   {
     "server": {
       "name": "io.github.kukapay/crypto-feargreed-mcp",
-      "description": "Providing real-time and historical Crypto Fear \u0026 Greed Index data",
+      "description": "Providing real-time and historical Crypto Fear & Greed Index data",
       "status": "active",
       "repository": {
         "url": "https://github.com/kukapay/crypto-feargreed-mcp",
@@ -6975,9 +7123,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "crypto-feargreed-mcp",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "pypi",
+          "identifier": "crypto-feargreed-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -7004,8 +7153,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "crypto-indicators-mcp",
           "version": "1.0.1",
           "package_arguments": [
             {
@@ -7023,7 +7170,10 @@
               "description": "binance",
               "name": "EXCHANGE_NAME"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "crypto-indicators-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -7050,15 +7200,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "crypto-sentiment-mcp",
           "version": "0.1.0",
           "environment_variables": [
             {
               "description": "${input:apiKey}",
               "name": "API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "crypto-sentiment-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -7085,9 +7236,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "cryptopanic-mcp-server",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "pypi",
+          "identifier": "cryptopanic-mcp-server",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -7114,15 +7266,16 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "dappier-mcp",
           "version": "0.3.2",
           "environment_variables": [
             {
               "description": "YOUR_API_KEY_HERE",
               "name": "DAPPIER_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "dappier-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -7149,8 +7302,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "datadog-mcp-server",
           "version": "1.0.8",
           "package_arguments": [
             {
@@ -7203,7 +7354,10 @@
               "name": "--metricsSite \u003cYOUR_METRICS_SITE\u003e",
               "value_hint": "\u003cYOUR_METRICS_SITE\u003e"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "datadog-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -7230,9 +7384,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-server-ds",
-          "version": "0.1.6"
+          "version": "0.1.6",
+          "registry_type": "pypi",
+          "identifier": "mcp-server-ds",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -7259,9 +7414,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "samuelgursky/davinci-resolve-mcp",
-          "version": ""
+          "version": "",
+          "registry_type": "pypi",
+          "identifier": "samuelgursky",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -7288,8 +7444,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "dataset-viewer",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -7300,7 +7454,10 @@
               "type": "positional",
               "value_hint": "dataset-viewer"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "dataset-viewer",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -7327,8 +7484,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "deebo-prototype",
           "version": "1.0.0",
           "package_arguments": [
             {
@@ -7398,7 +7553,10 @@
               "description": "your-openrouter-api-key",
               "name": "OPENROUTER_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "deebo-prototype",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -7425,9 +7583,10 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mcp-server-deep-research",
-          "version": "0.1.1"
+          "version": "0.1.1",
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mcp-server-deep-research",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -7454,15 +7613,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "deepseek-mcp-server",
           "version": "0.2.1",
           "environment_variables": [
             {
               "description": "your-api-key",
               "name": "DEEPSEEK_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "deepseek-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -7489,15 +7649,16 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "deepseek_r1",
           "version": "1.0.0",
           "environment_variables": [
             {
               "description": "your-api-key",
               "name": "DEEPSEEK_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "deepseek_r1",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -7524,8 +7685,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "deepseek-thinker-mcp",
           "version": "1.0.2",
           "environment_variables": [
             {
@@ -7536,7 +7695,10 @@
               "description": "\u003cYour Base URL\u003e",
               "name": "BASE_URL"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "deepseek-thinker-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -7563,8 +7725,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "descope-mcp-server",
           "version": "1.0.0",
           "environment_variables": [
             {
@@ -7575,7 +7735,10 @@
               "description": "your-descope-management-key-here",
               "name": "DESCOPE_MANAGEMENT_KEY"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/descope-mcp-server",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -7602,9 +7765,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "devrev-mcp",
-          "version": "0.1.1"
+          "version": "0.1.1",
+          "registry_type": "pypi",
+          "identifier": "devrev-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -7631,8 +7795,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "dicom-mcp",
           "version": "0.1.1",
           "package_arguments": [
             {
@@ -7663,7 +7825,10 @@
               "type": "positional",
               "value_hint": "/path/to/your_config.yaml"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "dicom-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -7690,8 +7855,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "dify-mcp-server",
           "version": "0.1.1",
           "package_arguments": [
             {
@@ -7723,7 +7886,10 @@
               "description": "app-sk1,app-sk2",
               "name": "DIFY_APP_SKS"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "dify-mcp-server",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -7750,9 +7916,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "discord-mcp-server",
-          "version": "1.0.0"
+          "version": "1.0.0",
+          "registry_type": "pypi",
+          "identifier": "discord-mcp-server",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -7779,8 +7946,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "SaseQ/discord-mcp",
           "version": "",
           "package_arguments": [
             {
@@ -7798,7 +7963,10 @@
               "description": "YOUR_DISCORD_BOT_TOKEN",
               "name": "DISCORD_TOKEN"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "SaseQ",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -7825,8 +7993,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@ashdev/discourse-mcp-server",
           "version": "1.0.2",
           "environment_variables": [
             {
@@ -7841,7 +8007,10 @@
               "description": "ash",
               "name": "DISCOURSE_API_USERNAME"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@ashdev/discourse-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -7868,9 +8037,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-server-docker",
-          "version": "0.2.0"
+          "version": "0.2.0",
+          "registry_type": "pypi",
+          "identifier": "mcp-server-docker",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -7897,9 +8067,10 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mcp-dblp",
-          "version": "1.1.0"
+          "version": "1.1.0",
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mcp-dblp",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -7926,9 +8097,10 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "Omedia/mcp-server-drupal",
-          "version": ""
+          "version": "",
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/Omedia/mcp-server-drupal",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -7955,9 +8127,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "dune-analytics-mcp",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "pypi",
+          "identifier": "dune-analytics-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -7984,9 +8157,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "edgeone-pages-mcp",
-          "version": "0.0.9"
+          "version": "0.0.9",
+          "registry_type": "npm",
+          "identifier": "edgeone-pages-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -8013,9 +8187,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "edwin-sdk",
-          "version": "0.8.29"
+          "version": "0.8.29",
+          "registry_type": "npm",
+          "identifier": "edwin-sdk",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -8042,8 +8217,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "elevenlabs-mcp-server",
           "version": "0.1.1",
           "package_arguments": [
             {
@@ -8095,7 +8268,10 @@
               "description": "output",
               "name": "ELEVENLABS_OUTPUT_DIR"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "elevenlabs-mcp-server",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -8122,9 +8298,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-server-email",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "pypi",
+          "identifier": "mcp-server-email",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -8151,9 +8328,10 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "eunomia-mcp-server",
-          "version": "0.0.2"
+          "version": "0.0.2",
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/eunomia-mcp-server",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -8180,9 +8358,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@mcpdotdirect/evm-mcp-server",
-          "version": "1.1.3"
+          "version": "1.1.3",
+          "registry_type": "npm",
+          "identifier": "@mcpdotdirect/evm-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ],
       "remotes": [
@@ -8215,8 +8394,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-server-everything-search",
           "version": "0.2.1",
           "package_arguments": [
             {
@@ -8244,7 +8421,10 @@
               "description": "path/to/Everything-SDK/dll/Everything64.dll",
               "name": "EVERYTHING_SDK_PATH"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "mcp-server-everything-search",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -8271,15 +8451,16 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "excel-mcp-server",
           "version": "0.1.1",
           "environment_variables": [
             {
               "description": "/path/to/excel/files",
               "name": "EXCEL_FILES_PATH"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "excel-mcp-server",
+          "registry_base_url": "https://pypi.org"
         }
       ],
       "remotes": [
@@ -8312,9 +8493,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "fpl-mcp",
-          "version": "0.1.4"
+          "version": "0.1.4",
+          "registry_type": "pypi",
+          "identifier": "fpl-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -8341,8 +8523,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "fastn",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -8353,7 +8533,10 @@
               "type": "positional",
               "value_hint": "fastn-server.py"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "fastn",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -8380,15 +8563,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "fred-mcp-server",
           "version": "0.2.3",
           "environment_variables": [
             {
               "description": "\u003cYOUR_API_KEY\u003e",
               "name": "FRED_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "fred-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -8415,9 +8599,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "fetch",
-          "version": "1.0.0"
+          "version": "1.0.0",
+          "registry_type": "pypi",
+          "identifier": "fetch",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -8444,8 +8629,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "figma-developer-mcp",
           "version": "0.2.2",
           "package_arguments": [
             {
@@ -8467,7 +8650,10 @@
               "type": "named",
               "name": "--stdio"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "figma-developer-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -8494,9 +8680,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@gannonh/firebase-mcp",
-          "version": "1.4.9"
+          "version": "1.4.9",
+          "registry_type": "npm",
+          "identifier": "@gannonh/firebase-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -8523,9 +8710,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "firecrawl-mcp",
-          "version": "1.9.0"
+          "version": "1.9.0",
+          "registry_type": "npm",
+          "identifier": "firecrawl-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -8552,8 +8740,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "flightradar24-mcp-server",
           "version": "1.0.0",
           "environment_variables": [
             {
@@ -8564,7 +8750,10 @@
               "description": "https://fr24api.flightradar24.com",
               "name": "FR24_API_URL"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "flightradar24-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -8591,9 +8780,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "freqtrade-mcp",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "pypi",
+          "identifier": "freqtrade-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -8620,8 +8810,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@fanyangmeng/ghost-mcp",
           "version": "0.1.0",
           "environment_variables": [
             {
@@ -8636,7 +8824,10 @@
               "description": "v5.0",
               "name": "GHOST_API_VERSION"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@fanyangmeng/ghost-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -8663,8 +8854,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "github-actions-mcp",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -8682,7 +8871,10 @@
               "description": "\u003cYOUR_TOKEN\u003e",
               "name": "GITHUB_PERSONAL_ACCESS_TOKEN"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "github-actions-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -8709,8 +8901,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@ddukbg/github-enterprise-mcp",
           "version": "1.3.0",
           "environment_variables": [
             {
@@ -8721,7 +8911,10 @@
               "description": "your_github_token",
               "name": "GITHUB_TOKEN"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@ddukbg/github-enterprise-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -8748,9 +8941,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@gongrzhe/server-gmail-autoauth-mcp",
-          "version": "1.1.9"
+          "version": "1.1.9",
+          "registry_type": "npm",
+          "identifier": "@gongrzhe/server-gmail-autoauth-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -8777,8 +8971,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mcp-server-headless-gmail",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -8826,7 +9018,10 @@
               "description": "your_access_token",
               "name": "google_access_token"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mcp-server-headless-gmail",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -8853,9 +9048,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "goalstory-mcp",
-          "version": "0.4.3"
+          "version": "0.4.3",
+          "registry_type": "npm",
+          "identifier": "goalstory-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -8882,9 +9078,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "goat-repo",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "npm",
+          "identifier": "goat-repo",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -8911,15 +9108,16 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "godot-mcp",
           "version": "0.1.0",
           "environment_variables": [
             {
               "description": "true",
               "name": "DEBUG"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/godot-mcp",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -8946,8 +9144,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mark3labs/mcp-filesystem-server",
           "version": "",
           "package_arguments": [
             {
@@ -8968,7 +9164,10 @@
               "type": "positional",
               "value_hint": "/path/to/allowed/directory"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mark3labs/mcp-filesystem-server",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -8995,8 +9194,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mcp-goodnews",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -9028,7 +9225,10 @@
               "description": "\u003ccohere-api-key\u003e",
               "name": "COHERE_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mcp-goodnews",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -9055,9 +9255,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "googlecalendar",
-          "version": "1.0.0"
+          "version": "1.0.0",
+          "registry_type": "pypi",
+          "identifier": "googlecalendar",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -9084,9 +9285,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "google-calendar-mcp",
-          "version": "1.1.0"
+          "version": "1.1.0",
+          "registry_type": "pypi",
+          "identifier": "google-calendar-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -9113,9 +9315,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@adenot/mcp-google-search",
-          "version": "0.2.0"
+          "version": "0.2.0",
+          "registry_type": "npm",
+          "identifier": "@adenot/mcp-google-search",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -9142,8 +9345,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-google-sheets",
           "version": "",
           "package_arguments": [
             {
@@ -9165,7 +9366,10 @@
               "description": "your_shared_folder_id_here",
               "name": "DRIVE_FOLDER_ID"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "mcp-google-sheets",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -9192,8 +9396,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "backend",
           "version": "",
           "package_arguments": [
             {
@@ -9205,7 +9407,10 @@
               "type": "positional",
               "value_hint": "Budget Q2"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "backend",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -9232,9 +9437,10 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mcp-vertexai-search",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mcp-vertexai-search",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -9261,8 +9467,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "mcp-graphql-schema",
           "version": "0.0.1",
           "package_arguments": [
             {
@@ -9274,7 +9478,10 @@
               "type": "positional",
               "value_hint": "/ABSOLUTE/PATH/TO/schema.graphqls"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "mcp-graphql-schema",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -9301,8 +9508,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@horizondatawave/mcp",
           "version": "0.1.3",
           "environment_variables": [
             {
@@ -9313,7 +9518,10 @@
               "description": "YOUR_HD_W_ACCOUNT_ID",
               "name": "HDW_ACCOUNT_ID"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@horizondatawave/mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -9340,9 +9548,10 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mesh-mcp-server",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mesh-mcp-server",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -9369,15 +9578,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "heurist-agent-framework",
           "version": "0.1.0",
           "environment_variables": [
             {
               "description": "${input:apiKey}",
               "name": "API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "heurist-agent-framework",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -9404,8 +9614,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "holaspirit-mcp-server",
           "version": "0.2.0",
           "environment_variables": [
             {
@@ -9416,7 +9624,10 @@
               "description": "\u003cyour org id\u003e",
               "name": "HOLASPIRIT_ORGANIZATION_ID"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "holaspirit-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -9443,9 +9654,10 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "homeassistant-mcp",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/homeassistant-mcp",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -9472,8 +9684,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "hass-mcp",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -9533,7 +9743,10 @@
               "description": "YOUR_LONG_LIVED_TOKEN",
               "name": "HA_TOKEN"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/hass-mcp",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -9560,8 +9773,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mcp-server-hubspot",
           "version": "0.2.0",
           "package_arguments": [
             {
@@ -9612,7 +9823,10 @@
               "type": "positional",
               "value_hint": "buryhuang/mcp-hubspot:latest"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mcp-server-hubspot",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -9639,8 +9853,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@llmindset/mcp-hfspace",
           "version": "0.5.4",
           "package_arguments": [
             {
@@ -9690,7 +9902,10 @@
               "type": "positional",
               "value_hint": "space/example/specific-endpint"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@llmindset/mcp-hfspace",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -9717,9 +9932,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@mektigboy/server-hyperliquid",
-          "version": "0.0.1"
+          "version": "0.0.1",
+          "registry_type": "npm",
+          "identifier": "@mektigboy/server-hyperliquid",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -9746,8 +9962,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "stefanoamorelli/hyprmcp",
           "version": "",
           "package_arguments": [
             {
@@ -9798,7 +10012,10 @@
               "description": "\u003cyour-hyprland-instance-signature\u003e",
               "name": "HYPRLAND_INSTANCE_SIGNATURE"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "stefanoamorelli",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -9825,8 +10042,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "ifly-workflow-mcp-server",
           "version": "1.0.0",
           "package_arguments": [
             {
@@ -9854,7 +10069,10 @@
               "description": "/Users/hygao1024/Projects/config.yaml",
               "name": "CONFIG_PATH"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/ifly-workflow-mcp-server",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -9881,8 +10099,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@gongrzhe/image-gen-server",
           "version": "1.0.1",
           "environment_variables": [
             {
@@ -9893,7 +10109,10 @@
               "description": "alternative-model-name",
               "name": "MODEL"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@gongrzhe/image-gen-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -9920,8 +10139,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "influxdb-mcp-server",
           "version": "0.1.1",
           "environment_variables": [
             {
@@ -9936,7 +10153,10 @@
               "description": "your_org",
               "name": "INFLUXDB_ORG"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "influxdb-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -9963,9 +10183,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@inoyu/mcp-unomi-server",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "npm",
+          "identifier": "@inoyu/mcp-unomi-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -9992,15 +10213,16 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mcp-server-for-intercom",
           "version": "1.0.0",
           "environment_variables": [
             {
               "description": "your_intercom_api_token",
               "name": "INTERCOM_ACCESS_TOKEN"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mcp-server-for-intercom",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -10027,9 +10249,10 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mcp-server-simulator-ios-idb",
-          "version": "1.0.1"
+          "version": "1.0.1",
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mcp-server-simulator-ios-idb",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -10056,9 +10279,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "iterm-mcp",
-          "version": "1.2.5"
+          "version": "1.2.5",
+          "registry_type": "npm",
+          "identifier": "iterm-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -10085,9 +10309,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "iterm_mcp_server",
-          "version": "1.0.4"
+          "version": "1.0.4",
+          "registry_type": "npm",
+          "identifier": "iterm_mcp_server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -10114,8 +10339,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "jmeter-mcp-server",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -10126,7 +10349,10 @@
               "type": "positional",
               "value_hint": "jmeter_server.py"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/jmeter-mcp-server",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -10153,9 +10379,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@gongrzhe/server-json-mcp",
-          "version": "1.0.3"
+          "version": "1.0.3",
+          "registry_type": "npm",
+          "identifier": "@gongrzhe/server-json-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -10182,8 +10409,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "jupiter-mcp",
           "version": "1.0.1",
           "package_arguments": [
             {
@@ -10205,7 +10430,10 @@
               "description": "your private key",
               "name": "PRIVATE_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "jupiter-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -10232,9 +10460,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "lamaalrajih/kicad-mcp",
-          "version": ""
+          "version": "",
+          "registry_type": "pypi",
+          "identifier": "lamaalrajih",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -10261,8 +10490,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "keycloak-model-context-protocol",
           "version": "0.0.2",
           "package_arguments": [
             {
@@ -10288,7 +10515,10 @@
               "description": "admin",
               "name": "KEYCLOAK_ADMIN_PASSWORD"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "keycloak-model-context-protocol",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -10315,8 +10545,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "@kiwamizamurai/mcp-kibela-server",
           "version": "1.1.0",
           "package_arguments": [
             {
@@ -10375,7 +10603,10 @@
               "description": "YOUR_TOKEN",
               "name": "KIBELA_TOKEN"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/@kiwamizamurai/mcp-kibela-server",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -10402,8 +10633,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "kong-konnect-mcp",
           "version": "1.0.0",
           "environment_variables": [
             {
@@ -10414,7 +10643,10 @@
               "description": "us",
               "name": "KONNECT_REGION"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/kong-konnect-mcp",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -10441,9 +10673,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-server-kubernetes",
-          "version": "1.6.2"
+          "version": "1.6.2",
+          "registry_type": "pypi",
+          "identifier": "mcp-server-kubernetes",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -10458,7 +10691,7 @@
   {
     "server": {
       "name": "io.github.gongrzhe/langflow-doc-qa-server",
-      "description": "A Model Context Protocol server for document Q\u0026A powered by Langflow . It demonstrates core MCP concepts by providing a simple interface to query documents through a Langflow backend.",
+      "description": "A Model Context Protocol server for document Q&A powered by Langflow . It demonstrates core MCP concepts by providing a simple interface to query documents through a Langflow backend.",
       "status": "active",
       "repository": {
         "url": "https://github.com/GongRzhe/Langflow-DOC-QA-SERVER",
@@ -10470,15 +10703,16 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "doc-qa-server",
           "version": "0.1.0",
           "environment_variables": [
             {
               "description": "http://127.0.0.1:7860/api/v1/run/480ec7b3-29d2-4caa-b03b-e74118f35fac",
               "name": "API_ENDPOINT"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/doc-qa-server",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -10505,9 +10739,10 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mcp-server-lark",
-          "version": ""
+          "version": "",
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mcp-server-lark",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -10534,8 +10769,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "lightdash-mcp-server",
           "version": "0.0.11",
           "environment_variables": [
             {
@@ -10546,7 +10779,10 @@
               "description": "https://\u003cyour base url\u003e",
               "name": "LIGHTDASH_API_URL"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "lightdash-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -10573,8 +10809,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "lsp-mcp-server",
           "version": "0.2.0",
           "package_arguments": [
             {
@@ -10587,7 +10821,10 @@
               "name": "debug",
               "value_hint": "debug"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/lsp-mcp-server",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -10614,15 +10851,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@tacticlaunch/mcp-linear",
           "version": "1.0.9",
           "environment_variables": [
             {
               "description": "\u003cYOUR_TOKEN\u003e",
               "name": "LINEAR_API_TOKEN"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@tacticlaunch/mcp-linear",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -10649,15 +10887,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "linear-mcp-server",
           "version": "0.1.0",
           "environment_variables": [
             {
               "description": "your_linear_api_key_here",
               "name": "LINEAR_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "linear-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -10684,8 +10923,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@llamaindex/mcp-server-llamacloud",
           "version": "0.1.2",
           "package_arguments": [
             {
@@ -10738,7 +10975,10 @@
               "description": "\u003cYOUR_API_KEY\u003e",
               "name": "LLAMA_CLOUD_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@llamaindex/mcp-server-llamacloud",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -10765,8 +11005,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "llm-context",
           "version": "0.3.2",
           "package_arguments": [
             {
@@ -10779,7 +11017,10 @@
               "name": "--from llm-context",
               "value_hint": "llm-context"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "llm-context",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -10806,9 +11047,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mac-messages-mcp",
-          "version": "0.6.6"
+          "version": "0.6.6",
+          "registry_type": "pypi",
+          "identifier": "mac-messages-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -10835,8 +11077,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-server-mariadb",
           "version": "0.1.2",
           "package_arguments": [
             {
@@ -10880,7 +11120,10 @@
               "description": "3306",
               "name": "MARIADB_PORT"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "mcp-server-mariadb",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -10895,7 +11138,7 @@
   {
     "server": {
       "name": "io.github.liuyoshio/mcp-compass",
-      "description": "MCP Discovery \u0026 Recommendation Service - Find the right MCP server for your needs",
+      "description": "MCP Discovery & Recommendation Service - Find the right MCP server for your needs",
       "status": "active",
       "repository": {
         "url": "https://github.com/liuyoshio/mcp-compass",
@@ -10907,9 +11150,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@liuyoshio/mcp-compass",
-          "version": "1.0.7"
+          "version": "1.0.7",
+          "registry_type": "npm",
+          "identifier": "@liuyoshio/mcp-compass",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -10936,9 +11180,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "mcp-create",
-          "version": "1.0.0"
+          "version": "1.0.0",
+          "registry_type": "npm",
+          "identifier": "mcp-create",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -10965,9 +11210,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@anaisbetts/mcp-installer",
-          "version": "0.5.0"
+          "version": "0.5.0",
+          "registry_type": "npm",
+          "identifier": "@anaisbetts/mcp-installer",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -10994,8 +11240,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "strowk/mcp-k8s-go",
           "version": "",
           "package_arguments": [
             {
@@ -11026,7 +11270,10 @@
               "type": "positional",
               "value_hint": "mcpk8s/server:latest"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/strowk/mcp-k8s-go",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -11053,8 +11300,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-local-rag",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -11076,7 +11321,10 @@
               "type": "positional",
               "value_hint": "src/mcp_local_rag/main.py"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "mcp-local-rag",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -11103,9 +11351,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-proxy",
-          "version": "0.6.0"
+          "version": "0.6.0",
+          "registry_type": "pypi",
+          "identifier": "mcp-proxy",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -11132,15 +11381,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "TBXark/mcp-proxy",
           "version": "",
           "environment_variables": [
             {
               "description": "\u003cYOUR_TOKEN\u003e",
               "name": "GITHUB_PERSONAL_ACCESS_TOKEN"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "TBXark",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ],
       "remotes": [
@@ -11173,9 +11423,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-salesforce",
-          "version": "1.0.0"
+          "version": "1.0.0",
+          "registry_type": "pypi",
+          "identifier": "mcp-salesforce",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -11202,9 +11453,10 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mem0-mcp",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mem0-mcp",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -11231,8 +11483,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "membase-mcp",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -11268,7 +11518,10 @@
               "description": "your sub account, any string",
               "name": "MEMBASE_ID"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "membase-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -11295,8 +11548,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "metatrader-mcp-server",
           "version": "0.2.8",
           "package_arguments": [
             {
@@ -11329,7 +11580,10 @@
               "name": "--server \u003cYOUR_MT5_SERVER\u003e",
               "value_hint": "\u003cYOUR_MT5_SERVER\u003e"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "metatrader-mcp-server",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -11356,8 +11610,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-metricool",
           "version": "1.1.0",
           "environment_variables": [
             {
@@ -11368,7 +11620,10 @@
               "description": "\u003cMETRICOOL_USER_ID\u003e",
               "name": "METRICOOL_USER_ID"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "mcp-metricool",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -11395,8 +11650,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mssql_mcp_server",
           "version": "0.1.2",
           "package_arguments": [
             {
@@ -11440,7 +11693,10 @@
               "description": "your_database",
               "name": "MSSQL_DATABASE"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "mssql_mcp_server",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -11467,9 +11723,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "ocr",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "pypi",
+          "identifier": "ocr",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -11496,15 +11753,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "mcp-teams-server",
           "version": "1.0.4",
           "environment_variables": [
             {
               "description": "${input:apiKey}",
               "name": "API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "mcp-teams-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -11531,8 +11789,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-server-mikrotik",
           "version": "0.1.6",
           "package_arguments": [
             {
@@ -11575,7 +11831,10 @@
               "name": "--port 22",
               "value_hint": "22"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "mcp-server-mikrotik",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -11602,8 +11861,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mindmap-mcp-server",
           "version": "0.1.1",
           "package_arguments": [
             {
@@ -11625,7 +11882,10 @@
               "name": "-v /path/to/output/folder:/output",
               "value_hint": "/path/to/output/folder:/output"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mindmap-mcp-server",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -11652,9 +11912,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@mobilenext/mobile-mcp",
-          "version": "0.0.17"
+          "version": "0.0.17",
+          "registry_type": "npm",
+          "identifier": "@mobilenext/mobile-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -11681,8 +11942,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "mcp-mongo-server",
           "version": "1.3.0",
           "package_arguments": [
             {
@@ -11694,7 +11953,10 @@
               "type": "positional",
               "value_hint": "mongodb://muhammed:kilic@localhost:27017/database"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "mcp-mongo-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -11721,9 +11983,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "mongodb-lens",
-          "version": "9.1.4"
+          "version": "9.1.4",
+          "registry_type": "npm",
+          "identifier": "mongodb-lens",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -11750,9 +12013,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-server-monday",
-          "version": "0.2.9"
+          "version": "0.2.9",
+          "registry_type": "pypi",
+          "identifier": "mcp-server-monday",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -11779,9 +12043,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "multicluster-mcp-server",
-          "version": "0.1.3"
+          "version": "0.1.3",
+          "registry_type": "pypi",
+          "identifier": "multicluster-mcp-server",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -11808,9 +12073,10 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "multi-model-advisor",
-          "version": "1.0.0"
+          "version": "1.0.0",
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/multi-model-advisor",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -11837,8 +12103,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@benborla29/mcp-server-mysql",
           "version": "2.0.0",
           "package_arguments": [
             {
@@ -11872,7 +12136,10 @@
               "description": "your_database",
               "name": "MYSQL_DB"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@benborla29/mcp-server-mysql",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -11899,8 +12166,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mysql_mcp_server",
           "version": "0.2.2",
           "package_arguments": [
             {
@@ -11944,7 +12209,10 @@
               "description": "your_database",
               "name": "MYSQL_DATABASE"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "mysql_mcp_server",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -11971,8 +12239,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "n8n-mcp-server",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -11994,7 +12260,10 @@
               "description": "YOUR_N8N_API_KEY",
               "name": "N8N_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "n8n-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -12021,8 +12290,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@programcomputer/nasa-mcp-server",
           "version": "1.0.12",
           "package_arguments": [
             {
@@ -12085,7 +12352,10 @@
               "name": "20220107",
               "value_hint": "20220107"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@programcomputer/nasa-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -12112,8 +12382,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "nasdaq-data-link-mcp-os",
           "version": "0.1.3",
           "package_arguments": [
             {
@@ -12126,7 +12394,10 @@
               "name": "investment_company_type N-1A",
               "value_hint": "N-1A"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "nasdaq-data-link-mcp-os",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -12153,15 +12424,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "mcp-server-nationalparks",
           "version": "1.0.0",
           "environment_variables": [
             {
               "description": "YOUR_NPS_API_KEY",
               "name": "NPS_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "mcp-server-nationalparks",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -12188,9 +12460,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-naver",
-          "version": "0.1.5"
+          "version": "0.1.5",
+          "registry_type": "pypi",
+          "identifier": "mcp-naver",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -12217,9 +12490,10 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mcp-server-nba",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mcp-server-nba",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -12246,8 +12520,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "ns-mcp-server",
           "version": "0.1.6",
           "package_arguments": [
             {
@@ -12265,7 +12537,10 @@
               "description": "your_api_key_here",
               "name": "NS_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "ns-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -12292,8 +12567,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@alanse/mcp-neo4j-server",
           "version": "0.1.1",
           "environment_variables": [
             {
@@ -12308,7 +12581,10 @@
               "description": "your-password",
               "name": "NEO4J_PASSWORD"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@alanse/mcp-neo4j-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -12335,8 +12611,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "mcp-neovim-server",
           "version": "0.4.2",
           "environment_variables": [
             {
@@ -12347,7 +12621,10 @@
               "description": "/tmp/nvim",
               "name": "NVIM_SOCKET_PATH"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "mcp-neovim-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -12374,8 +12651,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "kocierik/mcp-nomad",
           "version": "",
           "package_arguments": [
             {
@@ -12425,7 +12700,10 @@
               "type": "positional",
               "value_hint": "kocierik/mcpnomad-server:latest"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/kocierik/mcp-nomad",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -12452,8 +12730,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@suekou/mcp-notion-server",
           "version": "1.2.4",
           "package_arguments": [
             {
@@ -12475,7 +12751,10 @@
               "description": "true",
               "name": "NOTION_MARKDOWN_CONVERSION"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@suekou/mcp-notion-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -12502,15 +12781,16 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "notionmcp",
           "version": "1.0.0",
           "environment_variables": [
             {
               "description": "your_notion_api_key_here",
               "name": "NOTION_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/notionmcp",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -12537,8 +12817,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "ntfy-mcp-server",
           "version": "1.0.0",
           "package_arguments": [
             {
@@ -12556,7 +12834,10 @@
               "description": "\u003cyour topic name\u003e",
               "name": "NTFY_TOPIC"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "ntfy-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -12571,7 +12852,7 @@
   {
     "server": {
       "name": "io.github.gitmotion/ntfy-me-mcp",
-      "description": "An ntfy MCP server for sending/fetching ntfy notifications to any/self-hosted ntfy.sh server from AI Agents 📤 (supports secure token auth \u0026 more - use with npx or docker!)",
+      "description": "An ntfy MCP server for sending/fetching ntfy notifications to any/self-hosted ntfy.sh server from AI Agents 📤 (supports secure token auth & more - use with npx or docker!)",
       "status": "active",
       "repository": {
         "url": "https://github.com/gitmotion/ntfy-me-mcp",
@@ -12583,15 +12864,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "ntfy-me-mcp",
           "version": "1.3.3",
           "environment_variables": [
             {
               "description": "your-topic-name",
               "name": "NTFY_TOPIC"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "ntfy-me-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -12618,8 +12900,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "mcp-obsidian",
           "version": "1.0.0",
           "package_arguments": [
             {
@@ -12631,7 +12911,10 @@
               "type": "positional",
               "value_hint": "${input:vaultPath}"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "mcp-obsidian",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -12658,8 +12941,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "obsidian-mcp",
           "version": "1.0.6",
           "package_arguments": [
             {
@@ -12680,7 +12961,10 @@
               "type": "positional",
               "value_hint": "/path/to/your/vault2"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "obsidian-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -12707,8 +12991,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "oceanbase_mcp_server",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -12741,7 +13023,10 @@
               "description": "your_database",
               "name": "OB_DATABASE"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "oceanbase_mcp_server",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -12768,8 +13053,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "office-powerpoint-mcp-server",
           "version": "1.0.0",
           "package_arguments": [
             {
@@ -12791,7 +13074,10 @@
               "type": "positional",
               "value_hint": "ppt_mcp_server"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "office-powerpoint-mcp-server",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -12818,8 +13104,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "office-word-mcp-server",
           "version": "1.1.3",
           "package_arguments": [
             {
@@ -12830,7 +13114,10 @@
               "type": "positional",
               "value_hint": "word_mcp_server"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "office-word-mcp-server",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -12857,8 +13144,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "okta-mcp-server",
           "version": "1.0.0",
           "environment_variables": [
             {
@@ -12869,7 +13154,10 @@
               "description": "your-api-token",
               "name": "OKTA_API_TOKEN"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/okta-mcp-server",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -12896,8 +13184,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "openai-websearch-mcp",
           "version": "0.4.0",
           "package_arguments": [
             {
@@ -12916,7 +13202,10 @@
               "description": "your-api-key-here",
               "name": "OPENAI_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "openai-websearch-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -12943,9 +13232,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "openapi-mcp-server",
-          "version": "2.0.3"
+          "version": "2.0.3",
+          "registry_type": "pypi",
+          "identifier": "openapi-mcp-server",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -12972,8 +13262,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mcp-server-any-openapi",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -13033,7 +13321,10 @@
               "type": "positional",
               "value_hint": "buryhuang/mcp-server-any-openapi:latest"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mcp-server-any-openapi",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -13060,8 +13351,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "mcp-openapi-schema",
           "version": "0.0.1",
           "package_arguments": [
             {
@@ -13073,7 +13362,10 @@
               "type": "positional",
               "value_hint": "/ABSOLUTE/PATH/TO/openapi.yaml"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "mcp-openapi-schema",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -13100,8 +13392,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "opencti-server",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -13123,7 +13413,10 @@
               "description": "${OPENCTI_TOKEN}",
               "name": "OPENCTI_TOKEN"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/opencti-server",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -13150,8 +13443,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "opendota-mcp-server",
           "version": "0.1.1",
           "package_arguments": [
             {
@@ -13174,15 +13465,18 @@
               "value_hint": "-c"
             },
             {
-              "description": "cd ~/opendota-mcp-server \u0026\u0026 source .venv/bin/activate \u0026\u0026 python src/opendota_server/server.py",
+              "description": "cd ~/opendota-mcp-server && source .venv/bin/activate && python src/opendota_server/server.py",
               "is_required": true,
               "format": "string",
-              "value": "cd ~/opendota-mcp-server \u0026\u0026 source .venv/bin/activate \u0026\u0026 python src/opendota_server/server.py",
-              "default": "cd ~/opendota-mcp-server \u0026\u0026 source .venv/bin/activate \u0026\u0026 python src/opendota_server/server.py",
+              "value": "cd ~/opendota-mcp-server && source .venv/bin/activate && python src/opendota_server/server.py",
+              "default": "cd ~/opendota-mcp-server && source .venv/bin/activate && python src/opendota_server/server.py",
               "type": "positional",
-              "value_hint": "cd ~/opendota-mcp-server \u0026\u0026 source .venv/bin/activate \u0026\u0026 python src/opendota_server/server.py"
+              "value_hint": "cd ~/opendota-mcp-server && source .venv/bin/activate && python src/opendota_server/server.py"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/opendota-mcp-server",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -13209,9 +13503,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "openrpc-mcp-server",
-          "version": "0.1.2"
+          "version": "0.1.2",
+          "registry_type": "npm",
+          "identifier": "openrpc-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -13238,8 +13533,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "osp-marketing-tools",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -13252,7 +13545,10 @@
               "name": "--from git+https://github.com/open-strategy-partners/osp_marketing_tools@main",
               "value_hint": "git+https://github.com/open-strategy-partners/osp_marketing_tools@main"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/osp-marketing-tools",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -13279,9 +13575,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-outline",
-          "version": "0.2.2"
+          "version": "0.2.2",
+          "registry_type": "pypi",
+          "identifier": "mcp-outline",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -13308,8 +13605,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "pancakeswap-poolspy-mcp",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -13337,7 +13632,10 @@
               "description": "your api key from The Graph",
               "name": "THEGRAPH_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "pancakeswap-poolspy-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -13364,9 +13662,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-pandoc",
-          "version": "0.3.3"
+          "version": "0.3.3",
+          "registry_type": "pypi",
+          "identifier": "mcp-pandoc",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -13393,8 +13692,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mcp-paradex",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -13436,7 +13733,10 @@
               "name": "--transport stdio",
               "value_hint": "stdio"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mcp-paradex",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -13463,9 +13763,10 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mcp-pif",
-          "version": "1.0.0"
+          "version": "1.0.0",
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mcp-pif",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -13492,8 +13793,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-pinecone",
           "version": "0.1.8",
           "package_arguments": [
             {
@@ -13516,7 +13815,10 @@
               "name": "--api-key {your-secret-api-key}",
               "value_hint": "{your-secret-api-key}"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "mcp-pinecone",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -13543,9 +13845,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@felores/placid-mcp-server",
-          "version": "1.7.0"
+          "version": "1.7.0",
+          "registry_type": "npm",
+          "identifier": "@felores/placid-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -13572,9 +13875,10 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "plane-mcp-server",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/plane-mcp-server",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -13601,9 +13905,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@executeautomation/playwright-mcp-server",
-          "version": "1.0.5"
+          "version": "1.0.5",
+          "registry_type": "npm",
+          "identifier": "@executeautomation/playwright-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -13630,9 +13935,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "mcp-postman",
-          "version": "1.0.2"
+          "version": "1.0.2",
+          "registry_type": "npm",
+          "identifier": "mcp-postman",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -13659,9 +13965,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-prefect",
-          "version": "0.1.1"
+          "version": "0.1.1",
+          "registry_type": "pypi",
+          "identifier": "mcp-prefect",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -13688,15 +13995,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "productboard-mcp",
           "version": "1.0.1",
           "environment_variables": [
             {
               "description": "\u003cYOUR_TOKEN\u003e",
               "name": "PRODUCTBOARD_ACCESS_TOKEN"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "productboard-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -13723,8 +14031,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "prometheus_mcp_server",
           "version": "1.0.0",
           "package_arguments": [
             {
@@ -13791,7 +14097,10 @@
               "description": "your_password",
               "name": "PROMETHEUS_PASSWORD"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/prometheus_mcp_server",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -13818,9 +14127,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "pubchem_mcp_server",
-          "version": "0.1.5"
+          "version": "0.1.5",
+          "registry_type": "pypi",
+          "identifier": "pubchem_mcp_server",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -13847,8 +14157,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "pulumi-mcp-server",
           "version": "1.0.0",
           "package_arguments": [
             {
@@ -13906,7 +14214,10 @@
               "description": "${YOUR_TOKEN}",
               "name": "PULUMI_ACCESS_TOKEN"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/pulumi-mcp-server",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -13933,9 +14244,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "puppeteer-vision-mcp-server",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "npm",
+          "identifier": "puppeteer-vision-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -13962,8 +14274,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "pushover-mcp",
           "version": "1.0.0",
           "package_arguments": [
             {
@@ -13995,7 +14305,10 @@
               "name": "--user YOUR_USER",
               "value_hint": "YOUR_USER"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "pushover-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -14022,8 +14335,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "qgis-mcp",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -14045,7 +14356,10 @@
               "type": "positional",
               "value_hint": "qgis_mcp_server.py"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "qgis-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -14072,9 +14386,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@gongrzhe/quickchart-mcp-server",
-          "version": "1.0.6"
+          "version": "1.0.6",
+          "registry_type": "npm",
+          "identifier": "@gongrzhe/quickchart-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -14101,15 +14416,16 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "qwen_max",
           "version": "1.0.0",
           "environment_variables": [
             {
               "description": "your-api-key-here",
               "name": "DASHSCOPE_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/qwen_max",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -14136,8 +14452,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-server-rabbitmq",
           "version": "2.0.0",
           "package_arguments": [
             {
@@ -14209,7 +14523,10 @@
               "name": "--use-tls \u003ctrue if uses amqps, false otherwise\u003e",
               "value_hint": "\u003ctrue if uses amqps, false otherwise\u003e"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "mcp-server-rabbitmq",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -14236,9 +14553,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@apify/mcp-server-rag-web-browser",
-          "version": "0.1.3"
+          "version": "0.1.3",
+          "registry_type": "npm",
+          "identifier": "@apify/mcp-server-rag-web-browser",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -14265,8 +14583,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "raindrop-io-mcp-server",
           "version": "1.0.0",
           "package_arguments": [
             {
@@ -14284,7 +14600,10 @@
               "description": "your_access_token_here",
               "name": "RAINDROP_TOKEN"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/raindrop-io-mcp-server",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -14311,9 +14630,10 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "reaper-mcp-server",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/reaper-mcp-server",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -14340,8 +14660,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "@gongrzhe/server-redis-mcp",
           "version": "1.0.0",
           "package_arguments": [
             {
@@ -14362,7 +14680,10 @@
               "type": "positional",
               "value_hint": "host.docker.internal:6379"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/@gongrzhe/server-redis-mcp",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -14389,9 +14710,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-server-redis",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "pypi",
+          "identifier": "mcp-server-redis",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -14418,15 +14740,16 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-server-rememberizer",
           "version": "0.1.5",
           "environment_variables": [
             {
               "description": "your_rememberizer_api_token",
               "name": "REMEMBERIZER_API_TOKEN"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "mcp-server-rememberizer",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -14453,15 +14776,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "mcp-replicate",
           "version": "0.1.1",
           "environment_variables": [
             {
               "description": "your_token_here",
               "name": "REPLICATE_API_TOKEN"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "mcp-replicate",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -14488,9 +14812,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-rquest",
-          "version": "0.1.13"
+          "version": "0.1.13",
+          "registry_type": "pypi",
+          "identifier": "mcp-rquest",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -14517,15 +14842,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "mcp-server-rijksmuseum",
           "version": "1.0.4",
           "environment_variables": [
             {
               "description": "your_api_key_here",
               "name": "RIJKSMUSEUM_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "mcp-server-rijksmuseum",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -14552,9 +14878,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "riot",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "pypi",
+          "identifier": "riot",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -14581,9 +14908,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-salesforce-connector",
-          "version": "0.1.3"
+          "version": "0.1.3",
+          "registry_type": "pypi",
+          "identifier": "mcp-salesforce-connector",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -14610,9 +14938,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-scholarly",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "pypi",
+          "identifier": "mcp-scholarly",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -14639,9 +14968,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "scrapling-fetch-mcp",
-          "version": "0.1.6"
+          "version": "0.1.6",
+          "registry_type": "pypi",
+          "identifier": "scrapling-fetch-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -14668,8 +14998,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mcp-searxng",
           "version": "0.4.6",
           "package_arguments": [
             {
@@ -14708,7 +15036,10 @@
               "description": "YOUR_SEARXNG_INSTANCE_URL",
               "name": "SEARXNG_URL"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mcp-searxng",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -14735,9 +15066,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "sec-edgar-mcp",
-          "version": "0.1.1"
+          "version": "0.1.1",
+          "registry_type": "pypi",
+          "identifier": "sec-edgar-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -14764,8 +15096,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "servicenow-mcp",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -14795,7 +15125,10 @@
               "description": "basic",
               "name": "SERVICENOW_AUTH_TYPE"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "servicenow-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -14822,8 +15155,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "shopify-mcp",
           "version": "1.0.5",
           "package_arguments": [
             {
@@ -14846,7 +15177,10 @@
               "name": "--domain \u003cYOUR_SHOP\u003e.myshopify.com",
               "value_hint": "\u003cYOUR_SHOP\u003e.myshopify.com"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "shopify-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -14873,9 +15207,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "mcp-server-siri-shortcuts",
-          "version": "1.0.0"
+          "version": "1.0.0",
+          "registry_type": "npm",
+          "identifier": "mcp-server-siri-shortcuts",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -14902,8 +15237,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp_snowflake_server",
           "version": "0.4.0",
           "package_arguments": [
             {
@@ -14935,7 +15268,10 @@
               "type": "positional",
               "value_hint": "mcp_snowflake_server"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "mcp_snowflake_server",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -14962,9 +15298,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-solver",
-          "version": "3.2.0"
+          "version": "3.2.0",
+          "registry_type": "pypi",
+          "identifier": "mcp-solver",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -14991,9 +15328,10 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mcp-soccer-data",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mcp-soccer-data",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -15020,9 +15358,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "solana-agent-kit",
-          "version": "2.0.3"
+          "version": "2.0.3",
+          "registry_type": "npm",
+          "identifier": "solana-agent-kit",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -15049,8 +15388,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "spotify-mcp",
           "version": "0.2.0",
           "package_arguments": [
             {
@@ -15086,7 +15423,10 @@
               "description": "http://127.0.0.1:8080/callback",
               "name": "SPOTIFY_REDIRECT_URI"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "spotify-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -15113,9 +15453,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "strava-mcp-server",
-          "version": "1.0.0"
+          "version": "1.0.0",
+          "registry_type": "pypi",
+          "identifier": "strava-mcp-server",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -15142,8 +15483,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mcp-stripe",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -15156,7 +15495,10 @@
               "name": "charge_id ch_abc123",
               "value_hint": "ch_abc123"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mcp-stripe",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -15183,8 +15525,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "wilsonchenghy/ShaderToy-MCP",
           "version": "",
           "package_arguments": [
             {
@@ -15221,7 +15561,10 @@
               "description": "your_actual_api_key",
               "name": "SHADERTOY_APP_KEY"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "wilsonchenghy",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -15248,9 +15591,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "cursor-talk-to-figma-mcp",
-          "version": "0.2.1"
+          "version": "0.2.1",
+          "registry_type": "npm",
+          "identifier": "cursor-talk-to-figma-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -15277,15 +15621,16 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mcp-server-tmdb",
           "version": "1.0.0",
           "environment_variables": [
             {
               "description": "your_api_key_here",
               "name": "TMDB_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mcp-server-tmdb",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -15312,8 +15657,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp_tavily",
           "version": "0.1.8",
           "package_arguments": [
             {
@@ -15332,7 +15675,10 @@
               "description": "your_api_key_here",
               "name": "TAVILY_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "mcp_tavily",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -15359,9 +15705,10 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "teradata-mcp",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/teradata-mcp",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -15388,8 +15735,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "terminal-controller",
           "version": "0.1.8",
           "package_arguments": [
             {
@@ -15402,7 +15747,10 @@
               "name": "-m terminal_controller",
               "value_hint": "terminal_controller"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "terminal-controller",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -15429,8 +15777,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "mcp-server-tft",
           "version": "0.1.3",
           "package_arguments": [
             {
@@ -15463,7 +15809,10 @@
               "name": "--tagLine \u003cYOUR_TAG_LINE\u003e",
               "value_hint": "\u003cYOUR_TAG_LINE\u003e"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "mcp-server-tft",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -15490,8 +15839,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "thegraph-mcp",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -15519,7 +15866,10 @@
               "description": "your_api_key_here",
               "name": "THEGRAPH_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "thegraph-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -15546,15 +15896,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@delorenj/mcp-server-ticketmaster",
           "version": "0.2.5",
           "environment_variables": [
             {
               "description": "your-api-key-here",
               "name": "TICKETMASTER_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@delorenj/mcp-server-ticketmaster",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -15581,8 +15932,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "@alexarevalo.ai/mcp-server-ticktick",
           "version": "1.1.9",
           "package_arguments": [
             {
@@ -15658,7 +16007,10 @@
               "description": "\u003cYOUR_ACCESS_TOKEN\u003e",
               "name": "TICKTICK_ACCESS_TOKEN"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/@alexarevalo.ai/mcp-server-ticktick",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -15685,15 +16037,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@abhiz123/todoist-mcp-server",
           "version": "0.1.0",
           "environment_variables": [
             {
               "description": "your_api_token_here",
               "name": "TODOIST_API_TOKEN"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@abhiz123/todoist-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -15720,8 +16073,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "token-minter-mcp",
           "version": "1.0.1",
           "package_arguments": [
             {
@@ -15743,7 +16094,10 @@
               "description": "your private key",
               "name": "PRIVATE_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "token-minter-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -15770,8 +16124,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "token-revoke-mcp",
           "version": "1.0.0",
           "environment_variables": [
             {
@@ -15782,7 +16134,10 @@
               "description": "your wallet private key",
               "name": "PRIVATE_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "token-revoke-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -15809,8 +16164,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "typesense-mcp-server",
           "version": "1.0.0",
           "package_arguments": [
             {
@@ -15853,7 +16206,10 @@
               "name": "--api-key your-api-key",
               "value_hint": "your-api-key"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "typesense-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -15880,15 +16236,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@gongrzhe/server-travelplanner-mcp",
           "version": "0.1.2",
           "environment_variables": [
             {
               "description": "your_google_maps_api_key",
               "name": "GOOGLE_MAPS_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@gongrzhe/server-travelplanner-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -15915,8 +16272,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "uniswap-poolspy-mcp",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -15933,7 +16288,10 @@
               "description": "your api key from The Graph",
               "name": "THEGRAPH_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "uniswap-poolspy-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -15960,8 +16318,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "uniswap-trader-mcp",
           "version": "1.0.1",
           "package_arguments": [
             {
@@ -15983,7 +16339,10 @@
               "description": "your private key",
               "name": "WALLET_PRIVATE_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "uniswap-trader-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -16010,8 +16369,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mcp-server-unitycatalog",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -16062,7 +16419,10 @@
               "name": "--uc_schema \u003cyour schema name\u003e",
               "value_hint": "\u003cyour schema name\u003e"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mcp-server-unitycatalog",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -16089,9 +16449,10 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "com.gamelovers.mcp-unity",
-          "version": "1.0.2"
+          "version": "1.0.2",
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/com.gamelovers.mcp-unity",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -16118,15 +16479,16 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "com.quaza.unitymcp",
           "version": "0.0.1",
           "environment_variables": [
             {
               "description": "5010",
               "name": "MCP_WEBSOCKET_PORT"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/com.quaza.unitymcp",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -16153,9 +16515,10 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mcp-server-vegalite",
-          "version": "0.0.1"
+          "version": "0.0.1",
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mcp-server-vegalite",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -16182,8 +16545,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "video-editor-mcp",
           "version": "0.1.25",
           "package_arguments": [
             {
@@ -16220,7 +16581,10 @@
               "description": "1",
               "name": "LOAD_PHOTOS_DB"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "video-editor-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -16247,8 +16611,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "videocapture-mcp",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -16299,7 +16661,10 @@
               "type": "positional",
               "value_hint": "C:\\ABSOLUTE_PATH\\videocapture-mcp\\videocapture_mcp.py"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "videocapture-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -16326,8 +16691,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@mfukushim/map-traveler-mcp",
           "version": "0.0.77",
           "environment_variables": [
             {
@@ -16346,7 +16709,10 @@
               "description": "ckpt_name='animagineXL40_v40.safetensors',denoise=0.65",
               "name": "comfy_params"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@mfukushim/map-traveler-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -16373,8 +16739,6 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mcp-server-tos",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -16421,7 +16785,10 @@
               "description": "your specific bucket",
               "name": "TOS_BUCKET"
             }
-          ]
+          ],
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mcp-server-tos",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -16448,15 +16815,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "wanaku-ai/wanaku",
           "version": "",
           "environment_variables": [
             {
               "description": "${input:apiKey}",
               "name": "API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "wanaku-ai",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -16483,8 +16851,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "webflow-mcp-server",
           "version": "1.0.0",
           "package_arguments": [
             {
@@ -16502,7 +16868,10 @@
               "description": "your-api-token",
               "name": "WEBFLOW_API_TOKEN"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "webflow-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -16529,15 +16898,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "whale-tracker-mcp",
           "version": "0.1.0",
           "environment_variables": [
             {
               "description": "${input:apiKey}",
               "name": "API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "whale-tracker-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -16564,9 +16934,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@bharathvaj/whois-mcp",
-          "version": "1.0.1"
+          "version": "1.0.1",
+          "registry_type": "npm",
+          "identifier": "@bharathvaj/whois-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -16593,9 +16964,10 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mcp-wikidata",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mcp-wikidata",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -16622,9 +16994,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@simonb97/server-win-cli",
-          "version": "0.2.0"
+          "version": "0.2.0",
+          "registry_type": "npm",
+          "identifier": "@simonb97/server-win-cli",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -16651,8 +17024,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "world_bank_mcp_server",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -16674,7 +17045,10 @@
               "type": "positional",
               "value_hint": "world_bank_mcp_server"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "world_bank_mcp_server",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -16701,8 +17075,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@enescinar/twitter-mcp",
           "version": "0.1.0",
           "environment_variables": [
             {
@@ -16721,7 +17093,10 @@
               "description": "your_access_token_secret_here",
               "name": "ACCESS_TOKEN_SECRET"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@enescinar/twitter-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -16748,8 +17123,6 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "x-mcp",
           "version": "0.1.0",
           "package_arguments": [
             {
@@ -16778,7 +17151,10 @@
               "description": "your_access_token_secret",
               "name": "TWITTER_ACCESS_TOKEN_SECRET"
             }
-          ]
+          ],
+          "registry_type": "pypi",
+          "identifier": "x-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -16805,9 +17181,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcpxcodebuild",
-          "version": "0.10.0"
+          "version": "0.10.0",
+          "registry_type": "pypi",
+          "identifier": "mcpxcodebuild",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -16834,8 +17211,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "xero-mcp",
           "version": "1.3.0",
           "environment_variables": [
             {
@@ -16850,7 +17225,10 @@
               "description": "http://localhost:5000/callback",
               "name": "XERO_REDIRECT_URI"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "xero-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -16877,9 +17255,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "xiyan_mcp_server",
-          "version": "0.1.5"
+          "version": "0.1.5",
+          "registry_type": "pypi",
+          "identifier": "xiyan_mcp_server",
+          "registry_base_url": "https://pypi.org"
         }
       ],
       "remotes": [
@@ -16912,8 +17291,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@41px/mcp-xmind",
           "version": "1.1.1",
           "package_arguments": [
             {
@@ -16925,7 +17302,10 @@
               "type": "positional",
               "value_hint": "/Users/alex/XMind"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@41px/mcp-xmind",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -16952,9 +17332,10 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "ynabmcpserver",
-          "version": "0.0.0"
+          "version": "0.0.0",
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/ynabmcpserver",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -16981,15 +17362,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "zubeid-youtube-mcp-server",
           "version": "1.0.0",
           "environment_variables": [
             {
               "description": "${input:apiKey}",
               "name": "YOUTUBE_API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "zubeid-youtube-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -17016,8 +17398,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@prathamesh0901/zoom-mcp-server",
           "version": "1.0.1",
           "environment_variables": [
             {
@@ -17032,7 +17412,10 @@
               "description": "Your Zoom Client Secret",
               "name": "ZOOM_CLIENT_SECRET"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@prathamesh0901/zoom-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -17059,9 +17442,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp_weather_server",
-          "version": "0.2.1"
+          "version": "0.2.1",
+          "registry_type": "pypi",
+          "identifier": "mcp_weather_server",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -17088,9 +17472,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "easy-mcp",
-          "version": "1.0.1"
+          "version": "1.0.1",
+          "registry_type": "npm",
+          "identifier": "easy-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -17117,9 +17502,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "fastapi-mcp",
-          "version": "0.3.3"
+          "version": "0.3.3",
+          "registry_type": "pypi",
+          "identifier": "fastapi-mcp",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -17146,8 +17532,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "fastmcp",
           "version": "1.0.0",
           "package_arguments": [
             {
@@ -17165,7 +17549,10 @@
               "description": "value",
               "name": "YOUR_ENV_VAR"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "fastmcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -17192,8 +17579,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@mcpdotdirect/create-mcp-server",
           "version": "2.0.1",
           "package_arguments": [
             {
@@ -17211,7 +17596,10 @@
               "description": "development",
               "name": "NODE_ENV"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@mcpdotdirect/create-mcp-server",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ],
       "remotes": [
@@ -17244,15 +17632,16 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@marimo-team/codemirror-mcp",
           "version": "0.1.2",
           "environment_variables": [
             {
               "description": "${input:apiKey}",
               "name": "API_KEY"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "@marimo-team/codemirror-mcp",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -17279,8 +17668,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "jaw9c/awesome-remote-mcp-servers",
           "version": "",
           "package_arguments": [
             {
@@ -17292,7 +17679,10 @@
               "type": "positional",
               "value_hint": "\u003cREMOTE_MCP_SERVER_URL\u003e"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "jaw9c",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -17319,8 +17709,6 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "my-docs-site",
           "version": "0.0.0",
           "package_arguments": [
             {
@@ -17337,7 +17725,10 @@
               "description": "Issued Token",
               "name": "MCPR_TOKEN"
             }
-          ]
+          ],
+          "registry_type": "npm",
+          "identifier": "my-docs-site",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -17364,9 +17755,10 @@
       },
       "packages": [
         {
-          "registry_name": "npm",
-          "name": "@wong2/mcp-cli",
-          "version": "1.10.0"
+          "version": "1.10.0",
+          "registry_type": "npm",
+          "identifier": "@wong2/mcp-cli",
+          "registry_base_url": "https://registry.npmjs.org"
         }
       ]
     },
@@ -17381,7 +17773,7 @@
   {
     "server": {
       "name": "io.github.pathintegral-institute/mcpm.sh",
-      "description": "CLI MCP package manager \u0026 registry for all platforms and all clients. Search \u0026 configure MCP servers. Advanced Router \u0026 Profile features.",
+      "description": "CLI MCP package manager & registry for all platforms and all clients. Search & configure MCP servers. Advanced Router & Profile features.",
       "status": "active",
       "repository": {
         "url": "https://github.com/pathintegral-institute/mcpm.sh",
@@ -17393,9 +17785,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcpm",
-          "version": ""
+          "version": "",
+          "registry_type": "pypi",
+          "identifier": "mcpm",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -17422,9 +17815,10 @@
       },
       "packages": [
         {
-          "registry_name": "pypi",
-          "name": "mcp-manager",
-          "version": "0.1.9"
+          "version": "0.1.9",
+          "registry_type": "pypi",
+          "identifier": "mcp-manager",
+          "registry_base_url": "https://pypi.org"
         }
       ]
     },
@@ -17451,9 +17845,10 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "mcphub-desktop",
-          "version": "0.2.1"
+          "version": "0.2.1",
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/mcphub-desktop",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },
@@ -17480,9 +17875,10 @@
       },
       "packages": [
         {
-          "registry_name": "docker",
-          "name": "navfast",
-          "version": "0.1.0"
+          "version": "0.1.0",
+          "registry_type": "docker-hub",
+          "identifier": "https://hub.docker.com/r/navfast",
+          "registry_base_url": "https://docker.io"
         }
       ]
     },

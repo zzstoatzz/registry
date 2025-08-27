@@ -20,8 +20,9 @@ _These examples show the PublishRequest format used by the `/v0/publish` API end
     },
     "packages": [
       {
-        "registry_name": "npm",
-        "name": "@modelcontextprotocol/server-brave-search",
+        "registry_type": "npm",
+        "registry_base_url": "https://registry.npmjs.org",
+        "identifier": "@modelcontextprotocol/server-brave-search",
         "version": "1.0.2",
         "environment_variables": [
           {
@@ -58,8 +59,9 @@ Suppose your MCP server application requires a `mcp start` CLI arguments to star
     },
     "packages": [
       {
-        "registry_name": "nuget",
-        "name": "Knapcode.SampleMcpServer",
+        "registry_type": "nuget",
+        "registry_base_url": "https://api.nuget.org",
+        "identifier": "Knapcode.SampleMcpServer",
         "version": "0.4.0-beta",
         "package_arguments": [
           {
@@ -106,8 +108,9 @@ This will essentially instruct the MCP client to execute `dnx Knapcode.SampleMcp
     },
     "packages": [
       {
-        "registry_name": "npm",
-        "name": "@modelcontextprotocol/server-filesystem",
+        "registry_type": "npm",
+        "registry_base_url": "https://registry.npmjs.org",
+        "identifier": "@modelcontextprotocol/server-filesystem",
         "version": "1.0.2",
         "package_arguments": [
           {
@@ -128,8 +131,9 @@ This will essentially instruct the MCP client to execute `dnx Knapcode.SampleMcp
         ]
       },
       {
-        "registry_name": "docker",
-        "name": "mcp/filesystem",
+        "registry_type": "docker-hub",
+        "registry_base_url": "https://docker.io",
+        "identifier": "mcp/filesystem:1.0.2",
         "version": "1.0.2",
         "runtime_arguments": [
           {
@@ -168,7 +172,7 @@ This will essentially instruct the MCP client to execute `dnx Knapcode.SampleMcp
           }
         ]
       }
-    ]
+  ]
   },
   "x-publisher": {
     "tool": "ci-publisher",
@@ -235,8 +239,9 @@ This will essentially instruct the MCP client to execute `dnx Knapcode.SampleMcp
     },
     "packages": [
       {
-        "registry_name": "pypi",
-        "name": "weather-mcp-server",
+        "registry_type": "pypi",
+        "registry_base_url": "https://pypi.org",
+        "identifier": "weather-mcp-server",
         "version": "0.5.0",
         "runtime_hint": "uvx",
         "environment_variables": [
@@ -252,7 +257,7 @@ This will essentially instruct the MCP client to execute `dnx Knapcode.SampleMcp
             "default": "celsius"
           }
         ]
-      }
+    }
     ]
   },
   "x-publisher": {
@@ -287,8 +292,9 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
     },
     "packages": [
       {
-        "registry_name": "nuget",
-        "name": "Knapcode.SampleMcpServer",
+        "registry_type": "nuget",
+        "registry_base_url": "https://api.nuget.org",
+        "identifier": "Knapcode.SampleMcpServer",
         "version": "0.5.0",
         "runtime_hint": "dnx",
         "environment_variables": [
@@ -299,7 +305,7 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
             "is_secret": false
           }
         ]
-      }
+    }
     ]
   },
   "x-publisher": {
@@ -333,8 +339,9 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
     },
     "packages": [
       {
-        "registry_name": "docker",
-        "name": "example/database-manager-mcp",
+        "registry_type": "docker-hub",
+        "registry_base_url": "https://docker.io",
+        "identifier": "example/database-manager-mcp",
         "version": "3.1.0",
         "runtime_arguments": [
           {
@@ -433,20 +440,21 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
     },
     "packages": [
       {
-        "registry_name": "npm",
-        "name": "@example/hybrid-mcp-server",
+        "registry_type": "npm",
+        "registry_base_url": "https://registry.npmjs.org",
+        "identifier": "@example/hybrid-mcp-server",
         "version": "1.5.0",
         "runtime_hint": "npx",
-        "package_arguments": [
-          {
-            "type": "named",
-            "name": "--mode",
-            "description": "Operation mode",
-            "default": "local",
-            "choices": ["local", "cached", "proxy"]
-          }
-        ]
-      }
+      "package_arguments": [
+        {
+          "type": "named",
+          "name": "--mode",
+          "description": "Operation mode",
+          "default": "local",
+          "choices": ["local", "cached", "proxy"]
+        }
+      ]
+    }
     ],
     "remotes": [
       {
@@ -490,6 +498,46 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
 }
 ```
 
+## MCP Bundle (MCPB) Package Example
+
+```json
+{
+  "server": {
+    "name": "io.modelcontextprotocol/text-editor",
+    "description": "MCP Bundle server for advanced text editing capabilities",
+    "repository": {
+      "url": "https://github.com/modelcontextprotocol/text-editor-mcpb",
+      "source": "github"
+    },
+    "version_detail": {
+      "version": "1.0.2"
+    },
+    "packages": [
+      {
+        "registry_type": "mcpb",
+        "registry_base_url": "https://github.com",
+        "identifier": "https://github.com/modelcontextprotocol/text-editor-mcpb/releases/download/v1.0.2/text-editor.mcpb",
+        "version": "1.0.2",
+        "file_sha256": "fe333e598595000ae021bd27117db32ec69af6987f507ba7a63c90638ff633ce"
+    }
+  ]
+  },
+  "x-publisher": {
+    "tool": "mcpb-publisher",
+    "version": "1.0.0",
+    "build_info": {
+      "timestamp": "2023-12-02T09:15:00Z",
+      "bundle_format": "mcpb-v1"
+    }
+  }
+}
+```
+
+This example shows an MCPB (MCP Bundle) package that:
+- Is hosted on GitHub Releases (an allowlisted provider)
+- Includes a SHA-256 hash for integrity verification
+- Can be downloaded and executed directly by MCP clients that support MCPB
+
 ## Deprecated Server Example
 
 ```json
@@ -508,8 +556,9 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
     },
     "packages": [
       {
-        "registry_name": "npm",
-        "name": "@legacy/old-weather-server",
+        "registry_type": "npm",
+        "registry_base_url": "https://registry.npmjs.org",
+        "identifier": "@legacy/old-weather-server",
         "version": "0.9.5",
         "environment_variables": [
           {

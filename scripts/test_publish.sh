@@ -91,8 +91,9 @@ cat > "$PAYLOAD_FILE" << EOF
   },
   "packages": [
     {
+      "package_type": "javascript",
       "registry_name": "npm",
-      "name": "test-mcp-server",
+      "identifier": "test-mcp-server",
       "version": "1.0.$(date +%s)",
       "runtime_hint": "node",
       "runtime_arguments": [

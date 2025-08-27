@@ -5,8 +5,9 @@
     "status": "active",
     "packages": [
         {
+            "package_type": "javascript",
             "registry_name": "npm",
-            "name": "io.github.<owner>/<server-name>",
+            "identifier": "io.github.<owner>/<server-name>",
             "version": "0.2.23",
             "package_arguments": [
                 {
@@ -26,8 +27,9 @@
                 }
             ]
         },{
-            "registry_name": "docker",
-            "name": "io.github.<owner>/<server-name>-cli",
+            "package_type": "docker",
+            "registry_name": "docker-hub",
+            "identifier": "io.github.<owner>/<server-name>-cli:0.123.223",
             "version": "0.123.223",
             "runtime_hint": "docker",
             "runtime_arguments": [
