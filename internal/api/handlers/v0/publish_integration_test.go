@@ -99,15 +99,15 @@ func TestPublishIntegration(t *testing.T) {
 		assert.Equal(t, publishReq.Server.VersionDetail.Version, response.Server.VersionDetail.Version)
 	})
 
-	t.Run("successful publish without auth (no prefix)", func(t *testing.T) {
+	t.Run("successful publish with none auth (no prefix)", func(t *testing.T) {
 		publishReq := model.PublishRequest{
 			Server: model.ServerDetail{
-				Name:        "test-mcp-server-no-auth",
+				Name:        "com.example/test-mcp-server-no-auth",
 				Description: "A test MCP server without authentication",
 				Repository: model.Repository{
-					URL:    "https://example.com/test-mcp-server",
-					Source: "example",
-					ID:     "test-mcp-server",
+					URL:    "https://github.com/example/test-server",
+					Source: "github",
+					ID:     "example/test-server",
 				},
 				VersionDetail: model.VersionDetail{
 					Version: "1.0.0",
@@ -193,6 +193,11 @@ func TestPublishIntegration(t *testing.T) {
 				Description: "A test server",
 				VersionDetail: model.VersionDetail{
 					Version: "1.0.0",
+				},
+				Repository: model.Repository{
+					URL:    "https://github.com/example/test-server",
+					Source: "github",
+					ID:     "example/test-server",
 				},
 			},
 		}

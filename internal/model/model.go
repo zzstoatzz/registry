@@ -3,6 +3,9 @@ package model
 import (
 	"encoding/json"
 	"fmt"
+	"net/url"
+	"slices"
+	"strings"
 	"time"
 )
 
@@ -32,14 +35,12 @@ const (
 	ServerStatusDeprecated ServerStatus = "deprecated"
 )
 
-
 // Repository represents a source code repository as defined in the spec
 type Repository struct {
 	URL    string `json:"url" bson:"url"`
 	Source string `json:"source" bson:"source"`
 	ID     string `json:"id,omitempty" bson:"id,omitempty"`
 }
-
 
 // create an enum for Format
 type Format string
@@ -104,7 +105,7 @@ type Package struct {
 // Remote represents a remote connection endpoint
 type Remote struct {
 	TransportType string          `json:"transport_type" bson:"transport_type"`
-	URL           string          `json:"url" bson:"url"`
+	URL           string          `json:"url" format:"uri" bson:"url"`
 	Headers       []KeyValueInput `json:"headers,omitempty" bson:"headers,omitempty"`
 }
 
@@ -113,12 +114,12 @@ type VersionDetail struct {
 	Version string `json:"version" bson:"version"`
 }
 
-
-// ServerDetail represents complete server information as defined in the MCP spec (pure, no registry metadata)  
+// ServerDetail represents complete server information as defined in the MCP spec (pure, no registry metadata)
 type ServerDetail struct {
-	Name          string        `json:"name" bson:"name"`
-	Description   string        `json:"description" bson:"description"`
-	Status        ServerStatus  `json:"status,omitempty" bson:"status,omitempty"`
+	Schema        string        `json:"$schema,omitempty" bson:"$schema,omitempty"`
+	Name          string        `json:"name" minLength:"1" maxLength:"200" bson:"name"`
+	Description   string        `json:"description" minLength:"1" maxLength:"100" bson:"description"`
+	Status        ServerStatus  `json:"status,omitempty" minLength:"1" bson:"status,omitempty"`
 	Repository    Repository    `json:"repository,omitempty" bson:"repository"`
 	VersionDetail VersionDetail `json:"version_detail" bson:"version_detail"`
 	Packages      []Package     `json:"packages,omitempty" bson:"packages,omitempty"`
@@ -136,8 +137,8 @@ type RegistryMetadata struct {
 
 // ServerRecord represents the complete storage model that separates server.json from registry metadata
 type ServerRecord struct {
-	ServerJSON          ServerDetail           `json:"server" bson:"server"`                     // Pure MCP server.json
-	RegistryMetadata    RegistryMetadata       `json:"registry_metadata" bson:"registry_metadata"`    // Registry-generated data
+	ServerJSON          ServerDetail           `json:"server" bson:"server"`                             // Pure MCP server.json
+	RegistryMetadata    RegistryMetadata       `json:"registry_metadata" bson:"registry_metadata"`       // Registry-generated data
 	PublisherExtensions map[string]interface{} `json:"publisher_extensions" bson:"publisher_extensions"` // x-publisher extensions
 }
 
@@ -249,7 +250,99 @@ func ParseServerName(serverDetail ServerDetail) (string, error) {
 	if name == "" {
 		return "", fmt.Errorf("server name is required and must be a string")
 	}
+
+	// Validate format: dns-namespace/name
+	if !strings.Contains(name, "/") {
+		return "", fmt.Errorf("server name must be in format 'dns-namespace/name' (e.g., 'com.example.api/server')")
+	}
+
+	parts := strings.SplitN(name, "/", 2)
+	if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
+		return "", fmt.Errorf("server name must be in format 'dns-namespace/name' with non-empty namespace and name parts")
+	}
+
 	return name, nil
+}
+
+// ValidateRemoteNamespaceMatch validates that remote URLs match the reverse-DNS namespace
+func ValidateRemoteNamespaceMatch(serverDetail ServerDetail) error {
+	namespace := serverDetail.Name
+
+	for _, remote := range serverDetail.Remotes {
+		if err := validateRemoteURLMatchesNamespace(remote.URL, namespace); err != nil {
+			return fmt.Errorf("remote URL %s does not match namespace %s: %w", remote.URL, namespace, err)
+		}
+	}
+
+	return nil
+}
+
+// validateRemoteURLMatchesNamespace checks if a remote URL's hostname matches the publisher domain from the namespace
+func validateRemoteURLMatchesNamespace(remoteURL, namespace string) error {
+	// Parse the URL to extract the hostname
+	parsedURL, err := url.Parse(remoteURL)
+	if err != nil {
+		return fmt.Errorf("invalid URL format: %w", err)
+	}
+
+	hostname := parsedURL.Hostname()
+	if hostname == "" {
+		return fmt.Errorf("URL must have a valid hostname")
+	}
+
+	// Skip validation for localhost and local development URLs
+	if hostname == "localhost" || strings.HasSuffix(hostname, ".localhost") || hostname == "127.0.0.1" {
+		return nil
+	}
+
+	// Extract publisher domain from reverse-DNS namespace
+	publisherDomain := extractPublisherDomainFromNamespace(namespace)
+	if publisherDomain == "" {
+		return fmt.Errorf("invalid namespace format: cannot extract domain from %s", namespace)
+	}
+
+	// Check if the remote URL hostname matches the publisher domain or is a subdomain
+	if !isValidHostForDomain(hostname, publisherDomain) {
+		return fmt.Errorf("remote URL host %s does not match publisher domain %s", hostname, publisherDomain)
+	}
+
+	return nil
+}
+
+// extractPublisherDomainFromNamespace converts reverse-DNS namespace to normal domain format
+// e.g., "com.example" -> "example.com"
+func extractPublisherDomainFromNamespace(namespace string) string {
+	// Extract the namespace part before the first slash
+	namespacePart := namespace
+	if slashIdx := strings.Index(namespace, "/"); slashIdx != -1 {
+		namespacePart = namespace[:slashIdx]
+	}
+
+	// Split into parts and reverse them to get normal domain format
+	parts := strings.Split(namespacePart, ".")
+	if len(parts) < 2 {
+		return ""
+	}
+
+	// Reverse the parts to convert from reverse-DNS to normal domain
+	slices.Reverse(parts)
+
+	return strings.Join(parts, ".")
+}
+
+// isValidHostForDomain checks if a hostname is the domain or a subdomain of the publisher domain
+func isValidHostForDomain(hostname, publisherDomain string) bool {
+	// Exact match
+	if hostname == publisherDomain {
+		return true
+	}
+
+	// Subdomain match - hostname should end with "." + publisherDomain
+	if strings.HasSuffix(hostname, "."+publisherDomain) {
+		return true
+	}
+
+	return false
 }
 
 // ToServerResponse converts a ServerRecord to API response format
@@ -257,14 +350,14 @@ func (sr *ServerRecord) ToServerResponse() ServerResponse {
 	response := ServerResponse{
 		Server: sr.ServerJSON,
 	}
-	
+
 	// Add registry metadata extension
 	response.XIOModelContextProtocolRegistry = sr.RegistryMetadata.CreateRegistryExtensions()["x-io.modelcontextprotocol.registry"]
-	
+
 	// Add publisher extensions directly
 	if len(sr.PublisherExtensions) > 0 {
 		response.XPublisher = sr.PublisherExtensions
 	}
-	
+
 	return response
 }

@@ -7,6 +7,7 @@ _These examples show the PublishRequest format used by the `/v0/publish` API end
 ```json
 {
   "server": {
+    "$schema": "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.schema.json",
     "name": "io.modelcontextprotocol/brave-search",
     "description": "MCP server for Brave Search API integration",
     "status": "active",
@@ -93,6 +94,7 @@ This will essentially instruct the MCP client to execute `dnx Knapcode.SampleMcp
 ```json
 {
   "server": {
+    "$schema": "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.schema.json",
     "name": "com.github.modelcontextprotocol/filesystem",
     "description": "Node.js server implementing Model Context Protocol (MCP) for filesystem operations.",
     "status": "active",
@@ -190,7 +192,7 @@ This will essentially instruct the MCP client to execute `dnx Knapcode.SampleMcp
 ```json
 {
   "server": {
-    "name": "com.example/mcp-fs",
+    "name": "io.modelcontextprotocol.anonymous/mcp-fs",
     "description": "Cloud-hosted MCP filesystem server",
     "repository": {
       "url": "https://github.com/example/remote-fs",
@@ -203,7 +205,7 @@ This will essentially instruct the MCP client to execute `dnx Knapcode.SampleMcp
     "remotes": [
       {
         "transport_type": "sse",
-        "url": "http://mcp-fs.example.com/sse"
+        "url": "http://mcp-fs.anonymous.modelcontextprotocol.io/sse"
       }
     ]
   },
@@ -425,7 +427,8 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
 ```json
 {
   "server": {
-    "name": "com.example/hybrid-mcp",
+    "$schema": "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.schema.json",
+    "name": "io.modelcontextprotocol.anonymous/hybrid-mcp",
     "description": "MCP server available as both local package and remote service",
     "repository": {
       "url": "https://github.com/example/hybrid-mcp",
@@ -456,7 +459,7 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
     "remotes": [
       {
         "transport_type": "sse",
-        "url": "https://mcp.example.com/sse",
+        "url": "https://mcp.anonymous.modelcontextprotocol.io/sse",
         "headers": [
           {
             "name": "X-API-Key",
@@ -474,7 +477,7 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
       },
       {
         "transport_type": "streamable",
-        "url": "https://mcp.example.com/http"
+        "url": "https://mcp.anonymous.modelcontextprotocol.io/http"
       }
     ]
   },

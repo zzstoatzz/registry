@@ -11,6 +11,7 @@ import (
 	"github.com/modelcontextprotocol/registry/internal/config"
 	"github.com/modelcontextprotocol/registry/internal/model"
 	"github.com/modelcontextprotocol/registry/internal/service"
+	"github.com/modelcontextprotocol/registry/internal/validators"
 )
 
 // PublishServerInput represents the input for publishing a server
@@ -63,6 +64,12 @@ func RegisterPublishEndpoint(api huma.API, registry service.RegistryService, cfg
 		// Get server details from request body
 		serverDetail := publishRequest.Server
 
+		// Validate the server detail
+		validator := validators.NewObjectValidator()
+		if err := validator.Validate(&serverDetail); err != nil {
+			return nil, huma.Error400BadRequest(err.Error())
+		}
+
 		// Verify that the token's repository matches the server being published
 		if !jwtManager.HasPermission(serverDetail.Name, auth.PermissionActionPublish, claims.Permissions) {
 			return nil, huma.Error403Forbidden("You do not have permission to publish this server")
@@ -71,7 +78,7 @@ func RegisterPublishEndpoint(api huma.API, registry service.RegistryService, cfg
 		// Publish the server with extensions
 		publishedServer, err := registry.Publish(publishRequest)
 		if err != nil {
-			return nil, huma.Error500InternalServerError("Failed to publish server", err)
+			return nil, huma.Error400BadRequest("Failed to publish server", err)
 		}
 
 		// Return the published server in extension wrapper format

@@ -137,7 +137,7 @@ func (s *registryServiceImpl) Publish(req model.PublishRequest) (*model.ServerRe
 		return nil, err
 	}
 
-	// Validate server name exists
+	// Validate server name exists and format
 	if _, err := model.ParseServerName(req.Server); err != nil {
 		return nil, err
 	}
@@ -147,6 +147,16 @@ func (s *registryServiceImpl) Publish(req model.PublishRequest) (*model.ServerRe
 		if err := validatePackage(&pkg); err != nil {
 			return nil, fmt.Errorf("validation failed: %w", err)
 		}
+	}
+
+	// Validate reverse-DNS namespace matching for remote URLs
+	if err := model.ValidateRemoteNamespaceMatch(req.Server); err != nil {
+		return nil, err
+	}
+
+	// Check for duplicate remote URLs
+	if err := s.validateNoDuplicateRemoteURLs(ctx, req.Server); err != nil {
+		return nil, err
 	}
 
 	// Get the new version's details
@@ -219,4 +229,29 @@ func (s *registryServiceImpl) Publish(req model.PublishRequest) (*model.ServerRe
 	// Convert ServerRecord to ServerResponse format
 	response := serverRecord.ToServerResponse()
 	return &response, nil
+}
+
+// validateNoDuplicateRemoteURLs checks that no other server is using the same remote URLs
+func (s *registryServiceImpl) validateNoDuplicateRemoteURLs(ctx context.Context, serverDetail model.ServerDetail) error {
+	// Check each remote URL in the new server for conflicts
+	for _, remote := range serverDetail.Remotes {
+		// Use filter to find servers with this remote URL
+		filter := map[string]any{
+			"remote_url": remote.URL,
+		}
+
+		conflictingServers, _, err := s.db.List(ctx, filter, "", 1000)
+		if err != nil {
+			return fmt.Errorf("failed to check remote URL conflict: %w", err)
+		}
+
+		// Check if any conflicting server has a different name
+		for _, conflictingServer := range conflictingServers {
+			if conflictingServer.ServerJSON.Name != serverDetail.Name {
+				return fmt.Errorf("remote URL %s is already used by server %s", remote.URL, conflictingServer.ServerJSON.Name)
+			}
+		}
+	}
+
+	return nil
 }

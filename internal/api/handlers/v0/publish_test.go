@@ -112,8 +112,8 @@ func TestPublishEndpoint(t *testing.T) {
 					Name:        "example/test-server",
 					Description: "A test server without auth",
 					Repository: model.Repository{
-						URL:    "https://example.com/test-server",
-						Source: "example",
+						URL:    "https://github.com/example/test-server",
+						Source: "github",
 						ID:     "example/test-server",
 					},
 					VersionDetail: model.VersionDetail{
@@ -173,6 +173,11 @@ func TestPublishEndpoint(t *testing.T) {
 					VersionDetail: model.VersionDetail{
 						Version: "1.0.0",
 					},
+					Repository: model.Repository{
+						URL:    "https://github.com/example/test-server",
+						Source: "github",
+						ID:     "example/test-server",
+					},
 				},
 			},
 			tokenClaims: &auth.JWTClaims{
@@ -194,6 +199,11 @@ func TestPublishEndpoint(t *testing.T) {
 					VersionDetail: model.VersionDetail{
 						Version: "1.0.0",
 					},
+					Repository: model.Repository{
+						URL:    "https://github.com/example/test-server",
+						Source: "github",
+						ID:     "example/test-server",
+					},
 				},
 			},
 			tokenClaims: &auth.JWTClaims{
@@ -203,9 +213,9 @@ func TestPublishEndpoint(t *testing.T) {
 				},
 			},
 			setupMocks: func(registry *MockRegistryService) {
-				registry.On("Publish", mock.AnythingOfType("model.PublishRequest")).Return(nil, errors.New("database error"))
+				registry.On("Publish", mock.AnythingOfType("model.PublishRequest")).Return(nil, errors.New("cannot publish duplicate version"))
 			},
-			expectedStatus: http.StatusInternalServerError,
+			expectedStatus: http.StatusBadRequest,
 			expectedError:  "Failed to publish server",
 		},
 	}
