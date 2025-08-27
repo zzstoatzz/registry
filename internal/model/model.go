@@ -100,7 +100,7 @@ type Package struct {
 // Remote represents a remote connection endpoint
 type Remote struct {
 	TransportType string          `json:"transport_type" bson:"transport_type"`
-	URL           string          `json:"url" bson:"url"`
+	URL           string          `json:"url" format:"uri" bson:"url"`
 	Headers       []KeyValueInput `json:"headers,omitempty" bson:"headers,omitempty"`
 }
 
@@ -112,9 +112,9 @@ type VersionDetail struct {
 // ServerDetail represents complete server information as defined in the MCP spec (pure, no registry metadata)
 type ServerDetail struct {
 	Schema        string        `json:"$schema,omitempty" bson:"$schema,omitempty"`
-	Name          string        `json:"name" bson:"name"`
-	Description   string        `json:"description" bson:"description"`
-	Status        ServerStatus  `json:"status,omitempty" bson:"status,omitempty"`
+	Name          string        `json:"name" minLength:"1" maxLength:"200" bson:"name"`
+	Description   string        `json:"description" minLength:"1" maxLength:"100" bson:"description"`
+	Status        ServerStatus  `json:"status,omitempty" minLength:"1" bson:"status,omitempty"`
 	Repository    Repository    `json:"repository,omitempty" bson:"repository"`
 	VersionDetail VersionDetail `json:"version_detail" bson:"version_detail"`
 	Packages      []Package     `json:"packages,omitempty" bson:"packages,omitempty"`
