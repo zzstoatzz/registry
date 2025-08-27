@@ -81,15 +81,16 @@
     "Package": {
       "type": "object",
       "properties": {
-        "package_type": {
+        "registry_type": {
           "type": "string",
-          "description": "Type of package (e.g., 'javascript', 'python', 'docker', 'dotnet', 'mcpb', 'binary')",
-          "examples": ["javascript", "python", "docker", "dotnet", "mcpb", "binary"]
-        },
-        "registry_name": {
-          "type": "string",
-          "description": "Package registry or source (e.g., 'npm', 'pypi', 'docker-hub', 'nuget', 'github-releases', 'gitlab-releases')",
+          "description": "Registry type indicating how to download packages (e.g., 'npm', 'pypi', 'docker-hub', 'nuget', 'github-releases', 'gitlab-releases')",
           "examples": ["npm", "pypi", "docker-hub", "nuget", "github-releases", "gitlab-releases"]
+        },
+        "registry_base_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Base URL of the package registry",
+          "examples": ["https://registry.npmjs.org", "https://pypi.org", "https://docker.io", "https://api.nuget.org", "https://github.com", "https://gitlab.com"]
         },
         "identifier": {
           "type": "string",
