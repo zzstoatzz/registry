@@ -1,15 +1,15 @@
 package service
 
-import "github.com/modelcontextprotocol/registry/internal/model"
+import apiv1 "github.com/modelcontextprotocol/registry/pkg/api/v1"
 
-// RegistryService defines the interface for registry operations with extension wrapper architecture
+// RegistryService defines the interface for registry operations
 type RegistryService interface {
-	// List retrieves servers with extension wrapper format
-	List(cursor string, limit int) ([]model.ServerResponse, string, error)
-	// GetByID retrieves a single server by registry metadata ID with extension wrapper format
-	GetByID(id string) (*model.ServerResponse, error)
+	// List retrieves servers with unified format
+	List(cursor string, limit int) ([]apiv1.ServerRecord, string, error)
+	// GetByID retrieves a single server by registry metadata ID with unified format
+	GetByID(id string) (*apiv1.ServerRecord, error)
 	// Publish publishes a server with separated extensions
-	Publish(req model.PublishRequest) (*model.ServerResponse, error)
+	Publish(req apiv1.PublishRequest) (*apiv1.ServerRecord, error)
 	// EditServer updates an existing server with new details
-	EditServer(id string, req model.PublishRequest) (*model.ServerResponse, error)
+	EditServer(id string, req apiv1.PublishRequest) (*apiv1.ServerRecord, error)
 }

@@ -14,13 +14,14 @@ import (
 	v0 "github.com/modelcontextprotocol/registry/internal/api/handlers/v0"
 	"github.com/modelcontextprotocol/registry/internal/api/router"
 	"github.com/modelcontextprotocol/registry/internal/config"
-	"github.com/modelcontextprotocol/registry/internal/model"
 	"github.com/modelcontextprotocol/registry/internal/telemetry"
+	apiv1 "github.com/modelcontextprotocol/registry/pkg/api/v1"
+	"github.com/modelcontextprotocol/registry/pkg/model"
 )
 
 func mockServerEndpoint(registry *MockRegistryService, serverID string) {
-	serverDetail := &model.ServerResponse{
-		Server: model.ServerDetail{
+	serverDetail := &apiv1.ServerRecord{
+		Server: model.ServerJSON{
 			Name:        "test-server-detail",
 			Description: "Test server detail",
 			Repository: model.Repository{
@@ -32,8 +33,8 @@ func mockServerEndpoint(registry *MockRegistryService, serverID string) {
 				Version: "2.0.0",
 			},
 		},
-		XIOModelContextProtocolRegistry: map[string]interface{}{
-			"id": serverID,
+		XIOModelContextProtocolRegistry: apiv1.RegistryExtensions{
+			ID: serverID,
 		},
 	}
 	registry.Mock.On("GetByID", serverID).Return(serverDetail, nil)
