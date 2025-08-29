@@ -5,10 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"strings"
 
+	"github.com/modelcontextprotocol/registry/internal/validators"
 	apiv0 "github.com/modelcontextprotocol/registry/pkg/api/v0"
 )
 
@@ -48,14 +50,37 @@ func ReadSeedFile(ctx context.Context, path string) ([]*apiv0.ServerRecord, erro
 		return []*apiv0.ServerRecord{}, nil
 	}
 
-	// Convert ServerResponse to ServerRecord
-	var records []*apiv0.ServerRecord
+	// Validate servers and collect warnings instead of failing the whole batch
+	var validRecords []*apiv0.ServerRecord
+	var invalidServers []string
+	var validationFailures []string
+
 	for _, response := range serverResponses {
+		if err := validators.ValidateServerJSON(&response.Server); err != nil {
+			// Log warning and track invalid server instead of failing
+			invalidServers = append(invalidServers, response.Server.Name)
+			validationFailures = append(validationFailures, fmt.Sprintf("Server '%s': %v", response.Server.Name, err))
+			log.Printf("Warning: Skipping invalid server '%s': %v", response.Server.Name, err)
+			continue
+		}
+
+		// Convert valid ServerResponse to ServerRecord
 		record := convertServerResponseToRecord(response)
-		records = append(records, record)
+		validRecords = append(validRecords, record)
 	}
 
-	return records, nil
+	// Print summary of validation results
+	if len(invalidServers) > 0 {
+		log.Printf("Import summary: %d valid servers imported, %d invalid servers skipped", len(validRecords), len(invalidServers))
+		log.Printf("Invalid servers: %v", invalidServers)
+		for _, failure := range validationFailures {
+			log.Printf("  - %s", failure)
+		}
+	} else {
+		log.Printf("Import summary: All %d servers imported successfully", len(validRecords))
+	}
+
+	return validRecords, nil
 }
 
 func fetchFromHTTP(ctx context.Context, url string) ([]byte, error) {

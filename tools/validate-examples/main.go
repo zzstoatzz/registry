@@ -15,6 +15,8 @@ import (
 	"strings"
 
 	jsonschema "github.com/santhosh-tekuri/jsonschema/v5"
+	"github.com/modelcontextprotocol/registry/pkg/model"
+	"github.com/modelcontextprotocol/registry/internal/validators"
 )
 
 const (
@@ -65,52 +67,11 @@ func runValidation() error {
 	}
 
 	validatedCount := 0
+
 	for i, example := range examples {
 		log.Printf("Example %d:", i+1)
 
-		var data any
-		if err := json.Unmarshal([]byte(example.content), &data); err != nil {
-			log.Printf("  ❌ Invalid JSON: %v", err)
-			continue
-		}
-
-		// Extract server portion if this is a PublishRequest format
-		serverData := data
-		publishRequestValid := true
-		if dataMap, ok := data.(map[string]any); ok {
-			if server, exists := dataMap["server"]; exists {
-				// This is a PublishRequest format - validate only expected properties exist
-				for key := range dataMap {
-					if key != "server" && key != "x-publisher" {
-						log.Printf("  Invalid PublishRequest property: ❌ %s (only 'server' and optional 'x-publisher' are allowed)", key)
-						publishRequestValid = false
-					}
-				}
-				serverData = server
-			}
-		}
-
-		baseValid := false
-		registryValid := false
-
-		if err := baseSchema.Validate(serverData); err != nil {
-			log.Printf("  Validating against server.schema.json: ❌")
-			log.Printf("    Error: %v", err)
-		} else {
-			log.Printf("  Validating against server.schema.json: ✅")
-			baseValid = true
-		}
-
-		if err := registrySchema.Validate(serverData); err != nil {
-			log.Printf("  Validating against registry-schema.json: ❌")
-			log.Printf("    Error: %v", err)
-		} else {
-			log.Printf("  Validating against registry-schema.json: ✅")
-			registryValid = true
-		}
-
-		// Only count as validated if all validations passed
-		if publishRequestValid && baseValid && registryValid {
+		if validateExample(example, baseSchema, registrySchema) {
 			validatedCount++
 		}
 
@@ -118,12 +79,78 @@ func runValidation() error {
 	}
 
 	if validatedCount != expectedExampleCount {
-		return fmt.Errorf("validation failed: expected %d examples to pass both validations but only %d did",
+		return fmt.Errorf("validation failed: expected %d examples to pass all validations but only %d did",
 			expectedExampleCount, validatedCount)
 	}
 
 	log.Printf("Successfully validated all %d examples!", validatedCount)
 	return nil
+}
+
+func validateExample(ex example, baseSchema, registrySchema *jsonschema.Schema) bool {
+	var data any
+	if err := json.Unmarshal([]byte(ex.content), &data); err != nil {
+		log.Printf("  ❌ Invalid JSON: %v", err)
+		return false
+	}
+
+	// Extract server portion if this is a PublishRequest format
+	serverData := data
+	publishRequestValid := true
+	if dataMap, ok := data.(map[string]any); ok {
+		if server, exists := dataMap["server"]; exists {
+			// This is a PublishRequest format - validate only expected properties exist
+			for key := range dataMap {
+				if key != "server" && key != "x-publisher" {
+					log.Printf("  Invalid PublishRequest property: ❌ %s (only 'server' and optional 'x-publisher' are allowed)", key)
+					publishRequestValid = false
+				}
+			}
+			serverData = server
+		}
+	}
+
+	baseValid := validateAgainstSchema(serverData, baseSchema, "server.schema.json")
+	registryValid := validateAgainstSchema(serverData, registrySchema, "registry-schema.json")
+	goValidatorValid := validateWithObjectValidator(serverData)
+
+	// Only count as validated if all validations passed
+	return publishRequestValid && baseValid && registryValid && goValidatorValid
+}
+
+func validateAgainstSchema(data any, schema *jsonschema.Schema, schemaName string) bool {
+	if err := schema.Validate(data); err != nil {
+		log.Printf("  Validating against %s: ❌", schemaName)
+		log.Printf("    Error: %v", err)
+		return false
+	}
+	log.Printf("  Validating against %s: ✅", schemaName)
+	return true
+}
+
+func validateWithObjectValidator(serverData any) bool {
+	var serverDetail model.ServerJSON
+	serverDataBytes, err := json.Marshal(serverData)
+	if err != nil {
+		log.Printf("  Validating with Go Validator: ❌")
+		log.Printf("    Error marshaling server data: %v", err)
+		return false
+	}
+	
+	if err := json.Unmarshal(serverDataBytes, &serverDetail); err != nil {
+		log.Printf("  Validating with Go Validator: ❌")
+		log.Printf("    Error unmarshaling to ServerDetail: %v", err)
+		return false
+	}
+	
+	if err := validators.ValidateServerJSON(&serverDetail); err != nil {
+		log.Printf("  Validating with Go Validator: ❌")
+		log.Printf("    Error: %v", err)
+		return false
+	}
+	
+	log.Printf("  Validating with Go Validator: ✅")
+	return true
 }
 
 type example struct {

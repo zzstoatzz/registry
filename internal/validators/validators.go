@@ -71,6 +71,66 @@ func validatePackageField(obj *model.Package) error {
 		return ErrPackageNameHasSpaces
 	}
 
+	// Validate runtime arguments
+	for _, arg := range obj.RuntimeArguments {
+		if err := validateArgument(&arg); err != nil {
+			return fmt.Errorf("invalid runtime argument: %w", err)
+		}
+	}
+
+	// Validate package arguments
+	for _, arg := range obj.PackageArguments {
+		if err := validateArgument(&arg); err != nil {
+			return fmt.Errorf("invalid package argument: %w", err)
+		}
+	}
+
+	return nil
+}
+
+// validateArgument validates argument details
+func validateArgument(obj *model.Argument) error {
+	if obj.Type == model.ArgumentTypeNamed {
+		// Validate named argument name format
+		if err := validateNamedArgumentName(obj.Name); err != nil {
+			return err
+		}
+
+		// Validate value and default don't start with the name
+		if err := validateArgumentValueFields(obj.Name, obj.Value, obj.Default); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func validateNamedArgumentName(name string) error {
+	// Check if name is required for named arguments
+	if name == "" {
+		return ErrNamedArgumentNameRequired
+	}
+
+	// Check for invalid characters that suggest embedded values or descriptions
+	// Valid: "--directory", "--port", "-v", "config", "verbose"
+	// Invalid: "--directory <absolute_path_to_adfin_mcp_folder>", "--port 8080"
+	if strings.Contains(name, "<") || strings.Contains(name, ">") ||
+		strings.Contains(name, " ") || strings.Contains(name, "$") {
+		return fmt.Errorf("%w: %s", ErrInvalidNamedArgumentName, name)
+	}
+
+	return nil
+}
+
+func validateArgumentValueFields(name, value, defaultValue string) error {
+	// Check if value starts with the argument name (using startsWith, not contains)
+	if value != "" && strings.HasPrefix(value, name) {
+		return fmt.Errorf("%w: value starts with argument name '%s': %s", ErrArgumentValueStartsWithName, name, value)
+	}
+
+	if defaultValue != "" && strings.HasPrefix(defaultValue, name) {
+		return fmt.Errorf("%w: default starts with argument name '%s': %s", ErrArgumentDefaultStartsWithName, name, defaultValue)
+	}
+
 	return nil
 }
 
