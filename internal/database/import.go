@@ -5,20 +5,21 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"strings"
-	"time"
 
-	"github.com/modelcontextprotocol/registry/internal/model"
+	"github.com/modelcontextprotocol/registry/internal/validators"
+	apiv0 "github.com/modelcontextprotocol/registry/pkg/api/v0"
 )
 
 // ReadSeedFile reads seed data from various sources:
 // 1. Local file paths (*.json files) - expects extension wrapper format
-// 2. Direct HTTP URLs to seed.json files - expects extension wrapper format  
+// 2. Direct HTTP URLs to seed.json files - expects extension wrapper format
 // 3. Registry root URLs (automatically appends /v0/servers and paginates)
 // Only the extension wrapper format is supported (array of ServerResponse objects)
-func ReadSeedFile(ctx context.Context, path string) ([]*model.ServerRecord, error) {
+func ReadSeedFile(ctx context.Context, path string) ([]*apiv0.ServerRecord, error) {
 	var data []byte
 	var err error
 
@@ -40,23 +41,46 @@ func ReadSeedFile(ctx context.Context, path string) ([]*model.ServerRecord, erro
 	}
 
 	// Parse extension wrapper format (only supported format)
-	var serverResponses []model.ServerResponse
+	var serverResponses []apiv0.ServerRecord
 	if err := json.Unmarshal(data, &serverResponses); err != nil {
 		return nil, fmt.Errorf("failed to parse seed data as extension wrapper format: %w", err)
 	}
 
 	if len(serverResponses) == 0 {
-		return []*model.ServerRecord{}, nil
+		return []*apiv0.ServerRecord{}, nil
 	}
 
-	// Convert ServerResponse to ServerRecord
-	var records []*model.ServerRecord
+	// Validate servers and collect warnings instead of failing the whole batch
+	var validRecords []*apiv0.ServerRecord
+	var invalidServers []string
+	var validationFailures []string
+
 	for _, response := range serverResponses {
+		if err := validators.ValidateServerJSON(&response.Server); err != nil {
+			// Log warning and track invalid server instead of failing
+			invalidServers = append(invalidServers, response.Server.Name)
+			validationFailures = append(validationFailures, fmt.Sprintf("Server '%s': %v", response.Server.Name, err))
+			log.Printf("Warning: Skipping invalid server '%s': %v", response.Server.Name, err)
+			continue
+		}
+
+		// Convert valid ServerResponse to ServerRecord
 		record := convertServerResponseToRecord(response)
-		records = append(records, record)
+		validRecords = append(validRecords, record)
 	}
 
-	return records, nil
+	// Print summary of validation results
+	if len(invalidServers) > 0 {
+		log.Printf("Import summary: %d valid servers imported, %d invalid servers skipped", len(validRecords), len(invalidServers))
+		log.Printf("Invalid servers: %v", invalidServers)
+		for _, failure := range validationFailures {
+			log.Printf("  - %s", failure)
+		}
+	} else {
+		log.Printf("Import summary: All %d servers imported successfully", len(validRecords))
+	}
+
+	return validRecords, nil
 }
 
 func fetchFromHTTP(ctx context.Context, url string) ([]byte, error) {
@@ -78,8 +102,8 @@ func fetchFromHTTP(ctx context.Context, url string) ([]byte, error) {
 	return io.ReadAll(resp.Body)
 }
 
-func fetchFromRegistryAPI(ctx context.Context, baseURL string) ([]*model.ServerRecord, error) {
-	var allRecords []*model.ServerRecord
+func fetchFromRegistryAPI(ctx context.Context, baseURL string) ([]*apiv0.ServerRecord, error) {
+	var allRecords []*apiv0.ServerRecord
 	cursor := ""
 
 	for {
@@ -98,7 +122,7 @@ func fetchFromRegistryAPI(ctx context.Context, baseURL string) ([]*model.ServerR
 		}
 
 		var response struct {
-			Servers  []model.ServerResponse `json:"servers"`
+			Servers  []apiv0.ServerRecord `json:"servers"`
 			Metadata *struct {
 				NextCursor string `json:"next_cursor,omitempty"`
 			} `json:"metadata,omitempty"`
@@ -124,55 +148,19 @@ func fetchFromRegistryAPI(ctx context.Context, baseURL string) ([]*model.ServerR
 	return allRecords, nil
 }
 
-func convertServerResponseToRecord(response model.ServerResponse) *model.ServerRecord {
-	// Extract registry metadata from the extension
-	registryExt := response.XIOModelContextProtocolRegistry
-	
-	// Parse timestamps
-	publishedAt, _ := time.Parse(time.RFC3339, getStringFromInterface(registryExt, "published_at"))
-	updatedAt, _ := time.Parse(time.RFC3339, getStringFromInterface(registryExt, "updated_at"))
-
-	registryMetadata := model.RegistryMetadata{
-		ID:          getStringFromInterface(registryExt, "id"),
-		IsLatest:    getBoolFromInterface(registryExt, "is_latest"),
-		PublishedAt: publishedAt,
-		UpdatedAt:   updatedAt,
-		ReleaseDate: getStringFromInterface(registryExt, "release_date"),
-	}
+func convertServerResponseToRecord(response apiv0.ServerRecord) *apiv0.ServerRecord {
+	// The registry extensions are already properly typed, so we can use them directly
+	registryMetadata := response.XIOModelContextProtocolRegistry
 
 	// Publisher extensions
-	publisherExtensions := make(map[string]interface{})
-	if response.XPublisher != nil {
-		if publisherMap, ok := response.XPublisher.(map[string]interface{}); ok {
-			publisherExtensions = publisherMap
-		}
+	publisherExtensions := response.XPublisher
+	if publisherExtensions == nil {
+		publisherExtensions = make(map[string]interface{})
 	}
 
-	return &model.ServerRecord{
-		ServerJSON:          response.Server,
-		RegistryMetadata:    registryMetadata,
-		PublisherExtensions: publisherExtensions,
+	return &apiv0.ServerRecord{
+		Server:                          response.Server,
+		XIOModelContextProtocolRegistry: registryMetadata,
+		XPublisher:                      publisherExtensions,
 	}
-}
-
-func getStringFromInterface(data interface{}, key string) string {
-	if dataMap, ok := data.(map[string]interface{}); ok {
-		if value, exists := dataMap[key]; exists {
-			if strValue, ok := value.(string); ok {
-				return strValue
-			}
-		}
-	}
-	return ""
-}
-
-func getBoolFromInterface(data interface{}, key string) bool {
-	if dataMap, ok := data.(map[string]interface{}); ok {
-		if value, exists := dataMap[key]; exists {
-			if boolValue, ok := value.(bool); ok {
-				return boolValue
-			}
-		}
-	}
-	return false
 }

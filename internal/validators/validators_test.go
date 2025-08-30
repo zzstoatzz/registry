@@ -1,25 +1,24 @@
 package validators_test
 
 import (
+	"fmt"
 	"testing"
 
-	"github.com/modelcontextprotocol/registry/internal/model"
 	"github.com/modelcontextprotocol/registry/internal/validators"
+	"github.com/modelcontextprotocol/registry/pkg/model"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestObjectValidator_Validate(t *testing.T) {
-	validator := validators.NewObjectValidator()
-
+func TestValidate(t *testing.T) {
 	tests := []struct {
 		name          string
-		serverDetail  model.ServerDetail
+		serverDetail  model.ServerJSON
 		expectedError string
 	}{
 		{
 			name: "valid server detail with all fields",
-			serverDetail: model.ServerDetail{
-				Name:        "test-server",
+			serverDetail: model.ServerJSON{
+				Name:        "com.example/test-server",
 				Description: "A test server",
 				Repository: model.Repository{
 					URL:    "https://github.com/owner/repo",
@@ -46,8 +45,8 @@ func TestObjectValidator_Validate(t *testing.T) {
 		},
 		{
 			name: "server with invalid repository source",
-			serverDetail: model.ServerDetail{
-				Name:        "test-server",
+			serverDetail: model.ServerJSON{
+				Name:        "com.example/test-server",
 				Description: "A test server",
 				Repository: model.Repository{
 					URL:    "https://bitbucket.org/owner/repo",
@@ -61,8 +60,8 @@ func TestObjectValidator_Validate(t *testing.T) {
 		},
 		{
 			name: "server with invalid GitHub URL format",
-			serverDetail: model.ServerDetail{
-				Name:        "test-server",
+			serverDetail: model.ServerJSON{
+				Name:        "com.example/test-server",
 				Description: "A test server",
 				Repository: model.Repository{
 					URL:    "https://github.com/owner", // Missing repo name
@@ -76,8 +75,8 @@ func TestObjectValidator_Validate(t *testing.T) {
 		},
 		{
 			name: "server with invalid GitLab URL format",
-			serverDetail: model.ServerDetail{
-				Name:        "test-server",
+			serverDetail: model.ServerJSON{
+				Name:        "com.example/test-server",
 				Description: "A test server",
 				Repository: model.Repository{
 					URL:    "https://gitlab.com", // Missing owner and repo
@@ -91,8 +90,8 @@ func TestObjectValidator_Validate(t *testing.T) {
 		},
 		{
 			name: "package with spaces in name",
-			serverDetail: model.ServerDetail{
-				Name:        "test-server",
+			serverDetail: model.ServerJSON{
+				Name:        "com.example/test-server",
 				Description: "A test server",
 				Repository: model.Repository{
 					URL:    "https://github.com/owner/repo",
@@ -113,8 +112,8 @@ func TestObjectValidator_Validate(t *testing.T) {
 		},
 		{
 			name: "multiple packages with one invalid",
-			serverDetail: model.ServerDetail{
-				Name:        "test-server",
+			serverDetail: model.ServerJSON{
+				Name:        "com.example/test-server",
 				Description: "A test server",
 				Repository: model.Repository{
 					URL:    "https://github.com/owner/repo",
@@ -140,8 +139,8 @@ func TestObjectValidator_Validate(t *testing.T) {
 		},
 		{
 			name: "remote with invalid URL",
-			serverDetail: model.ServerDetail{
-				Name:        "test-server",
+			serverDetail: model.ServerJSON{
+				Name:        "com.example/test-server",
 				Description: "A test server",
 				Repository: model.Repository{
 					URL:    "https://github.com/owner/repo",
@@ -160,8 +159,8 @@ func TestObjectValidator_Validate(t *testing.T) {
 		},
 		{
 			name: "remote with missing scheme",
-			serverDetail: model.ServerDetail{
-				Name:        "test-server",
+			serverDetail: model.ServerJSON{
+				Name:        "com.example/test-server",
 				Description: "A test server",
 				Repository: model.Repository{
 					URL:    "https://github.com/owner/repo",
@@ -180,8 +179,8 @@ func TestObjectValidator_Validate(t *testing.T) {
 		},
 		{
 			name: "multiple remotes with one invalid",
-			serverDetail: model.ServerDetail{
-				Name:        "test-server",
+			serverDetail: model.ServerJSON{
+				Name:        "com.example/test-server",
 				Description: "A test server",
 				Repository: model.Repository{
 					URL:    "https://github.com/owner/repo",
@@ -203,8 +202,8 @@ func TestObjectValidator_Validate(t *testing.T) {
 		},
 		{
 			name: "server detail with nil packages and remotes",
-			serverDetail: model.ServerDetail{
-				Name:        "test-server",
+			serverDetail: model.ServerJSON{
+				Name:        "com.example/test-server",
 				Description: "A test server",
 				Repository: model.Repository{
 					URL:    "https://github.com/owner/repo",
@@ -220,8 +219,8 @@ func TestObjectValidator_Validate(t *testing.T) {
 		},
 		{
 			name: "server detail with empty packages and remotes slices",
-			serverDetail: model.ServerDetail{
-				Name:        "test-server",
+			serverDetail: model.ServerJSON{
+				Name:        "com.example/test-server",
 				Description: "A test server",
 				Repository: model.Repository{
 					URL:    "https://github.com/owner/repo",
@@ -239,7 +238,7 @@ func TestObjectValidator_Validate(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := validator.Validate(&tt.serverDetail)
+			err := validators.ValidateServerJSON(&tt.serverDetail)
 
 			if tt.expectedError == "" {
 				assert.NoError(t, err)
@@ -248,5 +247,430 @@ func TestObjectValidator_Validate(t *testing.T) {
 				assert.Contains(t, err.Error(), tt.expectedError)
 			}
 		})
+	}
+}
+
+func TestValidate_RemoteNamespaceMatch(t *testing.T) {
+	tests := []struct {
+		name         string
+		serverDetail model.ServerJSON
+		expectError  bool
+		errorMsg     string
+	}{
+		{
+			name: "valid match - example.com domain",
+			serverDetail: model.ServerJSON{
+				Name: "com.example/test-server",
+				Remotes: []model.Remote{
+					{URL: "https://example.com/mcp"},
+				},
+			},
+			expectError: false,
+		},
+		{
+			name: "valid match - subdomain mcp.example.com",
+			serverDetail: model.ServerJSON{
+				Name: "com.example/test-server",
+				Remotes: []model.Remote{
+					{URL: "https://mcp.example.com/endpoint"},
+				},
+			},
+			expectError: false,
+		},
+		{
+			name: "valid match - api subdomain",
+			serverDetail: model.ServerJSON{
+				Name: "com.example/api-server",
+				Remotes: []model.Remote{
+					{URL: "https://api.example.com/mcp"},
+				},
+			},
+			expectError: false,
+		},
+		{
+			name: "invalid - wrong domain",
+			serverDetail: model.ServerJSON{
+				Name: "com.example/test-server",
+				Remotes: []model.Remote{
+					{URL: "https://google.com/mcp"},
+				},
+			},
+			expectError: true,
+			errorMsg:    "remote URL host google.com does not match publisher domain example.com",
+		},
+		{
+			name: "invalid - different domain entirely",
+			serverDetail: model.ServerJSON{
+				Name: "com.microsoft/server",
+				Remotes: []model.Remote{
+					{URL: "https://api.github.com/endpoint"},
+				},
+			},
+			expectError: true,
+			errorMsg:    "remote URL host api.github.com does not match publisher domain microsoft.com",
+		},
+		{
+			name: "localhost URLs allowed with any namespace",
+			serverDetail: model.ServerJSON{
+				Name: "com.example/test-server",
+				Remotes: []model.Remote{
+					{URL: "http://localhost:3000/sse"},
+				},
+			},
+			expectError: false,
+		},
+		{
+			name: "invalid URL format",
+			serverDetail: model.ServerJSON{
+				Name: "com.example/test",
+				Remotes: []model.Remote{
+					{URL: "not-a-valid-url"},
+				},
+			},
+			expectError: true,
+			errorMsg:    "invalid remote URL",
+		},
+		{
+			name: "empty remotes array",
+			serverDetail: model.ServerJSON{
+				Name:    "com.example/test",
+				Remotes: []model.Remote{},
+			},
+			expectError: false,
+		},
+		{
+			name: "multiple valid remotes - different subdomains",
+			serverDetail: model.ServerJSON{
+				Name: "com.example/server",
+				Remotes: []model.Remote{
+					{URL: "https://api.example.com/sse"},
+					{URL: "https://mcp.example.com/websocket"},
+				},
+			},
+			expectError: false,
+		},
+		{
+			name: "one valid, one invalid remote",
+			serverDetail: model.ServerJSON{
+				Name: "com.example/server",
+				Remotes: []model.Remote{
+					{URL: "https://example.com/sse"},
+					{URL: "https://google.com/websocket"},
+				},
+			},
+			expectError: true,
+			errorMsg:    "remote URL host google.com does not match publisher domain example.com",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := validators.ValidateServerJSON(&tt.serverDetail)
+
+			if tt.expectError {
+				assert.Error(t, err)
+				assert.Contains(t, err.Error(), tt.errorMsg)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestValidate_ServerNameFormat(t *testing.T) {
+	tests := []struct {
+		name         string
+		serverDetail model.ServerJSON
+		expectError  bool
+		errorMsg     string
+	}{
+		{
+			name: "valid namespace/name format",
+			serverDetail: model.ServerJSON{
+				Name: "com.example.api/server",
+			},
+			expectError: false,
+		},
+		{
+			name: "valid complex namespace",
+			serverDetail: model.ServerJSON{
+				Name: "com.github.microsoft.azure/webapp-server",
+			},
+			expectError: false,
+		},
+		{
+			name: "empty server name",
+			serverDetail: model.ServerJSON{
+				Name: "",
+			},
+			expectError: true,
+			errorMsg:    "server name is required",
+		},
+		{
+			name: "missing slash separator",
+			serverDetail: model.ServerJSON{
+				Name: "com.example.server",
+			},
+			expectError: true,
+			errorMsg:    "server name must be in format 'dns-namespace/name'",
+		},
+		{
+			name: "empty namespace part",
+			serverDetail: model.ServerJSON{
+				Name: "/server-name",
+			},
+			expectError: true,
+			errorMsg:    "non-empty namespace and name parts",
+		},
+		{
+			name: "empty name part",
+			serverDetail: model.ServerJSON{
+				Name: "com.example/",
+			},
+			expectError: true,
+			errorMsg:    "non-empty namespace and name parts",
+		},
+		{
+			name: "multiple slashes - uses first as separator",
+			serverDetail: model.ServerJSON{
+				Name: "com.example/server/path",
+			},
+			expectError: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := validators.ValidateServerJSON(&tt.serverDetail)
+
+			if tt.expectError {
+				assert.Error(t, err)
+				assert.Contains(t, err.Error(), tt.errorMsg)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestValidateArgument_ValidNamedArguments(t *testing.T) {
+	validCases := []model.Argument{
+		{
+			InputWithVariables: model.InputWithVariables{Input: model.Input{Value: "/path/to/dir"}},
+			Type:               model.ArgumentTypeNamed,
+			Name:               "--directory",
+		},
+		{
+			InputWithVariables: model.InputWithVariables{Input: model.Input{Default: "8080"}},
+			Type:               model.ArgumentTypeNamed,
+			Name:               "--port",
+		},
+		{
+			InputWithVariables: model.InputWithVariables{Input: model.Input{Value: "true"}},
+			Type:               model.ArgumentTypeNamed,
+			Name:               "-v",
+		},
+		{
+			Type: model.ArgumentTypeNamed,
+			Name: "-p",
+		},
+		{
+			InputWithVariables: model.InputWithVariables{Input: model.Input{Value: "/etc/config.json"}},
+			Type:               model.ArgumentTypeNamed,
+			Name:               "config",
+		},
+		{
+			InputWithVariables: model.InputWithVariables{Input: model.Input{Default: "false"}},
+			Type:               model.ArgumentTypeNamed,
+			Name:               "verbose",
+		},
+		// No dash prefix requirement as per modification #1
+		{
+			InputWithVariables: model.InputWithVariables{Input: model.Input{Value: "json"}},
+			Type:               model.ArgumentTypeNamed,
+			Name:               "output-format",
+		},
+	}
+
+	for _, arg := range validCases {
+		t.Run("Valid_"+arg.Name, func(t *testing.T) {
+			server := createValidServerWithArgument(arg)
+			err := validators.ValidateServerJSON(&server)
+			assert.NoError(t, err, "Expected valid argument %+v", arg)
+		})
+	}
+}
+
+func TestValidateArgument_ValidPositionalArguments(t *testing.T) {
+	positionalCases := []model.Argument{
+		{Type: model.ArgumentTypePositional, Name: "anything with spaces"},
+		{Type: model.ArgumentTypePositional, Name: "anything<with>brackets"},
+		{
+			InputWithVariables: model.InputWithVariables{Input: model.Input{Value: "--port 8080"}},
+			Type:               model.ArgumentTypePositional,
+		}, // Can contain flags in value for positional
+	}
+
+	for i, arg := range positionalCases {
+		t.Run(fmt.Sprintf("ValidPositional_%d", i), func(t *testing.T) {
+			server := createValidServerWithArgument(arg)
+			err := validators.ValidateServerJSON(&server)
+			assert.NoError(t, err, "Expected valid positional argument %+v", arg)
+		})
+	}
+}
+
+func TestValidateArgument_InvalidNamedArgumentNames(t *testing.T) {
+	invalidNameCases := []struct {
+		name string
+		arg  model.Argument
+	}{
+		{"contains_description", model.Argument{Type: model.ArgumentTypeNamed, Name: "--directory <absolute_path_to_adfin_mcp_folder>"}},
+		{"contains_value", model.Argument{Type: model.ArgumentTypeNamed, Name: "--port 8080"}},
+		{"contains_dollar", model.Argument{Type: model.ArgumentTypeNamed, Name: "--config $CONFIG_FILE"}},
+		{"contains_brackets", model.Argument{Type: model.ArgumentTypeNamed, Name: "--file <path>"}},
+		{"empty_name", model.Argument{Type: model.ArgumentTypeNamed, Name: ""}},
+		{"has_spaces", model.Argument{Type: model.ArgumentTypeNamed, Name: "name with spaces"}},
+	}
+
+	for _, tc := range invalidNameCases {
+		t.Run("Invalid_"+tc.name, func(t *testing.T) {
+			server := createValidServerWithArgument(tc.arg)
+			err := validators.ValidateServerJSON(&server)
+			assert.Error(t, err, "Expected error for invalid named argument name: %+v", tc.arg)
+		})
+	}
+}
+
+func TestValidateArgument_InvalidValueFields(t *testing.T) {
+	invalidValueCases := []struct {
+		name string
+		arg  model.Argument
+	}{
+		{
+			"value_starts_with_name",
+			model.Argument{
+				InputWithVariables: model.InputWithVariables{Input: model.Input{Value: "--port 8080"}},
+				Type:               model.ArgumentTypeNamed,
+				Name:               "--port",
+			},
+		},
+		{
+			"default_starts_with_name",
+			model.Argument{
+				InputWithVariables: model.InputWithVariables{Input: model.Input{Default: "--config /etc/app.conf"}},
+				Type:               model.ArgumentTypeNamed,
+				Name:               "--config",
+			},
+		},
+		{
+			"value_starts_with_name_complex",
+			model.Argument{
+				InputWithVariables: model.InputWithVariables{Input: model.Input{Value: "--with-editable $REPOSITORY_DIRECTORY"}},
+				Type:               model.ArgumentTypeNamed,
+				Name:               "--with-editable",
+			},
+		},
+		{
+			"default_starts_with_name_complex",
+			model.Argument{
+				InputWithVariables: model.InputWithVariables{Input: model.Input{Default: "--with-editable $REPOSITORY_DIRECTORY"}},
+				Type:               model.ArgumentTypeNamed,
+				Name:               "--with-editable",
+			},
+		},
+	}
+
+	for _, tc := range invalidValueCases {
+		t.Run("Invalid_"+tc.name, func(t *testing.T) {
+			server := createValidServerWithArgument(tc.arg)
+			err := validators.ValidateServerJSON(&server)
+			assert.Error(t, err, "Expected error for argument with value starting with name: %+v", tc.arg)
+		})
+	}
+}
+
+func TestValidateArgument_ValidValueFields(t *testing.T) {
+	validValueCases := []struct {
+		name string
+		arg  model.Argument
+	}{
+		{
+			"value_without_name",
+			model.Argument{
+				InputWithVariables: model.InputWithVariables{Input: model.Input{Value: "8080"}},
+				Type:               model.ArgumentTypeNamed,
+				Name:               "--port",
+			},
+		},
+		{
+			"default_without_name",
+			model.Argument{
+				InputWithVariables: model.InputWithVariables{Input: model.Input{Default: "/etc/app.conf"}},
+				Type:               model.ArgumentTypeNamed,
+				Name:               "--config",
+			},
+		},
+		{
+			"value_with_var",
+			model.Argument{
+				InputWithVariables: model.InputWithVariables{Input: model.Input{Value: "$REPOSITORY_DIRECTORY"}},
+				Type:               model.ArgumentTypeNamed,
+				Name:               "--with-editable",
+			},
+		},
+		{
+			"absolute_path",
+			model.Argument{
+				InputWithVariables: model.InputWithVariables{Input: model.Input{Value: "/absolute/path/to/directory"}},
+				Type:               model.ArgumentTypeNamed,
+				Name:               "--directory",
+			},
+		},
+		{
+			"contains_but_not_starts_with_name",
+			model.Argument{
+				InputWithVariables: model.InputWithVariables{Input: model.Input{Value: "use --port for configuration"}},
+				Type:               model.ArgumentTypeNamed,
+				Name:               "--port",
+			},
+		},
+	}
+
+	for _, tc := range validValueCases {
+		t.Run("Valid_"+tc.name, func(t *testing.T) {
+			server := createValidServerWithArgument(tc.arg)
+			err := validators.ValidateServerJSON(&server)
+			assert.NoError(t, err, "Expected valid argument %+v", tc.arg)
+		})
+	}
+}
+
+// Helper function to create a valid server with a specific argument for testing
+func createValidServerWithArgument(arg model.Argument) model.ServerJSON {
+	return model.ServerJSON{
+		Name:        "com.example/test-server",
+		Description: "A test server",
+		Repository: model.Repository{
+			URL:    "https://github.com/owner/repo",
+			Source: "github",
+			ID:     "owner/repo",
+		},
+		VersionDetail: model.VersionDetail{
+			Version: "1.0.0",
+		},
+		Packages: []model.Package{
+			{
+				Identifier:      "test-package",
+				RegistryType:    "npm",
+				RegistryBaseURL: "https://registry.npmjs.org",
+				RuntimeArguments: []model.Argument{arg},
+			},
+		},
+		Remotes: []model.Remote{
+			{
+				URL: "https://example.com/remote",
+			},
+		},
 	}
 }
