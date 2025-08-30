@@ -156,7 +156,7 @@ func setDefaultProductionConfigs(envConfig *EnvironmentConfig, conf *config.Conf
 		envConfig.GrafanaConfig.DatabaseType = "postgres"
 	}
 	if envConfig.GrafanaConfig.DatabaseHost == "" {
-		envConfig.GrafanaConfig.DatabaseHost = "grafana-pg-rw:5432" // CNPG read-write service
+		envConfig.GrafanaConfig.DatabaseHost = "grafana-pg-rw" // CNPG read-write service
 	}
 	if envConfig.GrafanaConfig.DatabaseName == "" {
 		envConfig.GrafanaConfig.DatabaseName = "grafana"
@@ -357,20 +357,11 @@ func deployVMAgent(ctx *pulumi.Context, cluster *providers.ProviderInfo, namespa
 
 // deployGrafanaDatabase deploys the CloudNative PostgreSQL operator and PostgreSQL cluster
 func deployGrafanaDatabase(ctx *pulumi.Context, cluster *providers.ProviderInfo, environment string, envConfig *EnvironmentConfig) (*apiextensions.CustomResource, error) {
-	// Environment-specific PostgreSQL cluster configuration
-	var pgStorageSize string
-	var instances int
-
-	pgStorageSize = "1Gi"
-	instances = 1
-	if envConfig.IsProduction {
-		pgStorageSize = "5Gi"
-	}
-
+	grafanaConfig := envConfig.GrafanaConfig
 	clusterSpec := map[string]any{
-		"instances": instances,
+		"instances": 1,
 		"storage": map[string]any{
-			"size": pgStorageSize,
+			"size": grafanaConfig.StorageSize,
 		},
 		"bootstrap": map[string]any{
 			"initdb": map[string]any{
@@ -405,7 +396,6 @@ func deployGrafanaDatabase(ctx *pulumi.Context, cluster *providers.ProviderInfo,
 
 func deployGrafana(ctx *pulumi.Context, provider *kubernetes.Provider, ns *corev1.Namespace, envConfig *EnvironmentConfig, pgCluster *apiextensions.CustomResource) error {
 	grafanaConfig := envConfig.GrafanaConfig
-	adminPassword := grafanaConfig.AdminPassword
 	datasourcesConfig := map[string]interface{}{
 		"apiVersion": 1,
 		"datasources": []map[string]interface{}{
@@ -473,7 +463,7 @@ func deployGrafana(ctx *pulumi.Context, provider *kubernetes.Provider, ns *corev
 	grafanaValues := pulumi.Map{
 		"replicas":      pulumi.Int(1),
 		"adminUser":     pulumi.String("admin"),
-		"adminPassword": pulumi.String(adminPassword),
+		"adminPassword": pulumi.String(grafanaConfig.AdminPassword),
 		"persistence":   persistenceConfig,
 		"resources": pulumi.Map{
 			"limits": pulumi.Map{
@@ -552,11 +542,11 @@ func deployGrafana(ctx *pulumi.Context, provider *kubernetes.Provider, ns *corev
 	// Inject database URL via environment variable in production
 	if envConfig.IsProduction {
 		grafanaValues["env"] = pulumi.Map{
-			"GF_DATABASE_TYPE":     pulumi.String("postgres"),
-			"GF_DATABASE_HOST":     pulumi.String("grafana-pg-rw"),
+			"GF_DATABASE_TYPE":     pulumi.String(grafanaConfig.DatabaseType),
+			"GF_DATABASE_HOST":     pulumi.String(grafanaConfig.DatabaseHost),
 			"GF_DATABASE_PORT":     pulumi.String("5432"),
-			"GF_DATABASE_NAME":     pulumi.String("grafana"),
-			"GF_DATABASE_SSL_MODE": pulumi.String("require"),
+			"GF_DATABASE_NAME":     pulumi.String(grafanaConfig.DatabaseName),
+			"GF_DATABASE_SSL_MODE": pulumi.String(grafanaConfig.DatabaseSSLMode),
 		}
 
 		grafanaValues["envValueFrom"] = pulumi.Map{
