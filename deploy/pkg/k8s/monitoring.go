@@ -1,6 +1,7 @@
 package k8s
 
 import (
+	"github.com/pulumi/pulumi-kubernetes/sdk/v4/go/kubernetes/apiextensions"
 	corev1 "github.com/pulumi/pulumi-kubernetes/sdk/v4/go/kubernetes/core/v1"
 	"github.com/pulumi/pulumi-kubernetes/sdk/v4/go/kubernetes/helm/v3"
 	metav1 "github.com/pulumi/pulumi-kubernetes/sdk/v4/go/kubernetes/meta/v1"
@@ -98,6 +99,30 @@ func deployGrafana(ctx *pulumi.Context, cluster *providers.ProviderInfo, ns *cor
 		return err
 	}
 
+	grafanaPgCluster, err := apiextensions.NewCustomResource(ctx, "grafana-pg", &apiextensions.CustomResourceArgs{
+		ApiVersion: pulumi.String("postgresql.cnpg.io/v1"),
+		Kind:       pulumi.String("Cluster"),
+		Metadata: &metav1.ObjectMetaArgs{
+			Name:      pulumi.String("grafana-pg"),
+			Namespace: ns.Metadata.Name(),
+			Labels: pulumi.StringMap{
+				"app":         pulumi.String("grafana-pg"),
+				"environment": pulumi.String(environment),
+			},
+		},
+		OtherFields: map[string]any{
+			"spec": map[string]any{
+				"instances": 1,
+				"storage": map[string]any{
+					"size": "10Gi",
+				},
+			},
+		},
+	}, pulumi.Provider(cluster.Provider))
+	if err != nil {
+		return err
+	}
+
 	// Create VictoriaMetrics datasource
 	datasourcesConfig := map[string]interface{}{
 		"apiVersion": 1,
@@ -163,12 +188,49 @@ func deployGrafana(ctx *pulumi.Context, cluster *providers.ProviderInfo, ns *cor
 					"allowed_domains":    pulumi.String("modelcontextprotocol.io"),
 					"skip_org_role_sync": pulumi.Bool(true),
 				},
+				"database": pulumi.Map{
+					"type": pulumi.String("postgres"),
+					"host": pulumi.String("grafana-pg-rw:5432"),
+				},
 			},
 			"envValueFrom": pulumi.Map{
 				"GF_AUTH_GOOGLE_CLIENT_SECRET": pulumi.Map{
 					"secretKeyRef": pulumi.Map{
 						"name": grafanaSecret.Metadata.Name(),
 						"key":  pulumi.String("GF_AUTH_GOOGLE_CLIENT_SECRET"),
+					},
+				},
+				"GF_DATABASE_USER": pulumi.Map{
+					"secretKeyRef": pulumi.Map{
+						"name": grafanaPgCluster.Metadata.Name().ApplyT(func(name *string) string {
+							if name == nil {
+								return "grafana-pg-app"
+							}
+							return *name + "-app"
+						}).(pulumi.StringOutput),
+						"key": pulumi.String("username"),
+					},
+				},
+				"GF_DATABASE_PASSWORD": pulumi.Map{
+					"secretKeyRef": pulumi.Map{
+						"name": grafanaPgCluster.Metadata.Name().ApplyT(func(name *string) string {
+							if name == nil {
+								return "grafana-pg-app"
+							}
+							return *name + "-app"
+						}).(pulumi.StringOutput),
+						"key": pulumi.String("password"),
+					},
+				},
+				"GF_DATABASE_NAME": pulumi.Map{
+					"secretKeyRef": pulumi.Map{
+						"name": grafanaPgCluster.Metadata.Name().ApplyT(func(name *string) string {
+							if name == nil {
+								return "grafana-pg-app"
+							}
+							return *name + "-app"
+						}).(pulumi.StringOutput),
+						"key": pulumi.String("dbname"),
 					},
 				},
 			},
