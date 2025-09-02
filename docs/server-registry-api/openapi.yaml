@@ -199,6 +199,7 @@ components:
     Server:
       type: object
       required:
+        - id
         - name
         - description
         - version_detail
