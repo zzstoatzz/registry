@@ -180,6 +180,46 @@ func TestValidate(t *testing.T) {
 			expectedError: validators.ErrInvalidRemoteURL.Error(),
 		},
 		{
+			name: "remote with localhost url",
+			serverDetail: apiv0.ServerJSON{
+				Name:        "com.example/test-server",
+				Description: "A test server",
+				Repository: model.Repository{
+					URL:    "https://github.com/owner/repo",
+					Source: "github",
+				},
+				VersionDetail: model.VersionDetail{
+					Version: "1.0.0",
+				},
+				Remotes: []model.Remote{
+					{
+						URL: "http://localhost",
+					},
+				},
+			},
+			expectedError: validators.ErrInvalidRemoteURL.Error(),
+		},
+		{
+			name: "remote with localhost url with port",
+			serverDetail: apiv0.ServerJSON{
+				Name:        "com.example/test-server",
+				Description: "A test server",
+				Repository: model.Repository{
+					URL:    "https://github.com/owner/repo",
+					Source: "github",
+				},
+				VersionDetail: model.VersionDetail{
+					Version: "1.0.0",
+				},
+				Remotes: []model.Remote{
+					{
+						URL: "http://localhost:3000",
+					},
+				},
+			},
+			expectedError: validators.ErrInvalidRemoteURL.Error(),
+		},
+		{
 			name: "multiple remotes with one invalid",
 			serverDetail: apiv0.ServerJSON{
 				Name:        "com.example/test-server",
@@ -310,16 +350,6 @@ func TestValidate_RemoteNamespaceMatch(t *testing.T) {
 			},
 			expectError: true,
 			errorMsg:    "remote URL host api.github.com does not match publisher domain microsoft.com",
-		},
-		{
-			name: "localhost URLs allowed with any namespace",
-			serverDetail: apiv0.ServerJSON{
-				Name: "com.example/test-server",
-				Remotes: []model.Remote{
-					{URL: "http://localhost:3000/sse"},
-				},
-			},
-			expectError: false,
 		},
 		{
 			name: "invalid URL format",
