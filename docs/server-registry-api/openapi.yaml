@@ -309,7 +309,13 @@ components:
         runtime_hint:
           type: string
           description: A hint to help clients determine the appropriate runtime for the package. This field should be provided when `runtime_arguments` are present.
-          examples: [npx, uvx, dnx]
+          examples: [npx, uvx, docker, dnx]
+        transport:
+          anyOf:
+            - $ref: '#/components/schemas/StdioTransport'
+            - $ref: '#/components/schemas/StreamableHttpTransport'
+            - $ref: '#/components/schemas/SseTransport'
+          description: Transport protocol configuration for the package
         runtime_arguments:
           type: array
           description: A list of arguments to be passed to the package's runtime command (such as docker or npx). The `runtime_hint` field should be provided when `runtime_arguments` are present.
@@ -439,21 +445,52 @@ components:
         - $ref: '#/components/schemas/PositionalArgument'
         - $ref: '#/components/schemas/NamedArgument'
 
-    Remote:
+    StdioTransport:
       type: object
       required:
-        - transport_type
+        - type
+      properties:
+        type:
+          type: string
+          enum: [stdio]
+          description: Transport type
+          example: "stdio"
+
+    StreamableHttpTransport:
+      type: object
+      required:
+        - type
         - url
       properties:
-        transport_type:
+        type:
           type: string
-          enum: [streamable, sse]
-          description: Transport protocol type
+          enum: [streamable-http]
+          description: Transport type
+          example: "streamable-http"
+        url:
+          type: string
+          description: URL template for the streamable-http transport. Variables in {curly_braces} reference argument value_hints, argument names, or environment variable names. After variable substitution, this should produce a valid URI.
+          example: "https://api.example.com/mcp"
+        headers:
+          type: array
+          description: HTTP headers to include
+          items:
+            $ref: '#/components/schemas/KeyValueInput'
+
+    SseTransport:
+      type: object
+      required:
+        - type
+        - url
+      properties:
+        type:
+          type: string
+          enum: [sse]
+          description: Transport type
           example: "sse"
         url:
           type: string
-          format: uri
-          description: Remote server URL
+          description: URL template for the SSE transport. Variables in {curly_braces} reference argument value_hints, argument names, or environment variable names. After variable substitution, this should produce a valid URI.
           example: "https://mcp-fs.example.com/sse"
         headers:
           type: array
@@ -479,7 +516,9 @@ components:
             remotes:
               type: array
               items:
-                $ref: '#/components/schemas/Remote'
+                anyOf:
+                  - $ref: '#/components/schemas/StreamableHttpTransport'
+                  - $ref: '#/components/schemas/SseTransport'
             _meta:
               type: object
               description: Extension metadata using reverse DNS namespacing
