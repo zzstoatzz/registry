@@ -621,6 +621,43 @@ This example shows an MCPB (MCP Bundle) package that:
 - Includes a SHA-256 hash for integrity verification
 - Can be downloaded and executed directly by MCP clients that support MCPB
 
+## Embedded MCP inside a CLI tool
+
+Some CLI tools bundle an MCP server, without a standalone MCP package or a public repository. In these cases, reuse the existing `packages` shape by pointing at the host CLI package and supplying the `package_arguments` and `runtime_hint` if needed to start the MCP server.
+
+```json
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.schema.json",
+  "name": "io.snyk/cli-mcp",
+  "description": "MCP server provided by the Snyk CLI",
+  "status": "active",
+  "version_detail": {
+    "version": "1.1298.0"
+  },
+  "packages": [
+    {
+      "registry_type": "npm",
+      "registry_base_url": "https://registry.npmjs.org",
+      "identifier": "snyk",
+      "version": "1.1298.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "package_arguments": [
+        { "type": "positional", "value": "mcp" },
+        {
+          "type": "named",
+          "name": "-t",
+          "description": "Transport type for MCP server",
+          "default": "stdio",
+          "choices": ["stdio", "sse"]
+        }
+      ]
+    }
+  ]
+}
+```
+
 ## Deprecated Server Example
 
 ```json
