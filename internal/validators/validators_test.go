@@ -832,7 +832,7 @@ func TestValidate_TransportValidation(t *testing.T) {
 	}{
 		// Package transport tests - stdio (no URL required)
 		{
-			name: "package transport stdio without URL",
+			name: "package transport stdio without URL should pass",
 			serverDetail: apiv0.ServerJSON{
 				Name:        "com.example/test-server",
 				Description: "A test server",
@@ -852,7 +852,7 @@ func TestValidate_TransportValidation(t *testing.T) {
 			expectedError: "",
 		},
 		{
-			name: "package transport stdio with URL (should still work)",
+			name: "package transport stdio with URL (should fail)",
 			serverDetail: apiv0.ServerJSON{
 				Name:        "com.example/test-server",
 				Description: "A test server",
@@ -870,7 +870,7 @@ func TestValidate_TransportValidation(t *testing.T) {
 					},
 				},
 			},
-			expectedError: "",
+			expectedError: "url must be empty for stdio transport type",
 		},
 		// Package transport tests - streamable-http (URL required)
 		{
@@ -1270,9 +1270,9 @@ func createValidServerWithArgument(arg model.Argument) apiv0.ServerJSON {
 		},
 		Packages: []model.Package{
 			{
-				Identifier:       "test-package",
-				RegistryType:     "npm",
-				RegistryBaseURL:  "https://registry.npmjs.org",
+				Identifier:      "test-package",
+				RegistryType:    "npm",
+				RegistryBaseURL: "https://registry.npmjs.org",
 				Transport: model.Transport{
 					Type: "stdio",
 				},
