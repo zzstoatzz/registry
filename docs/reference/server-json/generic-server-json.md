@@ -1,6 +1,24 @@
-# Server JSON Examples
+# server.json Format Specification
 
-## Basic Server with NPM Package
+A `server.json` file is a standardized way to describe MCP servers for registry publishing, client discovery, and package management.
+
+Also see:
+- For step-by-step instructions on creating and using server.json files, see the [publishing guide](../../guides/publishing/publish-server.md).
+- For understanding the validation requirements when publishing to the official registry, see [official registry requirements](./official-registry-requirements.md).
+
+## Browse the Complete Schema
+
+**📋 View the full specification interactively**: Open [server.schema.json](./server.schema.json) in a schema viewer like [json-schema.app](https://json-schema.app/view/%23?url=https%3A%2F%2Fstatic.modelcontextprotocol.io%2Fschemas%2F2025-07-09%2Fserver.schema.json).
+
+The schema contains all field definitions, validation rules, examples, and detailed descriptions.
+
+The official registry has some more restrictions on top of this. See the [official registry requirements](./official-registry-requirements.md) for details.
+
+## Examples
+
+<!-- As a heads up, these are used as part of tests/integration/main.go -->
+
+### Basic Server with NPM Package
 
 ```json
 {
@@ -46,7 +64,7 @@
 }
 ```
 
-## Server in a Monorepo with Subfolder
+### Server in a Monorepo with Subfolder
 
 For MCP servers located within a subdirectory of a larger repository (monorepo structure), use the `subfolder` field to specify the relative path:
 
@@ -87,7 +105,7 @@ For MCP servers located within a subdirectory of a larger repository (monorepo s
 }
 ```
 
-## Constant (fixed) arguments needed to start the MCP server
+### Constant (fixed) arguments needed to start the MCP server
 
 Suppose your MCP server application requires a `mcp start` CLI arguments to start in MCP server mode. Express these as positional arguments like this:
 
@@ -134,7 +152,7 @@ Suppose your MCP server application requires a `mcp start` CLI arguments to star
 
 This will essentially instruct the MCP client to execute `dnx Knapcode.SampleMcpServer@0.4.0-beta -- mcp start` instead of the default `dnx Knapcode.SampleMcpServer@0.4.0-beta` (when no `package_arguments` are provided).
 
-## Filesystem Server with Multiple Packages
+### Filesystem Server with Multiple Packages
 
 ```json
 {
@@ -238,7 +256,7 @@ This will essentially instruct the MCP client to execute `dnx Knapcode.SampleMcp
 }
 ```
 
-## Remote Server Example
+### Remote Server Example
 
 ```json
 {
@@ -273,7 +291,7 @@ This will essentially instruct the MCP client to execute `dnx Knapcode.SampleMcp
 }
 ```
 
-## Python Package Example
+### Python Package Example
 
 ```json
 {
@@ -327,7 +345,7 @@ This will essentially instruct the MCP client to execute `dnx Knapcode.SampleMcp
 }
 ```
 
-## NuGet (.NET) Package Example
+### NuGet (.NET) Package Example
 
 The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
 
@@ -379,7 +397,7 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
 }
 ```
 
-## Complex Docker Server with Multiple Arguments
+### Complex Docker Server with Multiple Arguments
 
 ```json
 {
@@ -491,7 +509,7 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
 }
 ```
 
-## Server with Remote and Package Options
+### Server with Remote and Package Options
 
 ```json
 {
@@ -578,7 +596,7 @@ The `dnx` tool ships with the .NET 10 SDK, starting with Preview 6.
 }
 ```
 
-## MCP Bundle (MCPB) Package Example
+### MCP Bundle (MCPB) Package Example
 
 ```json
 {
@@ -621,7 +639,7 @@ This example shows an MCPB (MCP Bundle) package that:
 - Includes a SHA-256 hash for integrity verification
 - Can be downloaded and executed directly by MCP clients that support MCPB
 
-## Embedded MCP inside a CLI tool
+### Embedded MCP inside a CLI tool
 
 Some CLI tools bundle an MCP server, without a standalone MCP package or a public repository. In these cases, reuse the existing `packages` shape by pointing at the host CLI package and supplying the `package_arguments` and `runtime_hint` if needed to start the MCP server.
 
@@ -658,7 +676,7 @@ Some CLI tools bundle an MCP server, without a standalone MCP package or a publi
 }
 ```
 
-## Deprecated Server Example
+### Deprecated Server Example
 
 ```json
 {
