@@ -40,6 +40,7 @@ func NewPostgreSQL(ctx context.Context, connectionURI string) (*PostgreSQL, erro
 	}, nil
 }
 
+//nolint:cyclop // Database filtering logic is inherently complex but clear
 func (db *PostgreSQL) List(
 	ctx context.Context,
 	filter *ServerFilter,
@@ -69,6 +70,26 @@ func (db *PostgreSQL) List(
 		if filter.RemoteURL != nil {
 			whereConditions = append(whereConditions, fmt.Sprintf("EXISTS (SELECT 1 FROM jsonb_array_elements(value->'remotes') AS remote WHERE remote->>'url' = $%d)", argIndex))
 			args = append(args, *filter.RemoteURL)
+			argIndex++
+		}
+		if filter.UpdatedSince != nil {
+			whereConditions = append(whereConditions, fmt.Sprintf("(value->'_meta'->'io.modelcontextprotocol.registry/official'->>'updated_at')::timestamp > $%d", argIndex))
+			args = append(args, *filter.UpdatedSince)
+			argIndex++
+		}
+		if filter.SubstringName != nil {
+			whereConditions = append(whereConditions, fmt.Sprintf("value->>'name' ILIKE $%d", argIndex))
+			args = append(args, "%"+*filter.SubstringName+"%")
+			argIndex++
+		}
+		if filter.Version != nil {
+			whereConditions = append(whereConditions, fmt.Sprintf("(value->'version_detail'->>'version') = $%d", argIndex))
+			args = append(args, *filter.Version)
+			argIndex++
+		}
+		if filter.IsLatest != nil {
+			whereConditions = append(whereConditions, fmt.Sprintf("(value->'_meta'->'io.modelcontextprotocol.registry/official'->>'is_latest')::boolean = $%d", argIndex))
+			args = append(args, *filter.IsLatest)
 			argIndex++
 		}
 	}

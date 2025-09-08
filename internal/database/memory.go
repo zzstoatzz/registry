@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"sort"
+	"strings"
 	"sync"
 
 	apiv0 "github.com/modelcontextprotocol/registry/pkg/api/v0"
@@ -164,6 +165,7 @@ func (db *MemoryDB) filterAndSort(allEntries []*apiv0.ServerJSON, filter *Server
 }
 
 // matchesFilter checks if an entry matches the provided filter
+//nolint:cyclop // Filter matching logic is inherently complex but clear
 func (db *MemoryDB) matchesFilter(entry *apiv0.ServerJSON, filter *ServerFilter) bool {
 	if filter == nil {
 		return true
@@ -184,6 +186,44 @@ func (db *MemoryDB) matchesFilter(entry *apiv0.ServerJSON, filter *ServerFilter)
 			}
 		}
 		if !found {
+			return false
+		}
+	}
+
+	// Check updatedSince filter
+	if filter.UpdatedSince != nil {
+		if entry.Meta == nil || entry.Meta.Official == nil {
+			return false
+		}
+		if entry.Meta.Official.UpdatedAt.Before(*filter.UpdatedSince) ||
+			entry.Meta.Official.UpdatedAt.Equal(*filter.UpdatedSince) {
+			return false
+		}
+	}
+
+	// Check name search filter (substring match)
+	if filter.SubstringName != nil {
+		// Case-insensitive substring search
+		searchLower := strings.ToLower(*filter.SubstringName)
+		nameLower := strings.ToLower(entry.Name)
+		if !strings.Contains(nameLower, searchLower) {
+			return false
+		}
+	}
+
+	// Check exact version filter
+	if filter.Version != nil {
+		if entry.VersionDetail.Version != *filter.Version {
+			return false
+		}
+	}
+
+	// Check is_latest filter
+	if filter.IsLatest != nil {
+		if entry.Meta == nil || entry.Meta.Official == nil {
+			return false
+		}
+		if entry.Meta.Official.IsLatest != *filter.IsLatest {
 			return false
 		}
 	}
