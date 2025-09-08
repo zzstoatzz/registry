@@ -2,9 +2,23 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/modelcontextprotocol/registry/cmd/publisher/commands"
+)
+
+// Version info for the MCP Publisher tool
+// These variables are injected at build time via ldflags by goreleaser
+var (
+	// Version is the current version of the MCP Publisher tool
+	Version = "dev"
+
+	// BuildTime is the time at which the binary was built
+	BuildTime = "unknown"
+
+	// GitCommit is the git commit that was compiled
+	GitCommit = "unknown"
 )
 
 func main() {
@@ -23,6 +37,9 @@ func main() {
 		err = commands.LogoutCommand()
 	case "publish":
 		err = commands.PublishCommand(os.Args[2:])
+	case "--version", "-v", "version":
+		log.Printf("mcp-publisher %s (commit: %s, built: %s)", Version, GitCommit, BuildTime)
+		return
 	case "--help", "-h", "help":
 		printUsage()
 	default:
