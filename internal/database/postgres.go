@@ -234,6 +234,29 @@ func (db *PostgreSQL) UpdateServer(ctx context.Context, id string, server *apiv0
 	return server, nil
 }
 
+// CountRecentPublishesByUser counts servers published by a user in the last N hours
+func (db *PostgreSQL) CountRecentPublishesByUser(ctx context.Context, authMethodSubject string, hours int) (int, error) {
+	if ctx.Err() != nil {
+		return 0, ctx.Err()
+	}
+
+	// Query for servers published by this user within the time window
+	query := `
+		SELECT COUNT(*)
+		FROM servers 
+		WHERE (value->'_meta'->'io.modelcontextprotocol.registry/official'->>'published_at')::timestamptz > NOW() - INTERVAL $2
+		AND value->'_meta'->'io.modelcontextprotocol.registry/official'->>'auth_method_subject' = $1
+	`
+	
+	var count int
+	err := db.conn.QueryRow(ctx, query, authMethodSubject, fmt.Sprintf("%d hours", hours)).Scan(&count)
+	if err != nil {
+		return 0, fmt.Errorf("failed to count recent publishes by user: %w", err)
+	}
+
+	return count, nil
+}
+
 // Close closes the database connection
 func (db *PostgreSQL) Close() error {
 	return db.conn.Close(context.Background())

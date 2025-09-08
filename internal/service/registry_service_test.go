@@ -42,7 +42,7 @@ func TestValidateNoDuplicateRemoteURLs(t *testing.T) {
 	service := NewRegistryService(memDB, &config.Config{EnableRegistryValidation: false})
 
 	for _, server := range existingServers {
-		_, err := service.Publish(*server)
+		_, err := service.Publish(*server, "test-user", false)
 		if err != nil {
 			t.Fatalf("failed to publish server: %v", err)
 		}

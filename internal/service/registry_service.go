@@ -71,7 +71,7 @@ func (s *registryServiceImpl) GetByID(id string) (*apiv0.ServerJSON, error) {
 }
 
 // Publish publishes a server with flattened _meta extensions
-func (s *registryServiceImpl) Publish(req apiv0.ServerJSON) (*apiv0.ServerJSON, error) {
+func (s *registryServiceImpl) Publish(req apiv0.ServerJSON, authMethodSubject string, hasGlobalPermissions bool) (*apiv0.ServerJSON, error) {
 	// Create a timeout context for the database operation
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -79,6 +79,22 @@ func (s *registryServiceImpl) Publish(req apiv0.ServerJSON) (*apiv0.ServerJSON, 
 	// Validate the request
 	if err := validators.ValidatePublishRequest(req, s.cfg); err != nil {
 		return nil, err
+	}
+
+	// Check publish rate limit (skip for admins with global permissions)
+	if authMethodSubject != "" && s.cfg.PublishLimitPerDay != -1 && !hasGlobalPermissions {
+		if s.cfg.PublishLimitPerDay == 0 {
+			return nil, fmt.Errorf("publishing is currently disabled")
+		}
+		
+		recentPublishes, err := s.db.CountRecentPublishesByUser(ctx, authMethodSubject, 24)
+		if err != nil {
+			return nil, fmt.Errorf("failed to check publish rate limit: %w", err)
+		}
+		if recentPublishes >= s.cfg.PublishLimitPerDay {
+			return nil, fmt.Errorf("publish rate limit exceeded: %d servers published in the last 24 hours (limit: %d per day)", 
+				recentPublishes, s.cfg.PublishLimitPerDay)
+		}
 	}
 
 	publishTime := time.Now()
@@ -134,11 +150,12 @@ func (s *registryServiceImpl) Publish(req apiv0.ServerJSON) (*apiv0.ServerJSON, 
 
 	// Set registry metadata
 	server.Meta.Official = &apiv0.RegistryExtensions{
-		ID:          uuid.New().String(),
-		PublishedAt: publishTime,
-		UpdatedAt:   publishTime,
-		IsLatest:    isNewLatest,
-		ReleaseDate: publishTime.Format(time.RFC3339),
+		ID:                uuid.New().String(),
+		PublishedAt:       publishTime,
+		UpdatedAt:         publishTime,
+		IsLatest:          isNewLatest,
+		ReleaseDate:       publishTime.Format(time.RFC3339),
+		AuthMethodSubject: authMethodSubject,
 	}
 
 	// Create server in database

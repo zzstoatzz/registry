@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"sort"
 	"sync"
+	"time"
 
 	apiv0 "github.com/modelcontextprotocol/registry/pkg/api/v0"
 )
@@ -198,3 +199,29 @@ func (db *MemoryDB) getRegistryID(entry *apiv0.ServerJSON) string {
 	}
 	return ""
 }
+
+// CountRecentPublishesByUser counts servers published by a user in the last N hours
+func (db *MemoryDB) CountRecentPublishesByUser(ctx context.Context, authMethodSubject string, hours int) (int, error) {
+	if ctx.Err() != nil {
+		return 0, ctx.Err()
+	}
+
+	db.mu.RLock()
+	defer db.mu.RUnlock()
+
+	cutoff := time.Now().Add(-time.Duration(hours) * time.Hour)
+	count := 0
+
+	for _, entry := range db.entries {
+		if entry.Meta != nil && entry.Meta.Official != nil {
+			// Check if this server was published by the user within the time window
+			if entry.Meta.Official.AuthMethodSubject == authMethodSubject && 
+			   entry.Meta.Official.PublishedAt.After(cutoff) {
+				count++
+			}
+		}
+	}
+
+	return count, nil
+}
+

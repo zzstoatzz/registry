@@ -10,8 +10,8 @@ type RegistryService interface {
 	List(cursor string, limit int) ([]apiv0.ServerJSON, string, error)
 	// Retrieve a single server by registry metadata ID
 	GetByID(id string) (*apiv0.ServerJSON, error)
-	// Publish a server
-	Publish(req apiv0.ServerJSON) (*apiv0.ServerJSON, error)
+	// Publish a server with authentication subject and global permissions flag
+	Publish(req apiv0.ServerJSON, authMethodSubject string, hasGlobalPermissions bool) (*apiv0.ServerJSON, error)
 	// Update an existing server
 	EditServer(id string, req apiv0.ServerJSON) (*apiv0.ServerJSON, error)
 }

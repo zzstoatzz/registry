@@ -57,8 +57,8 @@ func TestServersListEndpoint(t *testing.T) {
 						Version: "2.0.0",
 					},
 				}
-				_, _ = registry.Publish(server1)
-				_, _ = registry.Publish(server2)
+				_, _ = registry.Publish(server1, "test-user", false)
+				_, _ = registry.Publish(server2, "test-user", false)
 			},
 			expectedStatus:  http.StatusOK,
 			expectedServers: nil, // Will be verified differently since IDs are dynamic
@@ -79,7 +79,7 @@ func TestServersListEndpoint(t *testing.T) {
 						Version: "1.5.0",
 					},
 				}
-				_, _ = registry.Publish(server)
+				_, _ = registry.Publish(server, "test-user", false)
 			},
 			expectedStatus:  http.StatusOK,
 			expectedServers: nil, // Will be verified differently since IDs are dynamic
@@ -301,7 +301,7 @@ func TestServersEndpointsIntegration(t *testing.T) {
 		},
 	}
 
-	published, err := registryService.Publish(testServer)
+	published, err := registryService.Publish(testServer, "test-user", false)
 	assert.NoError(t, err)
 	assert.NotNil(t, published)
 

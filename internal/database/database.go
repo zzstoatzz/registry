@@ -33,6 +33,8 @@ type Database interface {
 	CreateServer(ctx context.Context, server *apiv0.ServerJSON) (*apiv0.ServerJSON, error)
 	// UpdateServer updates an existing server record
 	UpdateServer(ctx context.Context, id string, server *apiv0.ServerJSON) (*apiv0.ServerJSON, error)
+	// CountRecentPublishesByUser counts servers published by a user in the last N hours
+	CountRecentPublishesByUser(ctx context.Context, authMethodSubject string, hours int) (int, error)
 	// Close closes the database connection
 	Close() error
 }

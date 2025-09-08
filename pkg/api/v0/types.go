@@ -8,11 +8,12 @@ import (
 
 // RegistryExtensions represents registry-generated metadata
 type RegistryExtensions struct {
-	ID          string    `json:"id"`
-	PublishedAt time.Time `json:"published_at"`
-	UpdatedAt   time.Time `json:"updated_at,omitempty"`
-	IsLatest    bool      `json:"is_latest"`
-	ReleaseDate string    `json:"release_date"`
+	ID                string    `json:"id"`
+	PublishedAt       time.Time `json:"published_at"`
+	UpdatedAt         time.Time `json:"updated_at,omitempty"`
+	IsLatest          bool      `json:"is_latest"`
+	ReleaseDate       string    `json:"release_date"`
+	AuthMethodSubject string    `json:"auth_method_subject,omitempty"`
 }
 
 // ServerListResponse represents the paginated server list response

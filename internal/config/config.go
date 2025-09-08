@@ -24,6 +24,7 @@ type Config struct {
 	JWTPrivateKey            string       `env:"JWT_PRIVATE_KEY" envDefault:""`
 	EnableAnonymousAuth      bool         `env:"ENABLE_ANONYMOUS_AUTH" envDefault:"false"`
 	EnableRegistryValidation bool         `env:"ENABLE_REGISTRY_VALIDATION" envDefault:"true"`
+	PublishLimitPerDay       int          `env:"PUBLISH_LIMIT_PER_DAY" envDefault:"10"`
 
 	// OIDC Configuration
 	OIDCEnabled      bool   `env:"OIDC_ENABLED" envDefault:"false"`
