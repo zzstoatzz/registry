@@ -78,7 +78,7 @@ func (db *PostgreSQL) List(
 		if _, err := uuid.Parse(cursor); err != nil {
 			return nil, "", fmt.Errorf("invalid cursor format: %w", err)
 		}
-		whereConditions = append(whereConditions, fmt.Sprintf("(value->'_meta'->'io.modelcontextprotocol.registry'->>'id') > $%d", argIndex))
+		whereConditions = append(whereConditions, fmt.Sprintf("(value->'_meta'->'io.modelcontextprotocol.registry/official'->>'id') > $%d", argIndex))
 		args = append(args, cursor)
 		argIndex++
 	}
@@ -94,7 +94,7 @@ func (db *PostgreSQL) List(
 		SELECT value
 		FROM servers
 		%s
-		ORDER BY (value->'_meta'->'io.modelcontextprotocol.registry'->>'id')
+		ORDER BY (value->'_meta'->'io.modelcontextprotocol.registry/official'->>'id')
 		LIMIT $%d
 	`, whereClause, argIndex)
 	args = append(args, limit)
@@ -131,8 +131,8 @@ func (db *PostgreSQL) List(
 	nextCursor := ""
 	if len(results) > 0 && len(results) >= limit {
 		lastResult := results[len(results)-1]
-		if lastResult.Meta != nil && lastResult.Meta.IOModelContextProtocolRegistry != nil {
-			nextCursor = lastResult.Meta.IOModelContextProtocolRegistry.ID
+		if lastResult.Meta != nil && lastResult.Meta.Official != nil {
+			nextCursor = lastResult.Meta.Official.ID
 		}
 	}
 
@@ -147,7 +147,7 @@ func (db *PostgreSQL) GetByID(ctx context.Context, id string) (*apiv0.ServerJSON
 	query := `
 		SELECT value
 		FROM servers
-		WHERE (value->'_meta'->'io.modelcontextprotocol.registry'->>'id') = $1
+		WHERE (value->'_meta'->'io.modelcontextprotocol.registry/official'->>'id') = $1
 	`
 
 	var valueJSON []byte
@@ -177,11 +177,11 @@ func (db *PostgreSQL) CreateServer(ctx context.Context, server *apiv0.ServerJSON
 	}
 
 	// Get the ID from the registry metadata
-	if server.Meta == nil || server.Meta.IOModelContextProtocolRegistry == nil {
+	if server.Meta == nil || server.Meta.Official == nil {
 		return nil, fmt.Errorf("server must have registry metadata with ID")
 	}
 
-	id := server.Meta.IOModelContextProtocolRegistry.ID
+	id := server.Meta.Official.ID
 
 	// Marshal the complete server to JSONB
 	valueJSON, err := json.Marshal(server)
@@ -219,7 +219,7 @@ func (db *PostgreSQL) UpdateServer(ctx context.Context, id string, server *apiv0
 	query := `
 		UPDATE servers 
 		SET value = $1
-		WHERE (value->'_meta'->'io.modelcontextprotocol.registry'->>'id') = $2
+		WHERE (value->'_meta'->'io.modelcontextprotocol.registry/official'->>'id') = $2
 	`
 
 	result, err := db.conn.Exec(ctx, query, valueJSON, id)
