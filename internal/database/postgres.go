@@ -94,12 +94,12 @@ func (db *PostgreSQL) List(
 		}
 	}
 
-	// Add cursor pagination using registry metadata ID
+	// Add cursor pagination using primary key ID
 	if cursor != "" {
 		if _, err := uuid.Parse(cursor); err != nil {
 			return nil, "", fmt.Errorf("invalid cursor format: %w", err)
 		}
-		whereConditions = append(whereConditions, fmt.Sprintf("(value->'_meta'->'io.modelcontextprotocol.registry/official'->>'id') > $%d", argIndex))
+		whereConditions = append(whereConditions, fmt.Sprintf("id > $%d", argIndex))
 		args = append(args, cursor)
 		argIndex++
 	}
@@ -112,12 +112,12 @@ func (db *PostgreSQL) List(
 
 	// Simple query on servers table
 	query := fmt.Sprintf(`
-		SELECT value
-		FROM servers
-		%s
-		ORDER BY (value->'_meta'->'io.modelcontextprotocol.registry/official'->>'id')
-		LIMIT $%d
-	`, whereClause, argIndex)
+        SELECT value
+        FROM servers
+        %s
+        ORDER BY id
+        LIMIT $%d
+    `, whereClause, argIndex)
 	args = append(args, limit)
 
 	rows, err := db.conn.Query(ctx, query, args...)
@@ -168,7 +168,7 @@ func (db *PostgreSQL) GetByID(ctx context.Context, id string) (*apiv0.ServerJSON
 	query := `
 		SELECT value
 		FROM servers
-		WHERE (value->'_meta'->'io.modelcontextprotocol.registry/official'->>'id') = $1
+		WHERE id = $1
 	`
 
 	var valueJSON []byte
@@ -230,6 +230,11 @@ func (db *PostgreSQL) UpdateServer(ctx context.Context, id string, server *apiv0
 		return nil, ctx.Err()
 	}
 
+	// Validate that meta structure exists and ID matches path
+	if server.Meta == nil || server.Meta.Official == nil || server.Meta.Official.ID != id {
+		return nil, fmt.Errorf("%w: io.modelcontextprotocol.registry/official.id must match path id (%s)", ErrInvalidInput, id)
+	}
+
 	// Marshal updated server
 	valueJSON, err := json.Marshal(server)
 	if err != nil {
@@ -240,7 +245,7 @@ func (db *PostgreSQL) UpdateServer(ctx context.Context, id string, server *apiv0
 	query := `
 		UPDATE servers 
 		SET value = $1
-		WHERE (value->'_meta'->'io.modelcontextprotocol.registry/official'->>'id') = $2
+		WHERE id = $2
 	`
 
 	result, err := db.conn.Exec(ctx, query, valueJSON, id)
