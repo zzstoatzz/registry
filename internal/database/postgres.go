@@ -307,14 +307,26 @@ func (db *PostgreSQL) UpdateServer(ctx context.Context, id string, server *apiv0
 	var args []interface{}
 
 	if hasServerID {
-		// New schema: update by server_id and is_latest
+		// New schema: update by server_id and version to target specific record
+		// We need to find the record by server_id and version from the updated server data
+		serverVersion := ""
+		if server.Version != "" {
+			serverVersion = server.Version
+		} else {
+			// Extract version from the server data if not provided separately
+			var tempServer apiv0.ServerJSON
+			if err := json.Unmarshal(valueJSON, &tempServer); err == nil {
+				serverVersion = tempServer.Version
+			}
+		}
+		
 		query = `
 			UPDATE servers 
 			SET value = $1
 			WHERE server_id = $2
-			AND (value->'_meta'->'io.modelcontextprotocol.registry/official'->>'is_latest')::boolean = true
+			AND (value->>'version') = $3
 		`
-		args = []interface{}{valueJSON, id}
+		args = []interface{}{valueJSON, id, serverVersion}
 	} else {
 		// Old schema: update by id in JSON
 		query = `

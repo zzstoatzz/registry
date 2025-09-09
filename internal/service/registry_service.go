@@ -241,10 +241,21 @@ func (s *registryServiceImpl) markAsNotLatest(ctx context.Context, server *apiv0
 		return nil
 	}
 
-	// Update the existing server to set is_latest = false
-	server.Meta.Official.IsLatest = false
-	server.Meta.Official.UpdatedAt = time.Now()
-	_, err := s.db.UpdateServer(ctx, serverID, server)
+	// Create a copy of the server to avoid modifying the original
+	serverCopy := *server
+	if serverCopy.Meta == nil {
+		serverCopy.Meta = &apiv0.ServerMeta{}
+	}
+	if serverCopy.Meta.Official == nil {
+		serverCopy.Meta.Official = &apiv0.RegistryExtensions{}
+	}
+
+	// Update the copy to set is_latest = false
+	serverCopy.Meta.Official.IsLatest = false
+	serverCopy.Meta.Official.UpdatedAt = time.Now()
+	
+	// Use UpdateServer with the serverID which should match the current latest version
+	_, err := s.db.UpdateServer(ctx, serverID, &serverCopy)
 	return err
 }
 
