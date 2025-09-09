@@ -165,15 +165,40 @@ func (db *PostgreSQL) GetByID(ctx context.Context, id string) (*apiv0.ServerJSON
 		return nil, ctx.Err()
 	}
 
-	query := `
-		SELECT value
-		FROM servers
-		WHERE (value->'_meta'->'io.modelcontextprotocol.registry/official'->>'id') = $1
-	`
+	// Check if the table has the new schema (with server_id column)
+	var hasServerID bool
+	err := db.conn.QueryRow(ctx, `
+		SELECT EXISTS (
+			SELECT 1 FROM information_schema.columns 
+			WHERE table_name = 'servers' AND column_name = 'server_id'
+		)
+	`).Scan(&hasServerID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to check schema: %w", err)
+	}
+
+	var query string
+	if hasServerID {
+		// New schema: search by server_id and get the latest version
+		query = `
+			SELECT value
+			FROM servers
+			WHERE server_id = $1
+			AND (value->'_meta'->'io.modelcontextprotocol.registry/official'->>'is_latest')::boolean = true
+			LIMIT 1
+		`
+	} else {
+		// Old schema: search by id in the JSON
+		query = `
+			SELECT value
+			FROM servers
+			WHERE (value->'_meta'->'io.modelcontextprotocol.registry/official'->>'id') = $1
+		`
+	}
 
 	var valueJSON []byte
 
-	err := db.conn.QueryRow(ctx, query, id).Scan(&valueJSON)
+	err = db.conn.QueryRow(ctx, query, id).Scan(&valueJSON)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -197,12 +222,16 @@ func (db *PostgreSQL) CreateServer(ctx context.Context, server *apiv0.ServerJSON
 		return nil, ctx.Err()
 	}
 
-	// Get the ID from the registry metadata
+	// Get the server ID from the registry metadata
 	if server.Meta == nil || server.Meta.Official == nil {
 		return nil, fmt.Errorf("server must have registry metadata with ID")
 	}
 
-	id := server.Meta.Official.ID
+	serverID := server.Meta.Official.ID
+	version := server.Version
+
+	// Generate a unique record ID for this version
+	recordID := fmt.Sprintf("%s_%s", serverID, version)
 
 	// Marshal the complete server to JSONB
 	valueJSON, err := json.Marshal(server)
@@ -210,13 +239,39 @@ func (db *PostgreSQL) CreateServer(ctx context.Context, server *apiv0.ServerJSON
 		return nil, fmt.Errorf("failed to marshal server JSON: %w", err)
 	}
 
-	// Insert into simple servers table
-	query := `
-		INSERT INTO servers (id, value)
-		VALUES ($1, $2)
-	`
+	// Check if the table has the new schema (with record_id column)
+	var hasRecordID bool
+	err = db.conn.QueryRow(ctx, `
+		SELECT EXISTS (
+			SELECT 1 FROM information_schema.columns 
+			WHERE table_name = 'servers' AND column_name = 'record_id'
+		)
+	`).Scan(&hasRecordID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to check schema: %w", err)
+	}
 
-	_, err = db.conn.Exec(ctx, query, id, valueJSON)
+	var query string
+	var args []interface{}
+
+	if hasRecordID {
+		// New schema with record_id and server_id columns
+		query = `
+			INSERT INTO servers (record_id, server_id, value)
+			VALUES ($1, $2, $3)
+		`
+		args = []interface{}{recordID, serverID, valueJSON}
+	} else {
+		// Old schema with id column only
+		query = `
+			INSERT INTO servers (id, value)
+			VALUES ($1, $2)
+		`
+		// For old schema, use unique record ID to avoid conflicts
+		args = []interface{}{recordID, valueJSON}
+	}
+
+	_, err = db.conn.Exec(ctx, query, args...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to insert server: %w", err)
 	}
@@ -236,14 +291,41 @@ func (db *PostgreSQL) UpdateServer(ctx context.Context, id string, server *apiv0
 		return nil, fmt.Errorf("failed to marshal updated server: %w", err)
 	}
 
-	// Update the complete server record in simple table
-	query := `
-		UPDATE servers 
-		SET value = $1
-		WHERE (value->'_meta'->'io.modelcontextprotocol.registry/official'->>'id') = $2
-	`
+	// Check if the table has the new schema
+	var hasServerID bool
+	err = db.conn.QueryRow(ctx, `
+		SELECT EXISTS (
+			SELECT 1 FROM information_schema.columns 
+			WHERE table_name = 'servers' AND column_name = 'server_id'
+		)
+	`).Scan(&hasServerID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to check schema: %w", err)
+	}
 
-	result, err := db.conn.Exec(ctx, query, valueJSON, id)
+	var query string
+	var args []interface{}
+
+	if hasServerID {
+		// New schema: update by server_id and is_latest
+		query = `
+			UPDATE servers 
+			SET value = $1
+			WHERE server_id = $2
+			AND (value->'_meta'->'io.modelcontextprotocol.registry/official'->>'is_latest')::boolean = true
+		`
+		args = []interface{}{valueJSON, id}
+	} else {
+		// Old schema: update by id in JSON
+		query = `
+			UPDATE servers 
+			SET value = $1
+			WHERE (value->'_meta'->'io.modelcontextprotocol.registry/official'->>'id') = $2
+		`
+		args = []interface{}{valueJSON, id}
+	}
+
+	result, err := db.conn.Exec(ctx, query, args...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to update server: %w", err)
 	}

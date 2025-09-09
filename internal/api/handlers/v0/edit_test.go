@@ -114,7 +114,7 @@ func TestEditServerEndpoint(t *testing.T) {
 					Source: "github",
 					ID:     "domdomegg/test-server",
 				},
-				Version: "1.0.1",
+				Version: "1.0.0",
 			},
 			serverID:       testServerID,
 			expectedStatus: http.StatusOK,
@@ -131,9 +131,9 @@ func TestEditServerEndpoint(t *testing.T) {
 			name:       "invalid authorization header format",
 			authHeader: "InvalidFormat token123",
 			requestBody: apiv0.ServerJSON{
-				Name:          "io.github.domdomegg/test-server",
-				Description:   "Test server",
-				Version: "1.0.0",
+				Name:        "io.github.domdomegg/test-server",
+				Description: "Test server",
+				Version:     "1.0.0",
 			},
 			serverID:       testServerID,
 			expectedStatus: http.StatusUnauthorized,
@@ -143,9 +143,9 @@ func TestEditServerEndpoint(t *testing.T) {
 			name:       "invalid token",
 			authHeader: "Bearer invalid-token",
 			requestBody: apiv0.ServerJSON{
-				Name:          "io.github.domdomegg/test-server",
-				Description:   "Test server",
-				Version: "1.0.0",
+				Name:        "io.github.domdomegg/test-server",
+				Description: "Test server",
+				Version:     "1.0.0",
 			},
 			serverID:       testServerID,
 			expectedStatus: http.StatusUnauthorized,
@@ -165,9 +165,9 @@ func TestEditServerEndpoint(t *testing.T) {
 				return "Bearer " + token
 			}(),
 			requestBody: apiv0.ServerJSON{
-				Name:          "io.github.domdomegg/test-server",
-				Description:   "Updated test server",
-				Version: "1.0.0",
+				Name:        "io.github.domdomegg/test-server",
+				Description: "Updated test server",
+				Version:     "1.0.0",
 			},
 			serverID:       testServerID,
 			expectedStatus: http.StatusForbidden,
@@ -187,9 +187,9 @@ func TestEditServerEndpoint(t *testing.T) {
 				return "Bearer " + token
 			}(),
 			requestBody: apiv0.ServerJSON{
-				Name:          "io.github.other/test-server",
-				Description:   "Updated test server",
-				Version: "1.0.0",
+				Name:        "io.github.other/test-server",
+				Description: "Updated test server",
+				Version:     "1.0.0",
 			},
 			serverID:       otherServerID,
 			expectedStatus: http.StatusForbidden,
@@ -209,9 +209,9 @@ func TestEditServerEndpoint(t *testing.T) {
 				return "Bearer " + token
 			}(),
 			requestBody: apiv0.ServerJSON{
-				Name:          "io.github.domdomegg/nonexistent-server",
-				Description:   "Updated test server",
-				Version: "1.0.0",
+				Name:        "io.github.domdomegg/nonexistent-server",
+				Description: "Updated test server",
+				Version:     "1.0.0",
 			},
 			serverID:       "550e8400-e29b-41d4-a716-446655440999", // Non-existent ID
 			expectedStatus: http.StatusNotFound,
@@ -231,9 +231,9 @@ func TestEditServerEndpoint(t *testing.T) {
 				return "Bearer " + token
 			}(),
 			requestBody: apiv0.ServerJSON{
-				Name:          "invalid-name-format", // Missing namespace/name format
-				Description:   "Test server",
-				Version: "1.0.0",
+				Name:        "invalid-name-format", // Missing namespace/name format
+				Description: "Test server",
+				Version:     "1.0.0",
 			},
 			serverID:       testServerID,
 			expectedStatus: http.StatusBadRequest,

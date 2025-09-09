@@ -95,17 +95,9 @@ func (s *registryServiceImpl) Publish(req apiv0.ServerJSON) (*apiv0.ServerJSON, 
 		return nil, err
 	}
 
-	// Check we haven't exceeded the maximum versions allowed for a server
-	if len(existingServerVersions) >= maxServerVersionsPerServer {
-		return nil, database.ErrMaxServersReached
-	}
-
-	// Check this isn't a duplicate version
-	for _, server := range existingServerVersions {
-		existingVersion := server.Version
-		if existingVersion == serverJSON.Version {
-			return nil, database.ErrInvalidVersion
-		}
+	// Validate version constraints
+	if err := s.validateVersionConstraints(existingServerVersions, serverJSON.Version); err != nil {
+		return nil, err
 	}
 
 	// Determine if this version should be marked as latest
@@ -132,9 +124,12 @@ func (s *registryServiceImpl) Publish(req apiv0.ServerJSON) (*apiv0.ServerJSON, 
 		server.Meta = &apiv0.ServerMeta{}
 	}
 
+	// Determine the ID to use - reuse from first version or generate new
+	serverID := s.determineServerID(existingServerVersions)
+
 	// Set registry metadata
 	server.Meta.Official = &apiv0.RegistryExtensions{
-		ID:          uuid.New().String(),
+		ID:          serverID,
 		PublishedAt: publishTime,
 		UpdatedAt:   publishTime,
 		IsLatest:    isNewLatest,
@@ -148,17 +143,8 @@ func (s *registryServiceImpl) Publish(req apiv0.ServerJSON) (*apiv0.ServerJSON, 
 
 	// Mark previous latest as no longer latest
 	if isNewLatest && existingLatest != nil {
-		var existingLatestID string
-		if existingLatest.Meta != nil && existingLatest.Meta.Official != nil {
-			existingLatestID = existingLatest.Meta.Official.ID
-		}
-		if existingLatestID != "" {
-			// Update the existing server to set is_latest = false
-			existingLatest.Meta.Official.IsLatest = false
-			existingLatest.Meta.Official.UpdatedAt = time.Now()
-			if _, err := s.db.UpdateServer(ctx, existingLatestID, existingLatest); err != nil {
-				return nil, err
-			}
+		if err := s.markAsNotLatest(ctx, existingLatest); err != nil {
+			return nil, err
 		}
 	}
 
@@ -198,6 +184,68 @@ func (s *registryServiceImpl) getCurrentLatestVersion(existingServerVersions []*
 		}
 	}
 	return nil
+}
+
+// determineServerID determines the server ID to use for a new version
+// It reuses the ID from the earliest version if one exists, otherwise generates a new one
+func (s *registryServiceImpl) determineServerID(existingServerVersions []*apiv0.ServerJSON) string {
+	if len(existingServerVersions) > 0 {
+		// Find the earliest published version to get the consistent ID
+		var earliestVersion *apiv0.ServerJSON
+		var earliestTime time.Time
+
+		for _, version := range existingServerVersions {
+			if version.Meta != nil && version.Meta.Official != nil {
+				versionTime := version.Meta.Official.PublishedAt
+				if earliestVersion == nil || versionTime.Before(earliestTime) {
+					earliestVersion = version
+					earliestTime = versionTime
+				}
+			}
+		}
+
+		if earliestVersion != nil && earliestVersion.Meta != nil && earliestVersion.Meta.Official != nil {
+			return earliestVersion.Meta.Official.ID
+		}
+	}
+
+	// Generate new ID only if this is the first version
+	return uuid.New().String()
+}
+
+// validateVersionConstraints checks version-related constraints
+func (s *registryServiceImpl) validateVersionConstraints(existingServerVersions []*apiv0.ServerJSON, newVersion string) error {
+	// Check we haven't exceeded the maximum versions allowed for a server
+	if len(existingServerVersions) >= maxServerVersionsPerServer {
+		return database.ErrMaxServersReached
+	}
+
+	// Check this isn't a duplicate version
+	for _, server := range existingServerVersions {
+		if server.Version == newVersion {
+			return database.ErrInvalidVersion
+		}
+	}
+
+	return nil
+}
+
+// markAsNotLatest marks a server version as no longer the latest
+func (s *registryServiceImpl) markAsNotLatest(ctx context.Context, server *apiv0.ServerJSON) error {
+	if server.Meta == nil || server.Meta.Official == nil {
+		return nil
+	}
+
+	serverID := server.Meta.Official.ID
+	if serverID == "" {
+		return nil
+	}
+
+	// Update the existing server to set is_latest = false
+	server.Meta.Official.IsLatest = false
+	server.Meta.Official.UpdatedAt = time.Now()
+	_, err := s.db.UpdateServer(ctx, serverID, server)
+	return err
 }
 
 // EditServer updates an existing server with new details (admin operation)

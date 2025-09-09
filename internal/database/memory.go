@@ -12,7 +12,7 @@ import (
 
 // MemoryDB is an in-memory implementation of the Database interface
 type MemoryDB struct {
-	entries map[string]*apiv0.ServerJSON // maps registry metadata ID to ServerJSON
+	entries map[string]*apiv0.ServerJSON // maps record ID (serverID_version) to ServerJSON
 	mu      sync.RWMutex
 }
 
@@ -88,10 +88,20 @@ func (db *MemoryDB) GetByID(ctx context.Context, id string) (*apiv0.ServerJSON, 
 	db.mu.RLock()
 	defer db.mu.RUnlock()
 
-	// Find entry by registry metadata ID
-	if entry, exists := db.entries[id]; exists {
+	// Find the latest version with this server ID
+	var latestEntry *apiv0.ServerJSON
+	for _, entry := range db.entries {
+		if entry.Meta != nil && entry.Meta.Official != nil &&
+			entry.Meta.Official.ID == id &&
+			entry.Meta.Official.IsLatest {
+			latestEntry = entry
+			break
+		}
+	}
+
+	if latestEntry != nil {
 		// Return a copy of the ServerRecord
-		entryCopy := *entry
+		entryCopy := *latestEntry
 		return &entryCopy, nil
 	}
 
@@ -103,18 +113,22 @@ func (db *MemoryDB) CreateServer(ctx context.Context, server *apiv0.ServerJSON) 
 		return nil, ctx.Err()
 	}
 
-	// Get the ID from the registry metadata
+	// Get the server ID from the registry metadata
 	if server.Meta == nil || server.Meta.Official == nil {
 		return nil, fmt.Errorf("server must have registry metadata with ID")
 	}
 
-	id := server.Meta.Official.ID
+	serverID := server.Meta.Official.ID
+	version := server.Version
+
+	// Generate a unique record ID for this version
+	recordID := fmt.Sprintf("%s_%s", serverID, version)
 
 	db.mu.Lock()
 	defer db.mu.Unlock()
 
-	// Store the record using registry metadata ID
-	db.entries[id] = server
+	// Store the record using the unique record ID
+	db.entries[recordID] = server
 
 	return server, nil
 }
@@ -127,13 +141,64 @@ func (db *MemoryDB) UpdateServer(ctx context.Context, id string, server *apiv0.S
 	db.mu.Lock()
 	defer db.mu.Unlock()
 
-	_, exists := db.entries[id]
-	if !exists {
+	// Find the specific version to update
+	// We need to match both the server ID and version to update the right record
+	targetVersion := server.Version
+	var oldRecordKey string
+	var oldEntry *apiv0.ServerJSON
+
+	// First try to find by exact version match
+	targetRecordKey := fmt.Sprintf("%s_%s", id, targetVersion)
+	if entry, exists := db.entries[targetRecordKey]; exists {
+		if entry.Meta != nil && entry.Meta.Official != nil && entry.Meta.Official.ID == id {
+			oldRecordKey = targetRecordKey
+			oldEntry = entry
+		}
+	}
+
+	// If not found by exact key, search for it
+	if oldRecordKey == "" {
+		for key, entry := range db.entries {
+			if entry.Meta != nil && entry.Meta.Official != nil &&
+				entry.Meta.Official.ID == id &&
+				entry.Version == targetVersion {
+				oldRecordKey = key
+				oldEntry = entry
+				break
+			}
+		}
+	}
+
+	if oldRecordKey == "" {
 		return nil, ErrNotFound
 	}
 
-	// Update the server
-	db.entries[id] = server
+	// Ensure the server maintains proper metadata
+	if server.Meta == nil {
+		server.Meta = &apiv0.ServerMeta{}
+	}
+	if server.Meta.Official == nil {
+		server.Meta.Official = oldEntry.Meta.Official
+	}
+
+	// Preserve the server ID (must be consistent)
+	server.Meta.Official.ID = id
+
+	// If the version changed, we need to update the record key
+	newVersion := server.Version
+	oldVersion := oldEntry.Version
+
+	if newVersion != oldVersion {
+		// Delete the old record
+		delete(db.entries, oldRecordKey)
+
+		// Create new record key with new version
+		newRecordKey := fmt.Sprintf("%s_%s", id, newVersion)
+		db.entries[newRecordKey] = server
+	} else {
+		// Version unchanged, just update in place
+		db.entries[oldRecordKey] = server
+	}
 
 	// Return the updated record
 	return server, nil
@@ -154,17 +219,22 @@ func (db *MemoryDB) filterAndSort(allEntries []*apiv0.ServerJSON, filter *Server
 		}
 	}
 
-	// Sort by registry metadata ID for consistent pagination
+	// Sort by registry metadata ID and version for consistent pagination
 	sort.Slice(filteredEntries, func(i, j int) bool {
 		iID := db.getRegistryID(filteredEntries[i])
 		jID := db.getRegistryID(filteredEntries[j])
-		return iID < jID
+		if iID != jID {
+			return iID < jID
+		}
+		// If IDs are the same (same server), sort by version
+		return filteredEntries[i].Version < filteredEntries[j].Version
 	})
 
 	return filteredEntries
 }
 
 // matchesFilter checks if an entry matches the provided filter
+//
 //nolint:cyclop // Filter matching logic is inherently complex but clear
 func (db *MemoryDB) matchesFilter(entry *apiv0.ServerJSON, filter *ServerFilter) bool {
 	if filter == nil {
