@@ -10,7 +10,6 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgxpool"
 	apiv0 "github.com/modelcontextprotocol/registry/pkg/api/v0"
 )
 
@@ -50,7 +49,7 @@ func NewPostgreSQL(ctx context.Context, connectionURI string) (*PostgreSQL, erro
 		return nil, fmt.Errorf("failed to acquire connection for migrations: %w", err)
 	}
 	defer conn.Release()
-	
+
 	migrator := NewMigrator(conn.Conn())
 	if err := migrator.Migrate(ctx); err != nil {
 		return nil, fmt.Errorf("failed to run database migrations: %w", err)
@@ -89,13 +88,17 @@ func (db *PostgreSQL) List(
 			argIndex++
 		}
 		if filter.RemoteURL != nil {
-			whereConditions = append(whereConditions, fmt.Sprintf("EXISTS (SELECT 1 FROM jsonb_array_elements(value->'remotes') AS remote WHERE remote->>'url' = $%d)", argIndex))
-			args = append(args, *filter.RemoteURL)
+			// Use JSONB containment to leverage GIN index on value->'remotes'
+			// Construct JSON: [{"url": "<remote-url>"}]
+			contain, _ := json.Marshal([]map[string]string{{"url": *filter.RemoteURL}})
+			whereConditions = append(whereConditions, fmt.Sprintf("value->'remotes' @> $%d::jsonb", argIndex))
+			args = append(args, string(contain))
 			argIndex++
 		}
 		if filter.UpdatedSince != nil {
-			whereConditions = append(whereConditions, fmt.Sprintf("(value->'_meta'->'io.modelcontextprotocol.registry/official'->>'updated_at')::timestamp > $%d", argIndex))
-			args = append(args, *filter.UpdatedSince)
+			// Compare RFC3339 text directly to use btree index on expression
+			whereConditions = append(whereConditions, fmt.Sprintf("(value->'_meta'->'io.modelcontextprotocol.registry/official'->>'updated_at') > $%d", argIndex))
+			args = append(args, filter.UpdatedSince.Format(time.RFC3339))
 			argIndex++
 		}
 		if filter.SubstringName != nil {
